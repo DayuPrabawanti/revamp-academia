@@ -8,30 +8,6 @@ import (
 	"codeid.revampacademy/models"
 )
 
-const getBatch = `-- name: GetBatch :one
-SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date, batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id FROM bootcamp.batch
-WHERE batch_id = $1
-`
-
-func (q *Queries) GetBatch(ctx context.Context, batchID int32) (models.BootcampBatch, error) {
-	row := q.db.QueryRowContext(ctx, getBatch, batchID)
-	var i models.BootcampBatch
-	err := row.Scan(
-		&i.BatchID,
-		&i.BatchEntityID,
-		&i.BatchName,
-		&i.BatchDescription,
-		&i.BatchStartDate,
-		&i.BatchEndDate,
-		&i.BatchReason,
-		&i.BatchType,
-		&i.BatchModifiedDate,
-		&i.BatchStatus,
-		&i.BatchPicID,
-	)
-	return i, err
-}
-
 const listBatchs = `-- name: ListBatchs :many
 SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date, batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id FROM bootcamp.batch
 ORDER BY batch_id
@@ -70,6 +46,30 @@ func (q *Queries) ListBatchs(ctx context.Context) ([]models.BootcampBatch, error
 		return nil, err
 	}
 	return items, nil
+}
+
+const getBatch = `-- name: GetBatch :one
+SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date, batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id FROM bootcamp.batch
+WHERE batch_id = $1
+`
+
+func (q *Queries) GetBatch(ctx context.Context, batchID int32) (models.BootcampBatch, error) {
+	row := q.db.QueryRowContext(ctx, getBatch, batchID)
+	var i models.BootcampBatch
+	err := row.Scan(
+		&i.BatchID,
+		&i.BatchEntityID,
+		&i.BatchName,
+		&i.BatchDescription,
+		&i.BatchStartDate,
+		&i.BatchEndDate,
+		&i.BatchReason,
+		&i.BatchType,
+		&i.BatchModifiedDate,
+		&i.BatchStatus,
+		&i.BatchPicID,
+	)
+	return i, err
 }
 
 const createBatch = `-- name: CreateBatch :one

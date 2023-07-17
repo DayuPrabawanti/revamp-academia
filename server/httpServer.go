@@ -15,6 +15,8 @@ type HttpServer struct {
 	config          *viper.Viper
 	router          *gin.Engine
 	batchController *controllers.BatchController
+	// batchTraineeController           *controllers.BatchTraineeController
+	// batchTraineeEvaluationController *controllers.BatchTraineeEvaluationController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -31,7 +33,40 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/batch/:id", batchController.UpdateBatch)
 	router.DELETE("/batch/:id", batchController.DeleteBatch)
 
+	// BATCH TRAINEE
+	batchTraineeRepository := repositories.NewBatchTraineeRepository(dbHandler)
+	batchTraineeService := services.NewBatchTraineeService(batchTraineeRepository)
+	batchTraineeController := controllers.NewBatchTraineeController(batchTraineeService)
+
+	router.GET("/batch_trainee", batchTraineeController.GetListBatchTrainee)
+
 	// BATCH TRAINEE EVALUATION
+	batchTraineeEvaluationRepository := repositories.NewBatchTraineeEvaluationRepository(dbHandler)
+	batchTraineeEvaluationService := services.NewBatchTraineeEvaluationService(batchTraineeEvaluationRepository)
+	batchTraineeEvaluationController := controllers.NewBatchTraineeEvaluationController(batchTraineeEvaluationService)
+
+	router.GET("/batch_trainee_evaluation", batchTraineeEvaluationController.GetListBatchTraineeEvaluation)
+
+	// INSTRUCTOR PROGRAM
+	instructorProgramRepository := repositories.NewInstructorProgramRepository(dbHandler)
+	instructorProgramService := services.NewInstructorProgramService(instructorProgramRepository)
+	instructorProgramController := controllers.NewInstructorProgramController(instructorProgramService)
+
+	router.GET("/instructor_programs", instructorProgramController.GetListInstructorProgram)
+
+	// PROGRAM APPLY
+	programApplyRepository := repositories.NewProgramApplyRepository(dbHandler)
+	programApplyService := services.NewProgramApplyService(programApplyRepository)
+	programApplyController := controllers.NewProgramApplyController(programApplyService)
+
+	router.GET("/program_apply", programApplyController.GetListProgramApply)
+
+	// PROGRAM APPLY PROGRESS
+	programApplyProgressRepository := repositories.NewProgramApplyProgressRepository(dbHandler)
+	programApplyProgressService := services.NewProgramApplyProgressService(programApplyProgressRepository)
+	programApplyProgressController := controllers.NewProgramApplyProgressController(programApplyProgressService)
+
+	router.GET("/program_apply_progress", programApplyProgressController.GetListProgramApplyProgress)
 
 	return HttpServer{
 		config:          config,
