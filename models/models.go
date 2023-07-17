@@ -12,11 +12,11 @@ import (
 )
 
 
-type HrTalent struct{
-	UsersUser UsersUser
-	BootcampBatch BootcampBatch
+// type HrTalent struct{
+// 	UsersUser UsersUser
+// 	BootcampBatch BootcampBatch
 	
-}
+// }
 
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`

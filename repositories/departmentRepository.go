@@ -99,7 +99,7 @@ func (dr DepartmentRepository) DeleteDepartment(ctx *gin.Context, id int64) *mod
 
 	if err != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when delete",
 			Status:  http.StatusInternalServerError,
 		}
 	}

@@ -15,14 +15,17 @@ type HttpServer struct {
 	config               *viper.Viper
 	router               *gin.Engine
 	departmentController *controllers.DepartmentController
+	employeeControllers  *controllers.EmployeeController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	departmentRepository := repositories.NewDepartmentRepository(dbHandler)
-
 	departmentService := services.NewDepartmentService(departmentRepository)
-
 	departmentController := controllers.NewDepartmentController(departmentService)
+
+	employeeRepository := repositories.NewEmployeeRepository(dbHandler)
+	employeeService := services.NewEmployeeService(employeeRepository)
+	employeeController := controllers.NewEmployeeController(employeeService)
 
 	router := gin.Default()
 
@@ -33,10 +36,18 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/department/:id", departmentController.UpdateDepartment)
 	router.DELETE("/department/:id", departmentController.DeleteDepartment)
 
+	//router endpoint table employee
+	router.GET("/employee", employeeController.GetListEmployee)
+	router.GET("/employee/:id", employeeController.GetEmployee)
+	router.POST("/employee", employeeController.CreateEmployee)
+	router.PUT("/employee/:id", employeeController.UpdateEmployee)
+	router.DELETE("/employee/:id", employeeController.DeleteEmployee)
+
 	return HttpServer{
 		config:               config,
 		router:               router,
 		departmentController: departmentController,
+		employeeControllers:  employeeController,
 	}
 }
 
