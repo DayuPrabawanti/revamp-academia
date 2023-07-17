@@ -1,0 +1,85 @@
+package usersCt
+
+import (
+	"encoding/json"
+	"io"
+	"log"
+	"net/http"
+	"strconv"
+
+	"codeid.revampacademy/repositories/users/dbContext"
+	"codeid.revampacademy/services/usersService"
+	"github.com/gin-gonic/gin"
+)
+
+type UserEmailController struct {
+	userEmailService *usersService.UserEmailService
+}
+
+// Declare constructor
+func NewUserEmailController(userEmailService *usersService.UserEmailService) *UserEmailController {
+	return &UserEmailController{
+		userEmailService: userEmailService,
+	}
+}
+
+func (userEmailController UserEmailController) GetListUsersEmail(ctx *gin.Context){
+
+	response, responseErr := userEmailController.userEmailService.GetListUsersEmail(ctx)
+
+	if responseErr != nil{
+		ctx.JSON(responseErr.Status,responseErr)
+		return 
+	}
+
+	ctx.JSON(http.StatusOK,response)
+	
+	//ctx.JSON(http.StatusOK, "Hello gin Framework")
+}
+
+func (userEmailController UserEmailController) GetEmail(ctx *gin.Context) {
+
+	emailId, err := strconv.Atoi(ctx.Param("id")) // atoi mengubah string ke integer
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	response, responseErr := userEmailController.userEmailService.GetEmail(ctx, int32(emailId))
+	if responseErr != nil {
+
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (useremailcontroller UserEmailController) CreateEmail(ctx *gin.Context) {
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create email request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var email dbContext.CreateEmailParams
+	err = json.Unmarshal(body, &email)
+	if err != nil {
+		log.Println("Error while unmarshaling create email request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := useremailcontroller.userEmailService.CreateEmail(ctx, &email)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}

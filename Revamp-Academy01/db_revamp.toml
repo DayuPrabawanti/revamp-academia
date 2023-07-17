@@ -1,0 +1,14 @@
+[database]
+
+connection_string = "host=localhost port=5433 user=postgres password=Madhon07 dbname=db_revamp sslmode=disable"
+max_idle_connections = 5
+max_open_connections = 20
+connection_max_lifetime = "60s"
+driver_name = "postgres"
+###############################################################################
+# HTTP server configuration
+
+[http]
+
+server_address = ":8888"
+###############################################################################
