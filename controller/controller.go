@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/service"
 	"github.com/gin-gonic/gin"
@@ -11,9 +13,9 @@ type SalesController struct {
 	salesService *service.SalesService
 }
 
-func NewSalesRepository(categoryService *service.SalesService) *SalesController {
+func NewSalesRepository(salesService *service.SalesService) *SalesController {
 	return &SalesController{
-		salesService: categoryService,
+		salesService: salesService,
 	}
 }
 
@@ -26,4 +28,23 @@ func (salesController SalesController) GetListSales(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 
+}
+
+func (salesController SalesController) GetListCart_item(ctx *gin.Context) {
+	caitId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	response, responseErr := salesController.salesService.GetListCart_item(ctx, int64(caitId))
+	if responseErr != nil {
+
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }

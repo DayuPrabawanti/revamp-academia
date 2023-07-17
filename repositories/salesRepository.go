@@ -20,9 +20,9 @@ func NewSalesRepository(dbHandler *sql.DB) *SalesRepository {
 	}
 }
 
-func (cr SalesRepository) GetListSales(ctx *gin.Context) ([]*models.SalesSpecialOffer, *models.ResponseError) {
+func (sr SalesRepository) GetListSales(ctx *gin.Context) ([]*models.SalesSpecialOffer, *models.ResponseError) {
 
-	store := dbcontext.New(cr.dbHandler)
+	store := dbcontext.New(sr.dbHandler)
 	special_offer, err := store.ListSpecial_offer(ctx)
 
 	listSalesOffer := make([]*models.SalesSpecialOffer, 0)
@@ -51,4 +51,19 @@ func (cr SalesRepository) GetListSales(ctx *gin.Context) ([]*models.SalesSpecial
 	}
 
 	return listSalesOffer, nil
+}
+
+func (sr SalesRepository) GetListCart_item(ctx *gin.Context, id int64) (*models.SalesCartItem, *models.ResponseError) {
+
+	store := dbcontext.New(sr.dbHandler)
+	cart_items, err := store.Getcart_items(ctx, int32(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &cart_items, nil
 }

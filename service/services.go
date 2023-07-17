@@ -19,8 +19,12 @@ func NewSalesService(salesRepository *repositories.SalesRepository) *SalesServic
 	}
 }
 
-func (cs SalesService) GetListSales(ctx *gin.Context) ([]*models.SalesSpecialOffer, *models.ResponseError) {
-	return cs.salesRepository.GetListSales(ctx)
+func (sr SalesService) GetListSales(ctx *gin.Context) ([]*models.SalesSpecialOffer, *models.ResponseError) {
+	return sr.salesRepository.GetListSales(ctx)
+}
+
+func (sr SalesService) GetListCart_item(ctx *gin.Context, id int64) (*models.SalesCartItem, *models.ResponseError) {
+	return sr.salesRepository.GetListCart_item(ctx, id)
 }
 
 func validateSales(salesParams *dbcontext.CreateSales_special_offerParams) *models.ResponseError {

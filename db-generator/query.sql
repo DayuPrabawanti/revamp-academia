@@ -551,7 +551,7 @@ WHERE ephi_entity_id = $1;
 
 -- name: Getprogram_entity :one
 SELECT * FROM curriculum.program_entity
-WHERE prog_entity_id = $1;
+WHERE prog_title = $2;
 
 -- name: Listprogram_entity :many
 SELECT * FROM curriculum.program_entity
