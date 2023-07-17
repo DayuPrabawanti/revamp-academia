@@ -9,14 +9,13 @@ import (
 	"codeid.revampacademy/services"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-
 )
 
 type HttpServer struct {
 	config             *viper.Viper
 	router             *gin.Engine
 	jobcategoryController *controllers.JobCategoryController
-    jobclientController *controllers.JobPostController
+    jobPostController *controllers.JobPostController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -57,6 +56,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
     router.GET("/jobPost/:id", jobPostController.GetJobPostHttp)
         router.GET("/jobPostList/", jobPostController.ListJobPostHttp)
+            router.POST("/jobPostCreate", jobPostController.CreateJobPostHttp)
 
 
 

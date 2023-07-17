@@ -289,5 +289,17 @@ func (jobPost JobPostRepository) GetJobPostRepo(ctx *gin.Context, id int32) (*mo
 				return listJobPost, nil
 	}
 	
+		func (jobPost JobPostRepository) CreateJobPostRepo(ctx *gin.Context, CreateJobPostParams *dbContext.CreateJobPostParams) (*models.JobhireJobPost, *models.ResponseError) {
 
+						store := dbContext.New(jobPost.dbHandler)
+						jobClient, err2 := store.CreateJobPostImpl(ctx, *CreateJobPostParams)
+
+						if err2 != nil {
+							return nil, &models.ResponseError{
+								Message: err2.Message,
+								Status:  http.StatusInternalServerError,
+							}
+						}
+						return jobClient, nil
+		}
 		

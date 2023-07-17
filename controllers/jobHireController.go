@@ -10,6 +10,7 @@ import (
 	"codeid.revampacademy/repositories/dbContext"
 	"codeid.revampacademy/services"
 	"github.com/gin-gonic/gin"
+
 )
 
 type JobCategoryController struct {
@@ -303,3 +304,29 @@ func NewJobPostController(jobhirePostController *services.JobPostService) *JobPo
 
 					ctx.JSON(http.StatusOK, response)
 		}
+
+			func (jobPostController JobPostController) CreateJobPostHttp(ctx *gin.Context) {
+
+					body, err := io.ReadAll(ctx.Request.Body)
+					if err != nil {
+						log.Println("Error while reading create category request body", err)
+						ctx.AbortWithError(http.StatusInternalServerError, err)
+						return
+					}
+
+					var jopo dbContext.CreateJobPostParams
+					err = json.Unmarshal(body, &jopo)
+					if err != nil {
+						log.Println("Error while unmarshaling create category request body", err)
+						ctx.AbortWithError(http.StatusInternalServerError, err)
+						return
+					}
+
+					response, responseErr := jobPostController.JobPostService.JobPostServiceRepo.CreateJobPostRepo(ctx, &jopo)
+					if responseErr != nil {
+						ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+						return
+					}
+
+					ctx.JSON(http.StatusOK, response)
+			}

@@ -245,7 +245,7 @@ type JobhireJobPhoto struct {
 type JobhireJobPost struct {
 	JopoEntityID       int32          `db:"jopo_entity_id" json:"jopoEntityId"`
 	JopoNumber         sql.NullString `db:"jopo_number" json:"jopoNumber"`
-	JopoTitle          sql.NullString `db:"jopo_title" json:"jopoTitle"`
+	JopoTitle          string  `db:"jopo_title" json:"jopoTitle"`
 	JopoStartDate      sql.NullTime   `db:"jopo_start_date" json:"jopoStartDate"`
 	JopoEndDate        sql.NullTime   `db:"jopo_end_date" json:"jopoEndDate"`
 	JopoMinSalary      sql.NullInt32  `db:"jopo_min_salary" json:"jopoMinSalary"`

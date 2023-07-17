@@ -2,7 +2,6 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
@@ -365,57 +364,124 @@ ORDER BY jopo_title
 		}
 
 const CreateJobPostImpl = `-- name: CreateJobPostImpl :one
-INSERT INTO jobHire.job_post(jopo_entity_id, jopo_number, jopo_title, jopo_start_date, jopo_end_date, jopo_min_salary, jopo_max_salary, jopo_min_experience, jopo_max_experience, jopo_primary_skill, jopo_secondary_skill, jopo_publish_date, jopo_modified_date, jopo_emp_entity_id, jopo_clit_id, jopo_joro_id, jopo_joty_id, jopo_joca_id, jopo_addr_id, jopo_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
-RETURNING jopo_entity_id
+INSERT INTO jobHire.job_post
+	(jopo_entity_id, jopo_number, jopo_title, jopo_start_date, jopo_end_date,
+	jopo_min_salary, jopo_max_salary, jopo_min_experience, jopo_max_experience, jopo_primary_skill,
+	jopo_secondary_skill, jopo_publish_date, jopo_modified_date, jopo_emp_entity_id, jopo_clit_id, 
+	jopo_joro_id, jopo_joty_id, jopo_joca_id, jopo_addr_id,jopo_work_code, jopo_edu_code, jopo_indu_code,
+	jopo_status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,$21,$22,$23)
+RETURNING *
 `
 
 	type CreateJobPostParams struct {
 		JopoEntityID       int32          `db:"jopo_entity_id" json:"jopoEntityId"`
-		JopoNumber         sql.NullString `db:"jopo_number" json:"jopoNumber"`
-		JopoTitle          sql.NullString `db:"jopo_title" json:"jopoTitle"`
-		JopoStartDate      sql.NullTime   `db:"jopo_start_date" json:"jopoStartDate"`
-		JopoEndDate        sql.NullTime   `db:"jopo_end_date" json:"jopoEndDate"`
-		JopoMinSalary      sql.NullInt32  `db:"jopo_min_salary" json:"jopoMinSalary"`
-		JopoMaxSalary      sql.NullInt32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
-		JopoMinExperience  sql.NullInt32  `db:"jopo_min_experience" json:"jopoMinExperience"`
-		JopoMaxExperience  sql.NullInt32  `db:"jopo_max_experience" json:"jopoMaxExperience"`
-		JopoPrimarySkill   sql.NullString `db:"jopo_primary_skill" json:"jopoPrimarySkill"`
-		JopoSecondarySkill sql.NullString `db:"jopo_secondary_skill" json:"jopoSecondarySkill"`
-		JopoPublishDate    sql.NullTime   `db:"jopo_publish_date" json:"jopoPublishDate"`
-		JopoModifiedDate   sql.NullTime   `db:"jopo_modified_date" json:"jopoModifiedDate"`
-		JopoEmpEntityID    sql.NullInt32  `db:"jopo_emp_entity_id" json:"jopoEmpEntityId"`
-		JopoClitID         sql.NullInt32  `db:"jopo_clit_id" json:"jopoClitId"`
-		JopoJoroID         sql.NullInt32  `db:"jopo_joro_id" json:"jopoJoroId"`
-		JopoJotyID         sql.NullInt32  `db:"jopo_joty_id" json:"jopoJotyId"`
-		JopoJocaID         sql.NullInt32  `db:"jopo_joca_id" json:"jopoJocaId"`
-		JopoAddrID         sql.NullInt32  `db:"jopo_addr_id" json:"jopoAddrId"`
-		JopoStatus         sql.NullString `db:"jopo_status" json:"jopoStatus"`
+		JopoNumber         string `db:"jopo_number" json:"jopoNumber"`
+		JopoTitle          string `db:"jopo_title" json:"jopoTitle"`
+		JopoStartDate      time.Time   `db:"jopo_start_date" json:"jopoStartDate"`
+		JopoEndDate        time.Time   `db:"jopo_end_date" json:"jopoEndDate"`
+		JopoMinSalary      int32  `db:"jopo_min_salary" json:"jopoMinSalary"`
+		JopoMaxSalary      int32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
+		JopoMinExperience  int32  `db:"jopo_min_experience" json:"jopoMinExperience"`
+		JopoMaxExperience  int32  `db:"jopo_max_experience" json:"jopoMaxExperience"`
+		JopoPrimarySkill   string `db:"jopo_primary_skill" json:"jopoPrimarySkill"`
+		JopoSecondarySkill string `db:"jopo_secondary_skill" json:"jopoSecondarySkill"`
+		JopoPublishDate    time.Time   `db:"jopo_publish_date" json:"jopoPublishDate"`
+		JopoModifiedDate   time.Time   `db:"jopo_modified_date" json:"jopoModifiedDate"`
+		JopoEmpEntityID    int32  `db:"jopo_emp_entity_id" json:"jopoEmpEntityId"`
+		JopoClitID         int32  `db:"jopo_clit_id" json:"jopoClitId"`
+		JopoJoroID         int32  `db:"jopo_joro_id" json:"jopoJoroId"`
+		JopoJotyID         int32  `db:"jopo_joty_id" json:"jopoJotyId"`
+		JopoJocaID         int32  `db:"jopo_joca_id" json:"jopoJocaId"`
+		JopoAddrID         int32  `db:"jopo_addr_id" json:"jopoAddrId"`
+		JopoWorkCode string
+		JopoEduCode string
+		JopoInduCode string
+		JopoStatus         string `db:"jopo_status" json:"jopoStatus"`
 	}
 
-		func (q *Queries) CreateJobPostImpl(ctx context.Context, arg CreateJobPostParams) (int32, error) {
-			row := q.db.QueryRowContext(ctx, CreateJobPostImpl,
-				arg.JopoEntityID,
-				arg.JopoNumber,
-				arg.JopoTitle,
-				arg.JopoStartDate,
-				arg.JopoEndDate,
-				arg.JopoMinSalary,
-				arg.JopoMaxSalary,
-				arg.JopoMinExperience,
-				arg.JopoMaxExperience,
-				arg.JopoPrimarySkill,
-				arg.JopoSecondarySkill,
-				arg.JopoPublishDate,
-				arg.JopoModifiedDate,
-				arg.JopoEmpEntityID,
-				arg.JopoClitID,
-				arg.JopoJoroID,
-				arg.JopoJotyID,
-				arg.JopoJocaID,
-				arg.JopoAddrID,
-				arg.JopoStatus,
+		func (q *Queries) CreateJobPostImpl(ctx context.Context, arg CreateJobPostParams) (*models.JobhireJobPost, *models.ResponseError) {
+		row := q.db.QueryRowContext(ctx, CreateJobPostImpl,
+			arg.JopoEntityID,
+			arg.JopoNumber, 
+			arg.JopoTitle,
+			arg.JopoStartDate,
+			arg.JopoEndDate,
+			arg.JopoMinSalary, 
+			arg.JopoMaxSalary, 
+			arg.JopoMinExperience,
+	 		arg.JopoMaxExperience,
+	  		arg.JopoPrimarySkill, 
+	  		arg.JopoSecondarySkill,
+	   		arg.JopoPublishDate,
+			arg.JopoModifiedDate,
+	 		arg.JopoEmpEntityID, 
+	 		arg.JopoClitID,
+	  		arg.JopoJoroID,
+	   		arg.JopoJotyID,
+	    	arg.JopoJocaID,
+		 	arg.JopoAddrID,
+			arg.JopoWorkCode,
+			arg.JopoEduCode,
+			arg.JopoInduCode,
+		  	arg.JopoStatus,
 			)
-			var jopo_entity_id int32
-			err := row.Scan(&jopo_entity_id)
-			return jopo_entity_id, err
+
+		i := models.JobhireJobPost{}
+		err := row.Scan(
+			&i.JopoEntityID,
+			&i.JopoNumber,
+			&i.JopoTitle,
+			&i.JopoStartDate,
+			&i.JopoEndDate,
+			&i.JopoMinSalary,
+			&i.JopoMaxSalary,
+			&i.JopoMinExperience,
+			&i.JopoMaxExperience,
+			&i.JopoPrimarySkill,
+			&i.JopoSecondarySkill,
+			&i.JopoPublishDate,
+			&i.JopoModifiedDate,
+			&i.JopoEmpEntityID,
+			&i.JopoClitID,
+			&i.JopoJoroID,
+			&i.JopoJotyID,
+			&i.JopoJocaID,
+			&i.JopoAddrID,
+			&i.JopoWorkCode,
+			&i.JopoEduCode,
+			&i.JopoInduCode,
+			&i.JopoStatus,
+		)
+
+		if err != nil {
+			return nil, &models.ResponseError{
+				Message: err.Error(),
+				Status:  http.StatusInternalServerError,
+			}
+		}
+		return &models.JobhireJobPost{
+			JopoEntityID:       i.JopoEntityID,
+			JopoNumber:         i.JopoNumber,
+			JopoTitle:          i.JopoTitle,
+			JopoStartDate:      i.JopoStartDate,
+			JopoEndDate:        i.JopoEndDate,
+			JopoMinSalary:      i.JopoMinSalary,
+			JopoMaxSalary:      i.JopoMaxSalary,
+			JopoMinExperience:  i.JopoMinExperience,
+			JopoMaxExperience:  i.JopoMaxExperience,
+			JopoPrimarySkill:   i.JopoPrimarySkill,
+			JopoSecondarySkill: i.JopoSecondarySkill,
+			JopoPublishDate:    i.JopoPublishDate,
+			JopoModifiedDate:   i.JopoModifiedDate,
+			JopoEmpEntityID:    i.JopoEmpEntityID,
+			JopoClitID:         i.JopoClitID,
+			JopoJoroID:         i.JopoJoroID,
+			JopoJotyID:         i.JopoJotyID,
+			JopoJocaID:         i.JopoJocaID,
+			JopoAddrID:         i.JopoAddrID,
+			JopoWorkCode: i.JopoWorkCode,
+			JopoEduCode: i.JopoEduCode,
+			JopoInduCode: i.JopoInduCode,
+			JopoStatus:         i.JopoStatus,
+		}, nil
 		}

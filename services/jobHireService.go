@@ -150,3 +150,30 @@ func (jpost JobPostService) GetJobPostService(ctx *gin.Context, id int32) (*mode
 	func (jpost JobPostService) ListJobPostService(ctx *gin.Context) ([]*models.JobhireJobPost, *models.ResponseError) {
 				return jpost.JobPostServiceRepo.ListJobPostRepo(ctx)
 	}
+
+		func (jpost JobPostService) CreateJobPostService(ctx *gin.Context, CreateJobPostParams *dbContext.CreateJobPostParams) (*models.JobhireJobPost, *models.ResponseError) {
+					responseErr := validateJobPost(CreateJobPostParams)
+					if responseErr != nil {
+						return nil, responseErr
+					}
+					return jpost.JobPostServiceRepo.CreateJobPostRepo(ctx,CreateJobPostParams)
+		}
+		
+
+func validateJobPost(jobPostParams *dbContext.CreateJobPostParams) *models.ResponseError {
+	if jobPostParams.JopoEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid category id",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if jobPostParams.JopoTitle == "" {
+		return &models.ResponseError{
+			Message: "Invalid category name",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	return nil
+}
