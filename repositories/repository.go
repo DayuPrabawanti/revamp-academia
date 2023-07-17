@@ -15,13 +15,12 @@ type ProgramEntityRepository struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
 	SectionRepository
-	SectionDetailRepository
-	SectionDetailMaterialRepository
 }
 
 func NewProgramEntityRepository(dbHandler *sql.DB) *ProgramEntityRepository {
 	return &ProgramEntityRepository{
-		dbHandler: dbHandler,
+		dbHandler:         dbHandler,
+		SectionRepository: SectionRepository{},
 	}
 }
 

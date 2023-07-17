@@ -24,6 +24,9 @@ func NewProgramEntityService(programEntityRepository *repositories.ProgramEntity
 func (pe ProgramEntityService) GetListProgramEntity(ctx *gin.Context) ([]*models.CurriculumProgramEntity, *models.ResponseError) {
 	return pe.programEntityRepository.GetListProgramEntity(ctx)
 }
+func (pe ProgramEntityService) GetListGabung(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
+	return pe.programEntityRepository.Group(ctx)
+}
 
 func (ps ProgramEntityService) GetProgramEntity(ctx *gin.Context, id int64) (*models.CurriculumProgramEntity, *models.ResponseError) {
 	return ps.programEntityRepository.GetProgramEntity(ctx, id)

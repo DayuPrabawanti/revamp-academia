@@ -11,6 +11,11 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+type Group struct{
+	CurriculumProgramEntity CurriculumProgramEntity
+	CurriculumSection 		CurriculumSection
+}
+
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
 	BatchEntityID     int32          `db:"batch_entity_id" json:"batchEntityId"`

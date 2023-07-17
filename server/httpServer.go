@@ -12,14 +12,14 @@ import (
 )
 
 type HttpServer struct {
-	config                   *viper.Viper
-	router                   *gin.Engine
-	programEntityController  *controllers.ProgramEntityController
-	progEntityDescController *controllers.ProgEntityDescController
-	progReviewsController    *controllers.ProgReviewsController
-	sections                 *controllers.SectionController
-	sectionDetail            *controllers.SectionDetailController
-	sectionDetailMaterial    *controllers.SectionDetailMaterialController
+	config                  *viper.Viper
+	router                  *gin.Engine
+	programEntityController *controllers.ProgramEntityController
+	// progEntityDescController *controllers.ProgEntityDescController
+	// progReviewsController    *controllers.ProgReviewsController
+	// sections                 *controllers.SectionController
+	// sectionDetail            *controllers.SectionDetailController
+	// sectionDetailMaterial    *controllers.SectionDetailMaterialController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -94,15 +94,26 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.GET("/progReviews", progReviewsController.GetListProgReviews)
 
+	// GROUP
+
+	groupRepository := repositories.NewProgramEntityRepository(dbHandler)
+
+	groupService := services.NewGroupService(groupRepository)
+
+	groupController := controllers.NewGroupController(groupService)
+
+	//router.GET("/group", groupController.GROUP)
+	router.GET("/gabung", groupController.Gabung)
+
 	return HttpServer{
-		config:                   config,
-		router:                   router,
-		programEntityController:  programEntityController,
-		progEntityDescController: progEntityDescController,
-		progReviewsController:    progReviewsController,
-		sections:                 sectionController,
-		sectionDetail:            sectionDetailController,
-		sectionDetailMaterial:    sectionDetailMaterialController,
+		config:                  config,
+		router:                  router,
+		programEntityController: programEntityController,
+		// progEntityDescController: progEntityDescController,
+		// progReviewsController:    progReviewsController,
+		// sections:                 sectionController,
+		// sectionDetail:            sectionDetailController,
+		// sectionDetailMaterial:    sectionDetailMaterialController,
 	}
 }
 
