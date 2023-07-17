@@ -1,0 +1,3 @@
+- Yang harus diperhatikan di dump, pada baris ke 4609, tambahin di database kalian masing masing
+
+- Ingat untuk ganti nama database dan sesuaikan dengan nama database yg sudah diset di toml nya, 
