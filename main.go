@@ -19,8 +19,11 @@ func main() {
 
 	log.Println("Initializing database...")
 	dbHandler := server.InitDatabase(config)
-	log.Println(dbHandler)
+	//log.Println(dbHandler)
+	log.Println("Initializing HTTP server")
+	httpServer := server.InitHttpServer(config, dbHandler)
 
+	httpServer.Start()
 }
 
 func getConfigFileName() string {
