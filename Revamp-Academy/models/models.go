@@ -229,7 +229,7 @@ type JobhireEmployeeRange struct {
 
 type JobhireJobCategory struct {
 	JocaID           int32          `db:"joca_id" json:"jocaId"`
-	JocaName         sql.NullString `db:"joca_name" json:"jocaName"`
+	JocaName         string `db:"joca_name" json:"jocaName"`
 	JocaModifiedDate sql.NullTime   `db:"joca_modified_date" json:"jocaModifiedDate"`
 }
 

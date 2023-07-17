@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.19.0
 
-package repositories
+package dbContext
 
 import (
 	"context"
