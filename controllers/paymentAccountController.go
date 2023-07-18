@@ -12,20 +12,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PaymentFintechController struct {
-	paymentFintechService *services.PaymentFintechService
+type PaymentAccountController struct {
+	paymentAccountService *services.PaymentAccountService
 }
 
 // Declare constructor
-func NewPaymentFintechController(paymentFintechService *services.PaymentFintechService) *PaymentFintechController {
-	return &PaymentFintechController{
-		paymentFintechService: paymentFintechService,
+func NewPaymentAccountController(paymentAccountService *services.PaymentAccountService) *PaymentAccountController {
+	return &PaymentAccountController{
+		paymentAccountService: paymentAccountService,
 	}
 }
 
 // Method
-func (paymentFintechController PaymentFintechController) GetListPaymentFintech(ctx *gin.Context) {
-	response, responseErr := paymentFintechController.paymentFintechService.GetListPaymentFintech(ctx)
+func (paymentAccountController PaymentAccountController) GetListPaymentAccount(ctx *gin.Context) {
+	response, responseErr := paymentAccountController.paymentAccountService.GetListPaymentAccount(ctx)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
@@ -37,10 +37,10 @@ func (paymentFintechController PaymentFintechController) GetListPaymentFintech(c
 	// ctx.JSON(http.StatusOK, "Hello Gin Framework!")
 }
 
-func (paymentFintechController PaymentFintechController) GetPaymentFintechByName(ctx *gin.Context) {
-	paymentFintechName := ctx.Query("name")
+func (paymentAccountController PaymentAccountController) GetPaymentAccountByName(ctx *gin.Context) {
+	paymentAccountName := ctx.Query("name")
 
-	response, responseErr := paymentFintechController.paymentFintechService.GetPaymentFintechByName(ctx, paymentFintechName)
+	response, responseErr := paymentAccountController.paymentAccountService.GetPaymentAccountByName(ctx, paymentAccountName)
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
@@ -49,7 +49,7 @@ func (paymentFintechController PaymentFintechController) GetPaymentFintechByName
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentFintechController PaymentFintechController) CreateNewPaymentFintech(ctx *gin.Context) {
+func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount(ctx *gin.Context) {
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -58,15 +58,15 @@ func (paymentFintechController PaymentFintechController) CreateNewPaymentFintech
 		return
 	}
 
-	var paymentFintech dbContext.CreatePaymentFintechParams
-	err = json.Unmarshal(body, &paymentFintech)
+	var paymentAccount dbContext.CreatePaymentUsers_accountParams
+	err = json.Unmarshal(body, &paymentAccount)
 	if err != nil {
 		log.Println("Error while unmarshaling create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response, responseErr := paymentFintechController.paymentFintechService.CreateNewPaymentFintech(ctx, &paymentFintech)
+	response, responseErr := paymentAccountController.paymentAccountService.CreateNewPaymentAccount(ctx, &paymentAccount)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
@@ -76,7 +76,7 @@ func (paymentFintechController PaymentFintechController) CreateNewPaymentFintech
 
 }
 
-func (paymentFintechController PaymentFintechController) UpdatePaymentFintechById(ctx *gin.Context) {
+func (paymentAccountController PaymentAccountController) UpdatePaymentAccountById(ctx *gin.Context) {
 	fintEntityId, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
@@ -92,15 +92,15 @@ func (paymentFintechController PaymentFintechController) UpdatePaymentFintechByI
 		return
 	}
 
-	var paymentFintech dbContext.CreatePaymentFintechParams
-	err = json.Unmarshal(body, &paymentFintech)
+	var paymentAccount dbContext.CreatePaymentUsers_accountParams
+	err = json.Unmarshal(body, &paymentAccount)
 	if err != nil {
 		log.Println("Error while unmarshaling update category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response := paymentFintechController.paymentFintechService.UpdatePaymentFintechById(ctx, &paymentFintech, int64(fintEntityId))
+	response := paymentAccountController.paymentAccountService.UpdatePaymentAccountById(ctx, &paymentAccount, int64(fintEntityId))
 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return
@@ -109,9 +109,9 @@ func (paymentFintechController PaymentFintechController) UpdatePaymentFintechByI
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentFintechController PaymentFintechController) DeletePaymentFintechById(ctx *gin.Context) {
+func (paymentAccountController PaymentAccountController) DeletePaymentAccountById(ctx *gin.Context) {
 
-	paymentFintechId, err := strconv.Atoi(ctx.Param("id"))
+	paymwntAccountId, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)
@@ -119,7 +119,7 @@ func (paymentFintechController PaymentFintechController) DeletePaymentFintechByI
 		return
 	}
 
-	responseErr := paymentFintechController.paymentFintechService.DeletePaymentFintechById(ctx, int64(paymentFintechId))
+	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountById(ctx, int64(paymwntAccountId))
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

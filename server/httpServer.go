@@ -24,15 +24,29 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	paymentFintechController := controllers.NewPaymentFintechController(paymentFintechService)
 
+	paymentAccountRepository := repositories.NewPaymentAccountRepository(dbHandler)
+
+	paymentAccountService := services.NewPaymentAccountService(paymentAccountRepository)
+
+	paymentAccountController := controllers.NewPaymentAccountController(paymentAccountService)
+
 	router := gin.Default()
 
-	// Router (API) end-point
+	// Router (API) end-point Mockup 2
 	router.GET("/api/fintech/fintech", paymentFintechController.GetListPaymentFintech)
 	router.GET("/api/fintech/fintech/search", paymentFintechController.GetPaymentFintechByName)
 	router.POST("/api/fintech/fintech/payment/create", paymentFintechController.CreateNewPaymentFintech)
 
 	router.PUT("/api/fintech/fintech/payment/update/:id", paymentFintechController.UpdatePaymentFintechById)
 	router.DELETE("/api/fintech/fintech/payment/delete/:id", paymentFintechController.DeletePaymentFintechById)
+
+	// Router (API) end-point Mockup 3
+	router.GET("/api/fintech/accounts", paymentAccountController.GetListPaymentAccount)
+	router.GET("/api/fintech/accounts/search", paymentAccountController.GetPaymentAccountByName)
+	router.POST("/api/fintech/accounts/payment/create", paymentAccountController.CreateNewPaymentAccount)
+
+	router.PUT("/api/fintech/accounts/payment/update/:id", paymentAccountController.UpdatePaymentAccountById)
+	router.DELETE("/api/fintech/accounts/payment/delete/:id", paymentAccountController.DeletePaymentAccountById)
 
 	return HttpServer{
 		config:                   config,
