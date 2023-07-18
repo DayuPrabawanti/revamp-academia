@@ -78,12 +78,25 @@ type BootcampProgramApplyProgress struct {
 }
 
 type CurriculumProgramEntity struct {
-	ProgTitle        string `db:"prog_title" json:"progTitle"`
-	ProgHeadline     string `db:"prog_headline" json:"progHeadline"`
-	ProgLearningType string `db:"prog_learning_type" json:"progLearningType"`
-	ProgImage        string `db:"prog_image" json:"progImage"`
-	ProgPrice        int32  `db:"prog_price" json:"progPrice"`
-	ProgDuration     int32  `db:"prog_duration" json:"progDuration"`
+	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
+	ProgTitle        string         `db:"prog_title" json:"progTitle"`
+	ProgHeadline     sql.NullString `db:"prog_headline" json:"progHeadline"`
+	ProgType         sql.NullString `db:"prog_type" json:"progType"`
+	ProgLearningType sql.NullString `db:"prog_learning_type" json:"progLearningType"`
+	ProgRating       sql.NullInt32  `db:"prog_rating" json:"progRating"`
+	ProgTotalTrainee sql.NullInt32  `db:"prog_total_trainee" json:"progTotalTrainee"`
+	ProgModifiedDate sql.NullTime   `db:"prog_modified_date" json:"progModifiedDate"`
+	ProgImage        sql.NullString `db:"prog_image" json:"progImage"`
+	ProgBestSeller   sql.NullString `db:"prog_best_seller" json:"progBestSeller"`
+	ProgPrice        sql.NullInt32  `db:"prog_price" json:"progPrice"`
+	ProgLanguage     sql.NullString `db:"prog_language" json:"progLanguage"`
+	ProgDuration     sql.NullInt32  `db:"prog_duration" json:"progDuration"`
+	ProgDurationType sql.NullString `db:"prog_duration_type" json:"progDurationType"`
+	ProgTagSkill     sql.NullString `db:"prog_tag_skill" json:"progTagSkill"`
+	ProgCityID       sql.NullInt32  `db:"prog_city_id" json:"progCityId"`
+	ProgCateID       sql.NullInt32  `db:"prog_cate_id" json:"progCateId"`
+	ProgCreatedBy    sql.NullInt32  `db:"prog_created_by" json:"progCreatedBy"`
+	ProgStatus       sql.NullString `db:"prog_status" json:"progStatus"`
 }
 
 type CurriculumProgramEntityDescription struct {

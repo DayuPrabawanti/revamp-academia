@@ -1,26 +1,28 @@
 package controller
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/service"
 	"github.com/gin-gonic/gin"
 )
 
-type ControllerMock1 struct {
-	serviceMock1 *service.ServiceMock1
+type ControllerMock struct {
+	serviceMock *service.ServiceMock
 }
 
-func NewRepositoryMock1(serviceMock1 *service.ServiceMock1) *ControllerMock1 {
-	return &ControllerMock1{
-		serviceMock1: serviceMock1,
+func NewRepositoryMock(serviceMock *service.ServiceMock) *ControllerMock {
+	return &ControllerMock{
+		serviceMock: serviceMock,
 	}
 }
 
-func (controllerMock1 ControllerMock1) GetMockup1(ctx *gin.Context) {
-	mockup := ctx.Param("nama")
+func (controllerMock ControllerMock) GetMockup1(ctx *gin.Context) {
+	mockUp := ctx.Query("nama")
 
-	response, responseErr := controllerMock1.serviceMock1.GetMockup1(ctx, string(mockup))
+	response, responseErr := controllerMock.serviceMock.GetMockup(ctx, string(mockUp))
 	if responseErr != nil {
 
 		ctx.JSON(responseErr.Status, responseErr)
@@ -30,13 +32,20 @@ func (controllerMock1 ControllerMock1) GetMockup1(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (controllerMock1 ControllerMock1) GetListMock1(ctx *gin.Context) {
-	response, responseErr := controllerMock1.serviceMock1.GetListMock1(ctx)
+func (controllerMock ControllerMock) GetMockupId(ctx *gin.Context) {
+	progEntityID, err := strconv.Atoi(ctx.Param("id"))
 
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+	response, responseErr := controllerMock.serviceMock.GetMockupId(ctx, int64(progEntityID))
 	if responseErr != nil {
+
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
-	ctx.JSON(http.StatusOK, response)
 
+	ctx.JSON(http.StatusOK, response)
 }

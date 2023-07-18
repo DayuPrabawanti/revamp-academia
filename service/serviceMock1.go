@@ -9,25 +9,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ServiceMock1 struct {
-	repositoryMock1 *repositories.RepositoryMock1
+type ServiceMock struct {
+	repositoryMock *repositories.RepositoryMock
 }
 
-func NewServiceMock1(repositoryMock1 *repositories.RepositoryMock1) *ServiceMock1 {
-	return &ServiceMock1{
-		repositoryMock1: repositoryMock1,
+func NewServiceMock(repositoryMock *repositories.RepositoryMock) *ServiceMock {
+	return &ServiceMock{
+		repositoryMock: repositoryMock,
 	}
 }
 
-func (sm ServiceMock1) GetListMock1(ctx *gin.Context) ([]*models.CurriculumProgramEntity, *models.ResponseError) {
-	return sm.repositoryMock1.GetListMock1(ctx)
+func (sm ServiceMock) GetMockup(ctx *gin.Context, nama string) (*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
+	return sm.repositoryMock.GetMockup(ctx, nama)
 }
 
-func (sm ServiceMock1) GetMockup1(ctx *gin.Context, nama string) (*models.CurriculumProgramEntity, *models.ResponseError) {
-	return sm.repositoryMock1.GetMockup1(ctx, nama)
+func (sm ServiceMock) GetMockupId(ctx *gin.Context, id int64) (*models.CurriculumProgramEntity, *models.ResponseError) {
+	return sm.repositoryMock.GetMockupId(ctx, id)
 }
 
-func validateMockup(mockupParams *dbcontext.Createprogram_entityParams) *models.ResponseError {
+func validateMockup(mockupParams *dbcontext.CreateprogramEntityParams) *models.ResponseError {
 	if mockupParams.ProgTitle == "" {
 		return &models.ResponseError{
 			Message: "Invalid Title id",
