@@ -12,11 +12,19 @@ import (
 )
 
 
-// type HrTalent struct{
-// 	UsersUser UsersUser
-// 	BootcampBatch BootcampBatch
-	
-// }
+type MasterJobRoleList []MasterJobRole
+type UsersUserList []UsersUser
+type HrEmployeeList []HrEmployee
+type BootcampBatchList []BootcampBatch
+type JobhireTalentApplyList []JobhireTalentApply
+
+type TalentsDetailMockup struct{
+	MasterJobRole 		MasterJobRole
+	UsersUser 			UsersUser
+	HrEmployee 			HrEmployee
+	BootcampBatch 		BootcampBatch
+	JobhireTalentApply	JobhireTalentApply
+}
 
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
