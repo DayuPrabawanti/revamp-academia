@@ -118,8 +118,6 @@ func (br BatchRepository) DeleteBatch(ctx *gin.Context, id int64) *models.Respon
 }
 
 func (br BatchRepository) SearchBatch(ctx *gin.Context, batchID int32, status string) ([]models.BootcampBatch, error) {
-	// Prepare the SQL query to search batches based on batchID and status.
-	// Note: Modify the query according to your database schema.
 
 	const searchBatchSQL = `
 		SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date,
@@ -157,6 +155,20 @@ func (br BatchRepository) SearchBatch(ctx *gin.Context, batchID int32, status st
 
 	if err := rows.Err(); err != nil {
 		return nil, err
+	}
+
+	return batches, nil
+}
+
+func (br BatchRepository) PagingBatch(ctx *gin.Context, offset, pageSize int) ([]models.BootcampBatch, *models.ResponseError) {
+
+	store := dbContext.New(br.dbHandler)
+	batches, err := store.PagingBatch(ctx, pageSize, offset)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to fetch batches",
+			Status:  http.StatusInternalServerError,
+		}
 	}
 
 	return batches, nil

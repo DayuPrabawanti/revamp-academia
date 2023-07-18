@@ -29,18 +29,14 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	//router endpoint
 	router.GET("/api/bootcamp/batch/", batchController.GetListBatch)
-	// router.GET("/api/bootcamp/batch/:id", batchController.GetBatch)
 	router.GET("/api/bootcamp/batch/batchid", batchController.GetBatch) // Menggunakan query parameter id
 	router.POST("/api/bootcamp/batch/create", batchController.CreateBatch)
 
 	router.PUT("/api/bootcamp/batch/update/:id", batchController.UpdateBatch)
 	router.DELETE("/api/bootcamp/batch/delete/:id", batchController.DeleteBatch)
 
-	// router.GET("/api/bootcamp/batch/search?/batch=#3 & status=Open", batchController.SearchBatch)
 	router.GET("/api/bootcamp/batch/search", batchController.SearchBatch)
-
-	// router.GET("/api/bootcamp/batch/paging? page=1 & pageSize=10", batchController.PagingBatch)
-	// router.GET("/api/bootcamp/batch/paging", batchController.PagingBatch) // Paging
+	router.GET("/api/bootcamp/batch/paging", batchController.PagingBatch)
 
 	return HttpServer{
 		config:          config,

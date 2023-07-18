@@ -32,28 +32,7 @@ func (batchController BatchController) GetListBatch(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, response)
-	// ctx.JSON(http.StatusOK, "Hello gin Framework")
 }
-
-// func (batchController BatchController) GetBatch(ctx *gin.Context) {
-
-// 	batchId, err := strconv.Atoi(ctx.Param("id"))
-
-// 	if err != nil {
-// 		log.Println("Error while reading paramater id", err)
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 		return
-// 	}
-
-// 	response, responseErr := batchController.batchService.GetBatch(ctx, int64(batchId))
-// 	if responseErr != nil {
-
-// 		ctx.JSON(responseErr.Status, responseErr)
-// 		return
-// 	}
-
-// 	ctx.JSON(http.StatusOK, response)
-// }
 
 func (batchController BatchController) GetBatch(ctx *gin.Context) {
 	id := ctx.Query("id") // Mengambil nilai query parameter id dari URL
@@ -161,12 +140,35 @@ func (batchController BatchController) SearchBatch(ctx *gin.Context) {
 
 	batchID, _ := strconv.Atoi(batchIDParam)
 
-	// Call the batchService.SearchBatch function to perform the search operation.
 	batches, err := batchController.batchService.SearchBatch(ctx, int32(batchID), statusParam)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Failed to search batches",
 		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, batches)
+}
+
+func (batchController BatchController) PagingBatch(ctx *gin.Context) {
+	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
+	if err != nil || page <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
+		return
+	}
+
+	pageSize, err := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
+	if err != nil || pageSize <= 0 {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page size"})
+		return
+	}
+
+	offset := (page - 1) * pageSize
+
+	batches, responseErr := batchController.batchService.PagingBatch(ctx, offset, pageSize)
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
 

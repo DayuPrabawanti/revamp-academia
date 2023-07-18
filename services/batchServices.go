@@ -69,10 +69,7 @@ func validateBatch(batchParams *dbContext.CreateBatchParams) *models.ResponseErr
 }
 
 func (bs BatchService) SearchBatch(ctx *gin.Context, batchID int32, status string) ([]models.BootcampBatch, *models.ResponseError) {
-	// Perform validation, if needed, for batchID and status
-	// If validation fails, return appropriate response error
 
-	// Call the batchRepository.SearchBatch function to perform the search operation.
 	batches, err := bs.batchRepository.SearchBatch(ctx, batchID, status)
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -82,4 +79,9 @@ func (bs BatchService) SearchBatch(ctx *gin.Context, batchID int32, status strin
 	}
 
 	return batches, nil
+}
+
+func (bs BatchService) PagingBatch(ctx *gin.Context, offset, pageSize int) ([]models.BootcampBatch, *models.ResponseError) {
+
+	return bs.batchRepository.PagingBatch(ctx, offset, pageSize)
 }
