@@ -12,12 +12,13 @@ import (
 )
 
 type HttpServer struct {
-	config                   *viper.Viper
-	router                   *gin.Engine
-	departmentController     *controllers.DepartmentController
-	employeeController       *controllers.EmployeeController
-	clientContractController *controllers.ClientContractController
-	talentDetailController   *controllers.TalentsDetailMockupController
+	config                      *viper.Viper
+	router                      *gin.Engine
+	departmentController        *controllers.DepartmentController
+	employeeController          *controllers.EmployeeController
+	clientContractController    *controllers.ClientContractController
+	departmentHistoryController *controllers.DepartmentHistoryController
+	// talentDetailController      *controllers.TalentsDetailMockupController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -33,9 +34,13 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	clientContractService := services.NewClientContractService(clientContractRepository)
 	clientContractController := controllers.NewClientContractController(clientContractService)
 
-	talentDetailRepository := repositories.NewTalentDetailMockupRepository(dbHandler)
-	talentDetailService := services.NewTalentDetailMockupService(talentDetailRepository)
-	talentDetailController := controllers.NewTalentDetailMockupController(talentDetailService)
+	departmentHistoryRepository := repositories.NewDepartmentHistoryRepository(dbHandler)
+	departmentHistoryService := services.NewDepartmentHistoryService(departmentHistoryRepository)
+	departmentHistoryController := controllers.NewDepartmentHistoryController(departmentHistoryService)
+
+	// talentDetailRepository := repositories.NewTalentDetailMockupRepository(dbHandler)
+	// talentDetailService := services.NewTalentDetailMockupService(talentDetailRepository)
+	// talentDetailController := controllers.NewTalentDetailMockupController(talentDetailService)
 
 	router := gin.Default()
 
@@ -60,16 +65,24 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/clientContract/:id", clientContractController.UpdateClientContract)
 	router.DELETE("/clientContract/:id", clientContractController.DeleteClientContract)
 
+	//router endpoint table employee department history
+	router.GET("/departmentHistory", departmentHistoryController.GetListDepartmentHistory)
+	router.GET("/departmentHistory/:id", departmentHistoryController.GetDepartmentHistory)
+	router.POST("/departmentHistory", departmentHistoryController.CreateDepartmentHistory)
+	router.PUT("/departmentHistory/:id", departmentHistoryController.UpdateDepartmentHistory)
+	router.DELETE("/departmentHistory/:id", departmentHistoryController.DeleteDepartmenHistory)
+
 	// router endpoint table TalentDetail
-	router.GET("/talentdetail", talentDetailController.GetListTalentDetailMockuptDetail)
+	// router.GET("/talentdetail", talentDetailController.GetListTalentDetailMockuptDetail)
 
 	return HttpServer{
-		config:                   config,
-		router:                   router,
-		departmentController:     departmentController,
-		employeeController:       employeeController,
-		clientContractController: clientContractController,
-		talentDetailController:   talentDetailController,
+		config:                      config,
+		router:                      router,
+		departmentController:        departmentController,
+		employeeController:          employeeController,
+		clientContractController:    clientContractController,
+		departmentHistoryController: departmentHistoryController,
+		// talentDetailController:      talentDetailController,
 	}
 }
 

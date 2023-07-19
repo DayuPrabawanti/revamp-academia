@@ -17,6 +17,8 @@ type UsersUserList []UsersUser
 type HrEmployeeList []HrEmployee
 type BootcampBatchList []BootcampBatch
 type JobhireTalentApplyList []JobhireTalentApply
+type MasterStatusList []MasterStatus
+type UsersUsersSkillList []UsersUsersSkill 
 
 type TalentsDetailMockup struct{
 	MasterJobRole 		MasterJobRole
@@ -24,6 +26,13 @@ type TalentsDetailMockup struct{
 	HrEmployee 			HrEmployee
 	BootcampBatch 		BootcampBatch
 	JobhireTalentApply	JobhireTalentApply
+}
+
+type TalentsMockup struct{
+	BootcampBatch BootcampBatch
+	UsersUser UsersUser
+	UsersUsersSkill UsersUsersSkill
+	MasterStatus MasterStatus 
 }
 
 type BootcampBatch struct {

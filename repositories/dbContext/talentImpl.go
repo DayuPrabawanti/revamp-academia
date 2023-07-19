@@ -6,34 +6,31 @@ package dbContext
 // 	"codeid.revampacademy/models"
 // )
 
-// const listTalentsDetail = `-- name: ListTalentsDetail :many
+// const listTalents = `-- name: ListTalents :many
 // SELECT
-// ms.*,
 // hr.*,
+// ms.*,
 // us.*,
-// jh.*,
 // bc.*
 // FROM hr.employee hr
 // JOIN master.job_role ms
 // ON hr.emp_joro_id = ms.joro_id
 // JOIN users.users us
 // ON hr.emp_entity_id = us.user_entity_id
-// JOIN jobhire.talent_apply jh
-// ON us.user_entity_id = jh.taap_entity_id
 // JOIN bootcamp.batch bc
 // ON hr.emp_entity_id = bc.batch_entity_id
 // ORDER BY hr.emp_entity_id
 // `
 
-// func (q *Queries) ListTalentsDetail(ctx context.Context) ([]models.TalentsDetailMockup, error) {
-// 	rows, err := q.db.QueryContext(ctx, listTalentsDetail)
+// func (q *Queries) ListTalents(ctx context.Context) ([]models.TalentsMockup, error) {
+// 	rows, err := q.db.QueryContext(ctx, listTalents)
 // 	if err != nil {
 // 		return nil, err
 // 	}
 // 	defer rows.Close()
-// 	var items []models.TalentsDetailMockup
+// 	var items []models.TalentsMockup
 // 	for rows.Next() {
-// 		var i models.TalentsDetailMockup
+// 		var i models.TalentsMockup
 // 		if err := rows.Scan(&i.MasterJobRole.JoroID, &i.MasterJobRole.JoroName, &i.MasterJobRole.JoroModifiedDate,
 
 // 			&i.HrEmployee.EmpEntityID, &i.HrEmployee.EmpEmpNumber, &i.HrEmployee.EmpNationalID, &i.HrEmployee.EmpBirthDate, &i.HrEmployee.EmpMaritalStatus, &i.HrEmployee.EmpGender, &i.HrEmployee.EmpHireDate, &i.HrEmployee.EmpSalariedFlag, &i.HrEmployee.EmpVacationHours, &i.HrEmployee.EmpSickleaveHours, &i.HrEmployee.EmpCurrentFlag, &i.HrEmployee.EmpModifiedDate, &i.HrEmployee.EmpType, &i.HrEmployee.EmpJoroID, &i.HrEmployee.EmpEmpEntityID,
