@@ -18,6 +18,7 @@ type HttpServer struct {
 	employeeController          *controllers.EmployeeController
 	clientContractController    *controllers.ClientContractController
 	departmentHistoryController *controllers.DepartmentHistoryController
+	payHistoryController        *controllers.PayHistoryController
 	// talentDetailController      *controllers.TalentsDetailMockupController
 }
 
@@ -37,6 +38,10 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	departmentHistoryRepository := repositories.NewDepartmentHistoryRepository(dbHandler)
 	departmentHistoryService := services.NewDepartmentHistoryService(departmentHistoryRepository)
 	departmentHistoryController := controllers.NewDepartmentHistoryController(departmentHistoryService)
+
+	payHistoryRepository := repositories.NewPayHistoryRepository(dbHandler)
+	payHistoryService := services.NewPayHistoryService(payHistoryRepository)
+	payHistoryController := controllers.NewPayHistoryController(payHistoryService)
 
 	// talentDetailRepository := repositories.NewTalentDetailMockupRepository(dbHandler)
 	// talentDetailService := services.NewTalentDetailMockupService(talentDetailRepository)
@@ -72,6 +77,13 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/departmentHistory/:id", departmentHistoryController.UpdateDepartmentHistory)
 	router.DELETE("/departmentHistory/:id", departmentHistoryController.DeleteDepartmenHistory)
 
+	//router endpoint table employee pay history
+	router.GET("/payHistory", payHistoryController.GetListPayHistory)
+	router.GET("/payHistory/:id", payHistoryController.GetPayHistory)
+	router.POST("/payHistory", payHistoryController.CreatePayHistory)
+	router.PUT("/payHistory/:id", payHistoryController.UpdatePayHistory)
+	router.DELETE("/payHistory/:id", payHistoryController.DeletePayHistory)
+
 	// router endpoint table TalentDetail
 	// router.GET("/talentdetail", talentDetailController.GetListTalentDetailMockuptDetail)
 
@@ -82,6 +94,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 		employeeController:          employeeController,
 		clientContractController:    clientContractController,
 		departmentHistoryController: departmentHistoryController,
+		payHistoryController:        payHistoryController,
 		// talentDetailController:      talentDetailController,
 	}
 }
