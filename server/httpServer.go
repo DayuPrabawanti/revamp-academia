@@ -48,6 +48,9 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.PUT("/api/fintech/accounts/payment/update/:id", paymentAccountController.UpdatePaymentAccountById)
 	router.DELETE("/api/fintech/accounts/payment/delete/:id", paymentAccountController.DeletePaymentAccountById)
 
+	// Router (API) end-point Mockup 4
+	router.GET("/api/fintech/topup", paymentAccountController.GetListPaymentAccount)
+
 	return HttpServer{
 		config:                   config,
 		router:                   router,
