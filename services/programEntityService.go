@@ -9,8 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PROGRAM ENTITY
-
 type ProgramEntityService struct {
 	programEntityRepository *repositories.ProgramEntityRepository
 }
@@ -24,8 +22,13 @@ func NewProgramEntityService(programEntityRepository *repositories.ProgramEntity
 func (pe ProgramEntityService) GetListProgramEntity(ctx *gin.Context) ([]*models.CurriculumProgramEntity, *models.ResponseError) {
 	return pe.programEntityRepository.GetListProgramEntity(ctx)
 }
-func (pe ProgramEntityService) GetListGabung(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
+
+func (pe ProgramEntityService) Group(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
 	return pe.programEntityRepository.Group(ctx)
+}
+
+func (pe ProgramEntityService) GetListMasterCategory(ctx *gin.Context) ([]*models.MasterCategory, *models.ResponseError) {
+	return pe.programEntityRepository.GetListMasterCategory(ctx)
 }
 
 func (ps ProgramEntityService) GetProgramEntity(ctx *gin.Context, id int64) (*models.CurriculumProgramEntity, *models.ResponseError) {
@@ -39,6 +42,11 @@ func (pe ProgramEntityService) CreateProgramEntity(ctx *gin.Context, programEnti
 	}
 
 	return pe.programEntityRepository.CreateProgramEntity(ctx, programEntityParams)
+}
+
+func (pe ProgramEntityService) CreateGroup(ctx *gin.Context, groupParams *dbcontext.CreateGroup) (*models.Group, *models.ResponseError) {
+
+	return pe.programEntityRepository.CreateGroup(ctx, groupParams)
 }
 
 func (pe ProgramEntityService) UpdateProgramEntity(ctx *gin.Context, programEntityParams *dbcontext.CreateProgramEntityParams, id int64) *models.ResponseError {

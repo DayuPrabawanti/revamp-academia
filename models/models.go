@@ -13,6 +13,8 @@ import (
 type Group struct{
 	CurriculumProgramEntity 		CurriculumProgramEntity
 	CurriculumSection 				CurriculumSection
+	CurriculumSectionDetail 		CurriculumSectionDetail
+	MasterCategory         			MasterCategory
 }
 
 type BootcampBatch struct {
@@ -104,7 +106,7 @@ type CurriculumProgramEntity struct {
 	ProgDurationType sql.NullString `db:"prog_duration_type" json:"progDurationType"`
 	ProgTagSkill     sql.NullString `db:"prog_tag_skill" json:"progTagSkill"`
 	ProgCityID       sql.NullInt32  `db:"prog_city_id" json:"progCityId"`
-	ProgCateID       sql.NullInt32  `db:"prog_cate_id" json:"progCateId"`
+	ProgCateID       int32  `db:"prog_cate_id" json:"progCateId"`
 	ProgCreatedBy    sql.NullInt32  `db:"prog_created_by" json:"progCreatedBy"`
 	ProgStatus       sql.NullString `db:"prog_status" json:"progStatus"`
 }
@@ -127,14 +129,14 @@ type CurriculumProgramReview struct {
 }
 
 type CurriculumSection struct {
-	SectID           int32          `db:"sect_id" json:"sectId"`
-	SectProgEntityID int32          `db:"sect_prog_entity_id" json:"sectProgEntityId"`
-	SectTitle        sql.NullString `db:"sect_title" json:"sectTitle"`
+	SectID           int32  `db:"sect_id" json:"sectId"`
+	SectProgEntityID int32  `db:"sect_prog_entity_id" json:"sectProgEntityId"`
+	SectTitle        string `db:"sect_title" json:"sectTitle"`
 	SectDescription  sql.NullString `db:"sect_description" json:"sectDescription"`
-	SectTotalSection sql.NullInt32  `db:"sect_total_section" json:"sectTotalSection"`
-	SectTotalLecture sql.NullInt32  `db:"sect_total_lecture" json:"sectTotalLecture"`
-	SectTotalMinute  sql.NullInt32  `db:"sect_total_minute" json:"sectTotalMinute"`
-	SectModifiedDate sql.NullTime   `db:"sect_modified_date" json:"sectModifiedDate"`
+	SectTotalSection int32  `db:"sect_total_section" json:"sectTotalSection"`
+	SectTotalLecture int32  `db:"sect_total_lecture" json:"sectTotalLecture"`
+	SectTotalMinute  int32  `db:"sect_total_minute" json:"sectTotalMinute"`
+	SectModifiedDate time.Time   `db:"sect_modified_date" json:"sectModifiedDate"`
 }
 
 type CurriculumSectionDetail struct {

@@ -13,7 +13,7 @@ import (
 
 type Group struct{
 	CurriculumProgramEntity CurriculumProgramEntity
-	CurriculumSection 		CurriculumSection
+	CurriculumSection       CurriculumSection
 }
 
 type BootcampBatch struct {

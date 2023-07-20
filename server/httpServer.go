@@ -15,11 +15,6 @@ type HttpServer struct {
 	config                  *viper.Viper
 	router                  *gin.Engine
 	programEntityController *controllers.ProgramEntityController
-	// progEntityDescController *controllers.ProgEntityDescController
-	// progReviewsController    *controllers.ProgReviewsController
-	// sections                 *controllers.SectionController
-	// sectionDetail            *controllers.SectionDetailController
-	// sectionDetailMaterial    *controllers.SectionDetailMaterialController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -53,6 +48,14 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	sectionController := controllers.NewSectionController(sectionService)
 
 	router.GET("/sections", sectionController.GetListSection)
+
+	router.GET("/sections/:id", sectionController.GetSections)
+
+	router.POST("/sections", sectionController.Createsections)
+
+	router.PUT("/sections/:id", sectionController.UpdateSections)
+
+	router.DELETE("/sections/:id", sectionController.DeleteSections)
 
 	// SECTION DETAIL
 
@@ -98,22 +101,16 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	groupRepository := repositories.NewProgramEntityRepository(dbHandler)
 
-	groupService := services.NewGroupService(groupRepository)
+	groupService := services.NewProgramEntityService(groupRepository)
 
-	groupController := controllers.NewGroupController(groupService)
+	groupController := controllers.NewProgramEntityController(groupService)
 
-	//router.GET("/group", groupController.GROUP)
-	router.GET("/gabung", groupController.Gabung)
+	router.GET("/group", groupController.Group)
 
 	return HttpServer{
 		config:                  config,
 		router:                  router,
 		programEntityController: programEntityController,
-		// progEntityDescController: progEntityDescController,
-		// progReviewsController:    progReviewsController,
-		// sections:                 sectionController,
-		// sectionDetail:            sectionDetailController,
-		// sectionDetailMaterial:    sectionDetailMaterialController,
 	}
 }
 

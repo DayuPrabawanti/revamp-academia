@@ -57,6 +57,38 @@ func (q *Queries) ListProgramEntity(ctx context.Context) ([]models.CurriculumPro
 	return items, nil
 }
 
+const listMasterCategories = `-- name: ListCategories :many
+SELECT cate_id, cate_name,cate_cate_id, cate_modified_date FROM master.category
+ORDER BY cate_name
+`
+
+func (q *Queries) ListMasterCategories(ctx context.Context) ([]models.MasterCategory, error) {
+	rows, err := q.db.QueryContext(ctx, listMasterCategories)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []models.MasterCategory
+	for rows.Next() {
+		var i models.MasterCategory
+		if err := rows.Scan(
+			&i.CateID,
+			&i.CateName,
+			&i.CateCateID,
+			&i.CateModifiedDate); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getProgramEntity = `-- name: GetProgramEntity :one
 SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_trainee, prog_image, prog_best_seller, prog_price, prog_language, prog_modified_date, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status 
 	FROM curriculum.program_entity
@@ -118,6 +150,11 @@ type CreateProgramEntityParams struct {
 	ProgCateID       int32     `db:"prog_cate_id" json:"progCateId"`
 	ProgCreatedBy    int32     `db:"prog_created_by" json:"progCreatedBy"`
 	ProgStatus       string    `db:"prog_status" json:"progStatus"`
+}
+
+type CreateGroup struct {
+	CreateProgramEntityParams CreateProgramEntityParams
+	CreatesectionsParams      CreatesectionsParams
 }
 
 func (q *Queries) CreateProgramEntity(ctx context.Context, arg CreateProgramEntityParams) (*models.CurriculumProgramEntity, *models.ResponseError) {

@@ -33,6 +33,25 @@ func (programEntityController ProgramEntityController) GetListProgramEntity(ctx 
 	ctx.JSON(http.StatusOK, response)
 }
 
+func (programEntityController ProgramEntityController) GetListMasterCategory(ctx *gin.Context) {
+	response, responerr := programEntityController.programEntityService.GetListMasterCategory(ctx)
+	if responerr != nil {
+		ctx.JSON(responerr.Status, responerr)
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (ProgramEntityController ProgramEntityController) Group(ctx *gin.Context) {
+	response, responseErr := ProgramEntityController.programEntityService.Group(ctx)
+
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (programEntityController ProgramEntityController) GetProgramEntity(ctx *gin.Context) {
 
 	prog_entity_id, err := strconv.Atoi(ctx.Param("id"))
@@ -78,6 +97,31 @@ func (programEntityController ProgramEntityController) CreateProgramEntity(ctx *
 
 	ctx.JSON(http.StatusOK, response)
 
+}
+
+func (programEntityController ProgramEntityController) CreateGroup(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create Gabung request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var groupParams dbcontext.CreateGroup
+	err = json.Unmarshal(body, &groupParams)
+	if err != nil {
+		log.Println("Error while unmarshaling create Gabung request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := programEntityController.programEntityService.CreateGroup(ctx, &groupParams)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (programEntityController ProgramEntityController) UpdateProgramEntity(ctx *gin.Context) {
