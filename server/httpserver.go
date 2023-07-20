@@ -19,7 +19,8 @@ type HttpServer struct {
 	clientContractController    *controllers.ClientContractController
 	departmentHistoryController *controllers.DepartmentHistoryController
 	payHistoryController        *controllers.PayHistoryController
-	// talentDetailController      *controllers.TalentsDetailMockupController
+	talentDetailController      *controllers.TalentsDetailMockupController
+	talentController            *controllers.TalentsMockupController
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -43,9 +44,13 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	payHistoryService := services.NewPayHistoryService(payHistoryRepository)
 	payHistoryController := controllers.NewPayHistoryController(payHistoryService)
 
-	// talentDetailRepository := repositories.NewTalentDetailMockupRepository(dbHandler)
-	// talentDetailService := services.NewTalentDetailMockupService(talentDetailRepository)
-	// talentDetailController := controllers.NewTalentDetailMockupController(talentDetailService)
+	talentDetailRepository := repositories.NewTalentDetailMockupRepository(dbHandler)
+	talentDetailService := services.NewTalentDetailMockupService(talentDetailRepository)
+	talentDetailController := controllers.NewTalentDetailMockupController(talentDetailService)
+
+	talentRepository := repositories.NewTalentMockupRepository(dbHandler)
+	talentService := services.NewTalentMockupService(talentRepository)
+	talentController := controllers.NewTalentMockupController(talentService)
 
 	router := gin.Default()
 
@@ -85,7 +90,8 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	router.DELETE("/payHistory/:id", payHistoryController.DeletePayHistory)
 
 	// router endpoint table TalentDetail
-	// router.GET("/talentdetail", talentDetailController.GetListTalentDetailMockuptDetail)
+	router.GET("/talentdetail", talentDetailController.GetListTalentDetailMockupDetail)
+	router.GET("/talent", talentController.GetListTalentMockup)
 
 	return HttpServer{
 		config:                      config,
@@ -95,7 +101,8 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 		clientContractController:    clientContractController,
 		departmentHistoryController: departmentHistoryController,
 		payHistoryController:        payHistoryController,
-		// talentDetailController:      talentDetailController,
+		talentDetailController:      talentDetailController,
+		talentController:            talentController,
 	}
 }
 

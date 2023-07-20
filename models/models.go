@@ -32,7 +32,8 @@ type TalentsMockup struct{
 	BootcampBatch BootcampBatch
 	UsersUser UsersUser
 	UsersUsersSkill UsersUsersSkill
-	MasterStatus MasterStatus 
+	MasterSkillType MasterSkillType
+	HrEmployee HrEmployee 
 }
 
 type BootcampBatch struct {
@@ -636,5 +637,5 @@ type UsersUsersSkill struct {
 	UskiID           int32          `db:"uski_id" json:"uskiId"`
 	UskiEntityID     int32          `db:"uski_entity_id" json:"uskiEntityId"`
 	UskiModifiedDate sql.NullTime   `db:"uski_modified_date" json:"uskiModifiedDate"`
-	UskiSktyName     sql.NullString `db:"uski_skty_name" json:"uskiSktyName"`
+	UskiSktyName     string `db:"uski_skty_name" json:"uskiSktyName"`
 }
