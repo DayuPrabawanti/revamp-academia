@@ -1,3 +1,39 @@
+-- name: GetMasterAddress :one
+SELECT * FROM master.address
+WHERE addr_id = $1;
+
+-- name: ListMasterAddress :many
+SELECT * FROM master.address
+ORDER BY addr_id;
+
+-- name: CreateMasterAddress :one
+INSERT INTO master.address (addr_id, addr_line1, addr_line2, addr_postal_code, addr_spatial_location, addr_modified_date, addr_city_id)
+VALUES($1, $2, $3, $4, $5, $6, $7)
+RETURNING addr_id;
+
+-- name: DeleteMasterAddress :exec
+DELETE FROM master.address
+WHERE addr_id = $1;
+
+
+-- name: GetMasterCity :one
+SELECT * FROM master.city
+WHERE city_id = $1;
+
+-- name: ListMasterCity :many
+SELECT * FROM master.city
+ORDER BY city_id;
+
+-- name: CreateMasterCity :one
+INSERT INTO master.city (city_id, city_name, city_modified_date, city_prov_id)
+VALUES($1, $2, $3, $4)
+RETURNING city_id;
+
+-- name: DeleteMasterCity :exec
+DELETE FROM master.city
+WHERE city_id = $1;
+
+
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;

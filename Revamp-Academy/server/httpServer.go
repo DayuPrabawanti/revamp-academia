@@ -13,25 +13,45 @@ import (
 )
 
 type HttpServer struct {
-	config             *viper.Viper
-	router             *gin.Engine
-	categoryController *controller.CategoryController
+	config *viper.Viper
+	router *gin.Engine
+	// categoryController *controller.CategoryController
+	// masterController *controller.MasterController
+	jobHireController *controller.JobHire
 }
 
 func InitHttpServer(cfg *viper.Viper, dbHandler *sql.DB) HttpServer {
+
+	//set router from gin first
+	router := gin.Default()
+
 	categoryRepo := repositories.NewCategoryRepo(dbHandler)
 	categoryService := service.NewCategoryService(categoryRepo)
 	categoryControl := controller.NewCategoryController(categoryService)
 
-	router := gin.Default()
-
 	//buat router Endpoint
 	router.GET("/listJobCategory", categoryControl.GetListCategoryControl)
 
+	masterRepo := repositories.NewMasterRepo(dbHandler)
+	masterService := service.NewMasterService(masterRepo)
+	masterController := controller.NewMasterController(masterService)
+
+	//make endpoint route
+	router.GET("/listaddress", masterController.GetListAddressControl)
+	router.GET("listcity", masterController.GetListCityControl)
+
+	jobRepo := repositories.NewJobPostRepo(dbHandler)
+	jobService := service.NewJobService(jobRepo)
+	jobController := controller.NewJobControll(jobService)
+
+	router.GET("/jobs", jobController.GetJobPostMergeControl)
+	router.GET("/dumpJobs", jobController.GetJobPostControl)
+
 	return HttpServer{
-		config:             cfg,
-		router:             router,
-		categoryController: categoryControl,
+		config: cfg,
+		router: router,
+		// router:             JobHireEndpointRoute(cfg, dbHandler),
+		jobHireController: jobController,
 	}
 }
 
