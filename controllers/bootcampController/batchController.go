@@ -1,4 +1,4 @@
-package controllers
+package bootcampController
 
 import (
 	"encoding/json"
@@ -7,17 +7,17 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/dbContext"
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
+	"codeid.revampacademy/services/bootcampService"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchController struct {
-	batchService *services.BatchService
+	batchService *bootcampService.BatchService
 }
 
 // declare constructor
-func NewBatchController(batchService *services.BatchService) *BatchController {
+func NewBatchController(batchService *bootcampService.BatchService) *BatchController {
 	return &BatchController{
 		batchService: batchService,
 	}
@@ -35,7 +35,7 @@ func (batchController BatchController) GetListBatch(ctx *gin.Context) {
 }
 
 func (batchController BatchController) GetBatch(ctx *gin.Context) {
-	id := ctx.Query("id") // Mengambil nilai query parameter id dari URL
+	id := ctx.Query("batchid") // Mengambil nilai query parameter id dari URL
 
 	batchId, err := strconv.Atoi(id)
 	if err != nil {
@@ -81,8 +81,10 @@ func (batchController BatchController) CreateBatch(ctx *gin.Context) {
 }
 
 func (batchController BatchController) UpdateBatch(ctx *gin.Context) {
+	id := ctx.Query("id") // Mengambil nilai query parameter id dari URL
 
-	batchId, err := strconv.Atoi(ctx.Param("id"))
+	batchId, err := strconv.Atoi(id)
+	// batchId, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)
@@ -135,16 +137,12 @@ func (batchController BatchController) DeleteBatch(ctx *gin.Context) {
 }
 
 func (batchController BatchController) SearchBatch(ctx *gin.Context) {
-	batchIDParam := ctx.DefaultQuery("batch", "")
-	statusParam := ctx.DefaultQuery("status", "")
+	batchName := ctx.DefaultQuery("batch", "")
+	status := ctx.DefaultQuery("status", "")
 
-	batchID, _ := strconv.Atoi(batchIDParam)
-
-	batches, err := batchController.batchService.SearchBatch(ctx, int32(batchID), statusParam)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to search batches",
-		})
+	batches, responseErr := batchController.batchService.SearchBatch(ctx, batchName, status)
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
 

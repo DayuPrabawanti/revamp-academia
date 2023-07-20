@@ -1,19 +1,19 @@
-package services
+package bootcampService
 
 import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/bootcampRepository"
+	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchService struct {
-	batchRepository *repositories.BatchRepository
+	batchRepository *bootcampRepository.BatchRepository
 }
 
-func NewBatchService(batchRepository *repositories.BatchRepository) *BatchService {
+func NewBatchService(batchRepository *bootcampRepository.BatchRepository) *BatchService {
 	return &BatchService{
 		batchRepository: batchRepository,
 	}
@@ -68,17 +68,11 @@ func validateBatch(batchParams *dbContext.CreateBatchParams) *models.ResponseErr
 
 }
 
-func (bs BatchService) SearchBatch(ctx *gin.Context, batchID int32, status string) ([]models.BootcampBatch, *models.ResponseError) {
+func (bs BatchService) SearchBatch(ctx *gin.Context, batchName, status string) ([]models.BootcampBatch, *models.ResponseError) {
+	// Perform validation, if needed, for batchName and status
+	// If validation fails, return appropriate response error
 
-	batches, err := bs.batchRepository.SearchBatch(ctx, batchID, status)
-	if err != nil {
-		return nil, &models.ResponseError{
-			Message: "Failed to search batches",
-			Status:  http.StatusInternalServerError,
-		}
-	}
-
-	return batches, nil
+	return bs.batchRepository.SearchBatch(ctx, batchName, status)
 }
 
 func (bs BatchService) PagingBatch(ctx *gin.Context, offset, pageSize int) ([]models.BootcampBatch, *models.ResponseError) {

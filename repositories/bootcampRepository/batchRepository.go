@@ -1,11 +1,11 @@
-package repositories
+package bootcampRepository
 
 import (
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -117,44 +117,17 @@ func (br BatchRepository) DeleteBatch(ctx *gin.Context, id int64) *models.Respon
 	}
 }
 
-func (br BatchRepository) SearchBatch(ctx *gin.Context, batchID int32, status string) ([]models.BootcampBatch, error) {
+func (br BatchRepository) SearchBatch(ctx *gin.Context, batchName, status string) ([]models.BootcampBatch, *models.ResponseError) {
+	// Perform validation, if needed, for batchName and status
+	// If validation fails, return appropriate response error
 
-	const searchBatchSQL = `
-		SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date,
-			batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id
-		FROM bootcamp.batch
-		WHERE batch_id = $1 AND batch_status = $2
-	`
-
-	rows, err := br.dbHandler.QueryContext(ctx, searchBatchSQL, batchID, status)
+	store := dbContext.New(br.dbHandler)
+	batches, err := store.SearchBatch(ctx, batchName, status)
 	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var batches []models.BootcampBatch
-	for rows.Next() {
-		var batch models.BootcampBatch
-		if err := rows.Scan(
-			&batch.BatchID,
-			&batch.BatchEntityID,
-			&batch.BatchName,
-			&batch.BatchDescription,
-			&batch.BatchStartDate,
-			&batch.BatchEndDate,
-			&batch.BatchReason,
-			&batch.BatchType,
-			&batch.BatchModifiedDate,
-			&batch.BatchStatus,
-			&batch.BatchPicID,
-		); err != nil {
-			return nil, err
+		return nil, &models.ResponseError{
+			Message: "Failed to search batches",
+			Status:  http.StatusInternalServerError,
 		}
-		batches = append(batches, batch)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
 	}
 
 	return batches, nil

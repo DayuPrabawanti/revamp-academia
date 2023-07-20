@@ -1,4 +1,4 @@
-package server
+package bootcampServer
 
 import (
 	"database/sql"

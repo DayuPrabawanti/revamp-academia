@@ -12,7 +12,7 @@ const createBatch = `-- name: CreateBatch :one
 INSERT INTO bootcamp.batch
 (batch_id, batch_entity_id, batch_name, batch_description, batch_start_date, batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
-RETURNING batch_id
+RETURNING *
 `
 
 type CreateBatchParams struct {
@@ -173,11 +173,11 @@ func (q *Queries) DeleteBatch(ctx context.Context, batchID int32) error {
 
 const searchBatch = `-- name: SearchBatch :many
 SELECT batch_id, batch_entity_id, batch_name, batch_description, batch_start_date, batch_end_date, batch_reason, batch_type, batch_modified_date, batch_status, batch_pic_id FROM bootcamp.batch
-WHERE batch_id = $1 AND batch_status = $2
+WHERE batch_name like '%' || $1 || '%' AND batch_status = $2
 `
 
-func (q *Queries) SearchBatch(ctx context.Context, batchID int32, status string) ([]models.BootcampBatch, error) {
-	rows, err := q.db.QueryContext(ctx, searchBatch, batchID, status)
+func (q *Queries) SearchBatch(ctx context.Context, batchName string, status string) ([]models.BootcampBatch, error) {
+	rows, err := q.db.QueryContext(ctx, searchBatch, batchName, status)
 	if err != nil {
 		return nil, err
 	}
