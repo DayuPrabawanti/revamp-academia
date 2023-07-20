@@ -107,6 +107,16 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.GET("/group", groupController.Group)
 
+	// MASTER.CATEGORY
+
+	masterRepository := repositories.NewProgramEntityRepository(dbHandler)
+
+	masterService := services.NewProgramEntityService(masterRepository)
+
+	masterController := controllers.NewProgramEntityController(masterService)
+
+	router.GET("/masterCategory", masterController.GetListMasterCategory)
+
 	return HttpServer{
 		config:                  config,
 		router:                  router,
