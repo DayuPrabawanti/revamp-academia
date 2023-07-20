@@ -52,14 +52,14 @@ func (se SectionService) DeleteSections(ctx *gin.Context, id int64) *models.Resp
 func validateSections(sectionsParams *dbcontext.CreatesectionsParams) *models.ResponseError {
 	if sectionsParams.SectID == 0 {
 		return &models.ResponseError{
-			Message: "Invalid program entity id",
+			Message: "Invalid program sect id",
 			Status:  http.StatusBadRequest,
 		}
 	}
 
 	if sectionsParams.SectTitle == "" {
 		return &models.ResponseError{
-			Message: "Invalid program entity name",
+			Message: "Invalid program sect name",
 			Status:  http.StatusBadRequest,
 		}
 	}

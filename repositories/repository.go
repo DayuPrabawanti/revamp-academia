@@ -280,6 +280,35 @@ func (sd SectionDetailRepository) GetListSectionDetail(ctx *gin.Context) ([]*mod
 	return listSectionDetail, nil
 }
 
+func (sd SectionDetailRepository) GetSectionDetail(ctx *gin.Context, id int64) (*models.CurriculumSectionDetail, *models.ResponseError) {
+
+	store := dbcontext.New(sd.dbHandler)
+	sectionDetail, err := store.GetSectionDetail(ctx, int16(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &sectionDetail, nil
+}
+
+func (sd SectionDetailRepository) CreateSectionDetail(ctx *gin.Context, sectionDetailParams *dbcontext.CreatesectionDetailParams) (*models.CurriculumSectionDetail, *models.ResponseError) {
+
+	store := dbcontext.New(sd.dbHandler)
+	sectionDetail, err := store.CreateSectionDetail(ctx, *sectionDetailParams)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return sectionDetail, nil
+}
+
 // SECTION DETAIL MATERIAL
 
 type SectionDetailMaterialRepository struct {
@@ -408,77 +437,104 @@ func (pr ProgReviewsRepository) GetListProgReviews(ctx *gin.Context) ([]*models.
 
 // GROUP
 
-func (pe ProgramEntityRepository) Group(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
+func (pr ProgramEntityRepository) GroupList(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
 
-	// Ambil daftar CurriculumProgramEntity
-	programEntity, err := pe.GetListProgramEntity(ctx)
-	if err != nil {
-		return nil, err
-	}
+	store := dbcontext.New(pr.dbHandler)
+	group, err := store.Group(ctx)
 
-	// Ambil daftar CurriculumSection
-	sections, err := pe.GetListSection(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// Ambil daftar CurriculumSectionDetail
-	sectionDetails, err := pe.GetListSectionDetail(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// Ambil daftar MasterCategory
-	masterCategories, err := pe.GetListMasterCategory(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	// Buat map untuk menyimpan CurriculumSection berdasarkan SectProgEntityID
-	sectionMap := make(map[int32]*models.CurriculumSection)
-	for _, section := range sections {
-		sectionMap[section.SectProgEntityID] = section
-	}
-	sectionDetailMap := make(map[int32]*models.CurriculumSectionDetail)
-	for _, sectionDetail := range sectionDetails {
-		sectionDetailMap[sectionDetail.SecdID] = sectionDetail
-	}
-	masterCategoryMap := make(map[int32]*models.MasterCategory)
-	for _, masterCategory := range masterCategories {
-		masterCategoryMap[masterCategory.CateID] = masterCategory
-	}
-
-	// Gabungkan data dari CurriculumProgramEntity dan Curriculum Section
 	groupList := make([]*models.Group, 0)
-	for _, progEntity := range programEntity {
-		section, ok := sectionMap[progEntity.ProgEntityID]
-		if !ok {
-			// Jika tidak ada CurriculumSection yang cocok, lanjutkan ke iterasi selanjutnya
-			continue
-		}
-		sectionDetail, ok := sectionDetailMap[section.SectID]
-		if !ok {
-			// Jika tidak ada CurriculumSectionDetail yang cocok, lanjutkan ke iterasi selanjutnya
-			continue
-		}
-		masterCategory, ok := masterCategoryMap[progEntity.ProgCateID]
-		if !ok {
-			// Jika tidak ada MasterCategory yang cocok, lanjutkan ke iterasi selanjutnya
-			continue
-		}
 
+	for _, v := range group {
 		group := &models.Group{
-			CurriculumProgramEntity: *progEntity,
-			CurriculumSection:       *section,
-			CurriculumSectionDetail: *sectionDetail,
-			MasterCategory:          *masterCategory,
+			CurriculumProgramEntity: v.CurriculumProgramEntity,
+			CurriculumSection:       v.CurriculumSection,
+			CurriculumSectionDetail: v.CurriculumSectionDetail,
+			MasterCategory:          v.MasterCategory,
 		}
-
 		groupList = append(groupList, group)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
 	}
 
 	return groupList, nil
 }
+
+// func (pe ProgramEntityRepository) Group(ctx *gin.Context) ([]*models.Group, *models.ResponseError) {
+
+// 	// Ambil daftar CurriculumProgramEntity
+// 	programEntity, err := pe.GetListProgramEntity(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// Ambil daftar CurriculumSection
+// 	sections, err := pe.GetListSection(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// Ambil daftar CurriculumSectionDetail
+// 	sectionDetails, err := pe.GetListSectionDetail(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// Ambil daftar MasterCategory
+// 	masterCategories, err := pe.GetListMasterCategory(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	// Buat map untuk menyimpan CurriculumSection berdasarkan SectProgEntityID
+// 	sectionMap := make(map[int32]*models.CurriculumSection)
+// 	for _, section := range sections {
+// 		sectionMap[section.SectProgEntityID] = section
+// 	}
+// 	sectionDetailMap := make(map[int32]*models.CurriculumSectionDetail)
+// 	for _, sectionDetail := range sectionDetails {
+// 		sectionDetailMap[sectionDetail.SecdID] = sectionDetail
+// 	}
+// 	masterCategoryMap := make(map[int32]*models.MasterCategory)
+// 	for _, masterCategory := range masterCategories {
+// 		masterCategoryMap[masterCategory.CateID] = masterCategory
+// 	}
+
+// 	// Gabungkan data dari CurriculumProgramEntity dan Curriculum Section
+// 	groupList := make([]*models.Group, 0)
+// 	for _, progEntity := range programEntity {
+// 		section, ok := sectionMap[progEntity.ProgEntityID]
+// 		if !ok {
+// 			// Jika tidak ada CurriculumSection yang cocok, lanjutkan ke iterasi selanjutnya
+// 			continue
+// 		}
+// 		sectionDetail, ok := sectionDetailMap[section.SectID]
+// 		if !ok {
+// 			// Jika tidak ada CurriculumSectionDetail yang cocok, lanjutkan ke iterasi selanjutnya
+// 			continue
+// 		}
+// 		masterCategory, ok := masterCategoryMap[progEntity.ProgCateID]
+// 		if !ok {
+// 			// Jika tidak ada MasterCategory yang cocok, lanjutkan ke iterasi selanjutnya
+// 			continue
+// 		}
+
+// 		group := &models.Group{
+// 			CurriculumProgramEntity: *progEntity,
+// 			CurriculumSection:       *section,
+// 			CurriculumSectionDetail: *sectionDetail,
+// 			MasterCategory:          *masterCategory,
+// 		}
+
+// 		groupList = append(groupList, group)
+// 	}
+
+// 	return groupList, nil
+// }
 
 func (per ProgramEntityRepository) GetListMasterCategory(ctx *gin.Context) ([]*models.MasterCategory, *models.ResponseError) {
 
@@ -507,25 +563,25 @@ func (per ProgramEntityRepository) GetListMasterCategory(ctx *gin.Context) ([]*m
 	return listSections, nil
 }
 
-func (pe ProgramEntityRepository) CreateGroup(ctx *gin.Context, groupParams *dbcontext.CreateGroup) (*models.Group, *models.ResponseError) {
-	// Buat CurriculumProgramEntity
-	programEntity, err := pe.CreateProgramEntity(ctx, &groupParams.CreateProgramEntityParams)
-	if err != nil {
-		return nil, err
-	}
+// func (pe ProgramEntityRepository) CreateGroup(ctx *gin.Context, groupParams *dbcontext.CreateGroup) (*models.Group, *models.ResponseError) {
+// 	// Buat CurriculumProgramEntity
+// 	programEntity, err := pe.CreateProgramEntity(ctx, &groupParams.CreateProgramEntityParams)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	// Buat CurriculumSection
-	//gabungParams.CreatesectionsParams.SectID = gabungParams.Createprogram_entityParams.ProgEntityID
-	section, err := pe.Createsections(ctx, &groupParams.CreatesectionsParams)
-	if err != nil {
-		return nil, err
-	}
+// 	// Buat CurriculumSection
+// 	//gabungParams.CreatesectionsParams.SectID = gabungParams.Createprogram_entityParams.ProgEntityID
+// 	section, err := pe.Createsections(ctx, &groupParams.CreatesectionsParams)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	// Buat Gabung
-	group := &models.Group{
-		CurriculumProgramEntity: *programEntity,
-		CurriculumSection:       *section,
-	}
+// 	// Buat Gabung
+// 	group := &models.Group{
+// 		CurriculumProgramEntity: *programEntity,
+// 		CurriculumSection:       *section,
+// 	}
 
-	return group, nil
-}
+// 	return group, nil
+// }

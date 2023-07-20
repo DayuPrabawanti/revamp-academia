@@ -67,6 +67,14 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.GET("/sectionDetail", sectionDetailController.GetListSectionDetail)
 
+	router.GET("/sectionDetail/:id", sectionDetailController.GetSectionDetail)
+
+	router.POST("/sectionDetail", sectionDetailController.CreateSectionDetail)
+
+	// router.PUT("/sections/:id", sectionController.UpdateSections)
+
+	// router.DELETE("/sections/:id", sectionController.DeleteSections)
+
 	// SECTION DETAIL MATERIAL
 
 	sectionDetailMaterialRepository := repositories.NewSectionDetailMaterialRepository(dbHandler)
@@ -105,7 +113,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	groupController := controllers.NewProgramEntityController(groupService)
 
-	router.GET("/group", groupController.Group)
+	router.GET("/group", groupController.GroupList)
 
 	// MASTER.CATEGORY
 

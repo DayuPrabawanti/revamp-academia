@@ -2,7 +2,6 @@ package dbcontext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
@@ -70,14 +69,14 @@ func (q *Queries) GetSections(ctx context.Context, sectId int16) (models.Curricu
 }
 
 type CreatesectionsParams struct {
-	SectID           int32          `db:"sect_id" json:"sectId"`
-	SectProgEntityID int32          `db:"sect_prog_entity_id" json:"sectProgEntityId"`
-	SectTitle        string         `db:"sect_title" json:"sectTitle"`
-	SectDescription  sql.NullString `db:"sect_description" json:"sectDescription"`
-	SectTotalSection int32          `db:"sect_total_section" json:"sectTotalSection"`
-	SectTotalLecture int32          `db:"sect_total_lecture" json:"sectTotalLecture"`
-	SectTotalMinute  int32          `db:"sect_total_minute" json:"sectTotalMinute"`
-	SectModifiedDate time.Time      `db:"sect_modified_date" json:"sectModifiedDate"`
+	SectID           int32     `db:"sect_id" json:"sectId"`
+	SectProgEntityID int32     `db:"sect_prog_entity_id" json:"sectProgEntityId"`
+	SectTitle        string    `db:"sect_title" json:"sectTitle"`
+	SectDescription  string    `db:"sect_description" json:"sectDescription"`
+	SectTotalSection int32     `db:"sect_total_section" json:"sectTotalSection"`
+	SectTotalLecture int32     `db:"sect_total_lecture" json:"sectTotalLecture"`
+	SectTotalMinute  int32     `db:"sect_total_minute" json:"sectTotalMinute"`
+	SectModifiedDate time.Time `db:"sect_modified_date" json:"sectModifiedDate"`
 }
 
 const createsections = `-- name: Createsections :many
@@ -134,19 +133,28 @@ func (q *Queries) Createsections(ctx context.Context, arg CreatesectionsParams) 
 	}, nil
 }
 
-const updateSections = `-- name: UpdateSections :exec
+const updateSections = `-- name: updateSections :exec
 UPDATE curriculum.sections
-  set sect_title = $2,
-  sect_description = $3,
-  sect_total_section = $4,
-  sect_total_lecture = $5,
-  sect_total_minute = $6,
-  sect_modified_date = $7
+sect_prog_entity_id = $2, 
+sect_title = $3, 
+sect_description = $4, 
+sect_total_section = $5, 
+sect_total_lecture = $6, 
+sect_total_minute = $7, 
+sect_modified_date = $8
 WHERE sect_id = $1
 `
 
 func (q *Queries) UpdateSections(ctx context.Context, arg CreatesectionsParams) error {
-	_, err := q.db.ExecContext(ctx, updateSections, arg.SectID, arg.SectProgEntityID, arg.SectTitle, arg.SectDescription, arg.SectTotalSection, arg.SectTotalLecture, arg.SectTotalMinute, arg.SectModifiedDate)
+	_, err := q.db.ExecContext(ctx, updateSections,
+		arg.SectID,
+		arg.SectProgEntityID,
+		arg.SectTitle,
+		arg.SectDescription,
+		arg.SectTotalSection,
+		arg.SectTotalLecture,
+		arg.SectTotalMinute,
+		arg.SectModifiedDate)
 	return err
 }
 

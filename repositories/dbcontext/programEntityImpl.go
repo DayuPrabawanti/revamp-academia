@@ -152,10 +152,10 @@ type CreateProgramEntityParams struct {
 	ProgStatus       string    `db:"prog_status" json:"progStatus"`
 }
 
-type CreateGroup struct {
-	CreateProgramEntityParams CreateProgramEntityParams
-	CreatesectionsParams      CreatesectionsParams
-}
+// type CreateGroup struct {
+// 	CreateProgramEntityParams CreateProgramEntityParams
+// 	CreatesectionsParams      CreatesectionsParams
+// }
 
 func (q *Queries) CreateProgramEntity(ctx context.Context, arg CreateProgramEntityParams) (*models.CurriculumProgramEntity, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createProgramEntity,
