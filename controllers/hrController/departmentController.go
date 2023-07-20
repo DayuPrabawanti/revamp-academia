@@ -1,4 +1,4 @@
-package controllers
+package hrController
 
 import (
 	"encoding/json"
@@ -7,17 +7,17 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/dbContext"
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/repositories/hrRepository/dbContext"
+	"codeid.revampacademy/services/hrService"
 	"github.com/gin-gonic/gin"
 )
 
 type DepartmentController struct {
-	departmentService *services.DepartmentService
+	departmentService *hrService.DepartmentService
 }
 
 // declare constructor
-func NewDepartmentController(departmentService *services.DepartmentService) *DepartmentController {
+func NewDepartmentController(departmentService *hrService.DepartmentService) *DepartmentController {
 	return &DepartmentController{
 		departmentService: departmentService,
 	}

@@ -1,11 +1,11 @@
-package repositories
+package hrRepository
 
 import (
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/hrRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,19 +1,19 @@
-package services
+package hrService
 
 import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/hrRepository"
+	"codeid.revampacademy/repositories/hrRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
 type EmployeeService struct {
-	employeeRepository *repositories.EmployeeRepository
+	employeeRepository *hrRepository.EmployeeRepository
 }
 
-func NewEmployeeService(employeeRepository *repositories.EmployeeRepository) *EmployeeService {
+func NewEmployeeService(employeeRepository *hrRepository.EmployeeRepository) *EmployeeService {
 	return &EmployeeService{
 		employeeRepository: employeeRepository,
 	}

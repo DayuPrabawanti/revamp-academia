@@ -1,11 +1,11 @@
-package repositories
+package hrRepository
 
 import (
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/hrRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,11 +29,15 @@ func (tdmr TalentsDetailMockupRepository) GetListTalentDetailMockup(ctx *gin.Con
 
 	for _, v := range talentDetail {
 		talents := &models.TalentsDetailMockup{
-			MasterJobRole:      v.MasterJobRole,
-			HrEmployee:         v.HrEmployee,
-			UsersUser:          v.UsersUser,
-			BootcampBatch:      v.BootcampBatch,
-			JobhireTalentApply: v.JobhireTalentApply,
+			MasterCategory:          v.MasterCategory,
+			MasterSkillType:         v.MasterSkillType,
+			UsersUser:               v.UsersUser,
+			UsersUsersSkill:         v.UsersUsersSkill,
+			UsersUsersPhone:         v.UsersUsersPhone,
+			UsersUsersEmail:         v.UsersUsersEmail,
+			HrEmployee:              v.HrEmployee,
+			BootcampBatch:           v.BootcampBatch,
+			CurriculumProgramEntity: v.CurriculumProgramEntity,
 		}
 		listTalentDetail = append(listTalentDetail, talents)
 	}

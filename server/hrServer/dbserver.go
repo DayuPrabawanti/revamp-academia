@@ -1,4 +1,4 @@
-package server
+package hrServer
 
 import (
 	"database/sql"

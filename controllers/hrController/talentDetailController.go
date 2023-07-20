@@ -1,18 +1,18 @@
-package controllers
+package hrController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/services/hrService"
 	"github.com/gin-gonic/gin"
 )
 
 type TalentsDetailMockupController struct {
-	talentDetailService *services.TalentsDetailMockupService
+	talentDetailService *hrService.TalentsDetailMockupService
 }
 
 // declare constructor
-func NewTalentDetailMockupController(talentDetailService *services.TalentsDetailMockupService) *TalentsDetailMockupController {
+func NewTalentDetailMockupController(talentDetailService *hrService.TalentsDetailMockupService) *TalentsDetailMockupController {
 	return &TalentsDetailMockupController{
 		// struct 				parameter
 		talentDetailService: talentDetailService,

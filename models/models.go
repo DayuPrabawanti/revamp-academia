@@ -21,11 +21,15 @@ type MasterStatusList []MasterStatus
 type UsersUsersSkillList []UsersUsersSkill 
 
 type TalentsDetailMockup struct{
-	MasterJobRole 		MasterJobRole
+	MasterCategory		MasterCategory
+	MasterSkillType		MasterSkillType
 	UsersUser 			UsersUser
+	UsersUsersSkill		UsersUsersSkill
+	UsersUsersPhone		UsersUsersPhone
+	UsersUsersEmail		UsersUsersEmail
 	HrEmployee 			HrEmployee
 	BootcampBatch 		BootcampBatch
-	JobhireTalentApply	JobhireTalentApply
+	CurriculumProgramEntity CurriculumProgramEntity
 }
 
 type TalentsMockup struct{
