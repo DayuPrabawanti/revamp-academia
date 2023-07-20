@@ -27,10 +27,21 @@ func (sm ServiceMock) GetMockupId(ctx *gin.Context, id int64) (*models.Curriculu
 	return sm.repositoryMock.GetMockupId(ctx, id)
 }
 
-func validateMockup(mockupParams *dbcontext.CreateprogramEntityParams) *models.ResponseError {
+func (sm ServiceMock) GetListProgram(ctx *gin.Context) ([]*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
+	return sm.repositoryMock.GetListProgram(ctx)
+}
+
+func validateMockup(mockupParams *models.CurriculumProgramEntity) *models.ResponseError {
+	if mockupParams.ProgEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid category id",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
 	if mockupParams.ProgTitle == "" {
 		return &models.ResponseError{
-			Message: "Invalid Title id",
+			Message: "Invalid category name",
 			Status:  http.StatusBadRequest,
 		}
 	}

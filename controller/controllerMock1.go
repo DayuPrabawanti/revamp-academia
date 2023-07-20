@@ -49,3 +49,15 @@ func (controllerMock ControllerMock) GetMockupId(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (controllerMock ControllerMock) GetListProgram(ctx *gin.Context) {
+
+	response, responseErr := controllerMock.serviceMock.GetListProgram(ctx)
+	if responseErr != nil {
+
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}

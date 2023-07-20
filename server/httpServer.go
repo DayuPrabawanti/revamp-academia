@@ -14,31 +14,19 @@ import (
 type HttpServer struct {
 	config           *viper.Viper
 	router           *gin.Engine
-	salesController  *controller.SalesController
 	controllerMockup *controller.ControllerMock
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
-	salesRepository := repositories.NewSalesRepository(dbHandler)
-	salesService := service.NewSalesService(salesRepository)
-	salesController1 := controller.NewSalesRepository(salesService)
-
 	repositoryMock := repositories.NewRepositoryMock(dbHandler)
 	serviceMock := service.NewServiceMock(repositoryMock)
 	controllerMock := controller.NewRepositoryMock(serviceMock)
 
 	router := gin.Default()
 
-	// router endpoint
-	router.GET("/SpecialOffer", salesController1.GetListSales)
-	router.GET("/CartItem/:id", salesController1.GetListCart_item)
-	router.GET("/api/bootcamp/search", controllerMock.GetMockup1)
-	router.GET("/api/bootcamp/progentityid/:id", controllerMock.GetMockupId)
-
 	return HttpServer{
 		config:           config,
 		router:           router,
-		salesController:  salesController1,
 		controllerMockup: controllerMock,
 	}
 }
