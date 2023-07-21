@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	services "codeid.revampacademy/services/paymentServices"
 	"github.com/gin-gonic/gin"
 )

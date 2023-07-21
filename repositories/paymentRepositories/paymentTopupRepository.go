@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
