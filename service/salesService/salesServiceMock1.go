@@ -1,19 +1,19 @@
-package service
+package salesservice
 
 import (
 	"net/http"
 
-	models "codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
-	dbcontext "codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/models"
+	salesrepositories "codeid.revampacademy/repositories/salesRepositories"
+	dbcontext "codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
 type ServiceMock struct {
-	repositoryMock *repositories.RepositoryMock
+	repositoryMock *salesrepositories.RepositoryMock
 }
 
-func NewServiceMock(repositoryMock *repositories.RepositoryMock) *ServiceMock {
+func NewServiceMock(repositoryMock *salesrepositories.RepositoryMock) *ServiceMock {
 	return &ServiceMock{
 		repositoryMock: repositoryMock,
 	}
@@ -23,12 +23,8 @@ func (sm ServiceMock) GetMockup(ctx *gin.Context, nama string) (*dbcontext.Creat
 	return sm.repositoryMock.GetMockup(ctx, nama)
 }
 
-func (sm ServiceMock) GetMockupId(ctx *gin.Context, id int64) (*models.CurriculumProgramEntity, *models.ResponseError) {
-	return sm.repositoryMock.GetMockupId(ctx, id)
-}
-
-func (sm ServiceMock) GetListProgram(ctx *gin.Context) ([]*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
-	return sm.repositoryMock.GetListProgram(ctx)
+func (sm ServiceMock) GetListProgram(ctx *gin.Context, nama string) ([]*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
+	return sm.repositoryMock.GetListProgram(ctx, nama)
 }
 
 func validateMockup(mockupParams *models.CurriculumProgramEntity) *models.ResponseError {

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"codeid.revampacademy/config"
-	"codeid.revampacademy/server"
+	salesserver "codeid.revampacademy/server/salesServer"
 
 	_ "github.com/lib/pq"
 )
@@ -18,10 +18,10 @@ func main() {
 	config := config.InitConfig(getConfigFileName())
 
 	log.Println("Initializing database...")
-	dbHandler := server.InitDatabase(config)
+	dbHandler := salesserver.InitDatabase(config)
 	//log.Println(dbHandler)
 	log.Println("Initializing HTTP server")
-	httpServer := server.InitHttpServer(config, dbHandler)
+	httpServer := salesserver.InitHttpServer(config, dbHandler)
 
 	httpServer.Start()
 }

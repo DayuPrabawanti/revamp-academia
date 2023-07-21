@@ -1,11 +1,11 @@
-package repositories
+package salesrepositories
 
 import (
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
-	dbcontext "codeid.revampacademy/repositories/dbContext"
+	dbcontext "codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,29 +35,14 @@ func (rm RepositoryMock) GetMockup(ctx *gin.Context, nama string) (*dbcontext.Cr
 	return &mockup, nil
 }
 
-func (rm RepositoryMock) GetMockupId(ctx *gin.Context, id int64) (*models.CurriculumProgramEntity, *models.ResponseError) {
+func (rm RepositoryMock) GetListProgram(ctx *gin.Context, nama string) ([]*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
 
 	store := dbcontext.New(rm.dbHandler)
-	mockup, err := store.GetProgramEntityId(ctx, int32(id))
+	program_entity, err := store.Listprogram_entity(ctx, nama)
 
-	if err != nil {
-		return nil, &models.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
-	}
+	listProgramEntity := make([]*dbcontext.CreateprogramEntityParams, 0)
 
-	return &mockup, nil
-}
-
-func (rm RepositoryMock) GetListProgram(ctx *gin.Context) ([]*dbcontext.CreateprogramEntityParams, *models.ResponseError) {
-
-	store := dbcontext.New(rm.dbHandler)
-	special_offer, err := store.Listprogram_entity(ctx)
-
-	listSalesOffer := make([]*dbcontext.CreateprogramEntityParams, 0)
-
-	for _, v := range special_offer {
+	for _, v := range program_entity {
 		sales := &dbcontext.CreateprogramEntityParams{
 			ProgTitle:        v.ProgTitle,
 			ProgHeadline:     v.ProgHeadline,
@@ -66,7 +51,7 @@ func (rm RepositoryMock) GetListProgram(ctx *gin.Context) ([]*dbcontext.Createpr
 			ProgPrice:        v.ProgPrice,
 			ProgDuration:     v.ProgDuration,
 		}
-		listSalesOffer = append(listSalesOffer, sales)
+		listProgramEntity = append(listProgramEntity, sales)
 	}
 
 	if err != nil {
@@ -76,5 +61,5 @@ func (rm RepositoryMock) GetListProgram(ctx *gin.Context) ([]*dbcontext.Createpr
 		}
 	}
 
-	return listSalesOffer, nil
+	return listProgramEntity, nil
 }

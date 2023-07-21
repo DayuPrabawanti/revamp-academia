@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+type MergeMockUser struct {
+	Users     UsersUser
+	Education UsersUsersEducation
+	Media     UsersUsersMedium
+}
+
 type BootcampBatch struct {
 	BatchID           int32  `db:"batch_id" json:"batchId"`
 	BatchEntityID     int32  `db:"batch_entity_id" json:"batchEntityId"`
@@ -507,17 +513,17 @@ type UsersRole struct {
 }
 
 type UsersUser struct {
-	UserEntityID       int32  `db:"user_entity_id" json:"userEntityId"`
-	UserName           string `db:"user_name" json:"userName"`
-	UserPassword       string `db:"user_password" json:"userPassword"`
-	UserFirstName      string `db:"user_first_name" json:"userFirstName"`
-	UserLastName       string `db:"user_last_name" json:"userLastName"`
-	UserBirthDate      string `db:"user_birth_date" json:"userBirthDate"`
-	UserEmailPromotion int32  `db:"user_email_promotion" json:"userEmailPromotion"`
-	UserDemographic    string `db:"user_demographic" json:"userDemographic"`
-	UserModifiedDate   string `db:"user_modified_date" json:"userModifiedDate"`
-	UserPhoto          string `db:"user_photo" json:"userPhoto"`
-	UserCurrentRole    int32  `db:"user_current_role" json:"userCurrentRole"`
+	UserEntityID       int32          `db:"user_entity_id" json:"userEntityId"`
+	UserName           string         `db:"user_name" json:"userName"`
+	UserPassword       string         `db:"user_password" json:"userPassword"`
+	UserFirstName      string         `db:"user_first_name" json:"userFirstName"`
+	UserLastName       string         `db:"user_last_name" json:"userLastName"`
+	UserBirthDate      sql.NullString `db:"user_birth_date" json:"userBirthDate"`
+	UserEmailPromotion int32          `db:"user_email_promotion" json:"userEmailPromotion"`
+	UserDemographic    string         `db:"user_demographic" json:"userDemographic"`
+	UserModifiedDate   string         `db:"user_modified_date" json:"userModifiedDate"`
+	UserPhoto          string         `db:"user_photo" json:"userPhoto"`
+	UserCurrentRole    int32          `db:"user_current_role" json:"userCurrentRole"`
 }
 
 type UsersUsersAddress struct {
