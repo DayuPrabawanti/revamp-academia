@@ -25,7 +25,7 @@ func main() {
 
     httpServer.Start()
 
-}
+}	
 
 func getConfigFileName() string {
 	env := os.Getenv("ENV")	

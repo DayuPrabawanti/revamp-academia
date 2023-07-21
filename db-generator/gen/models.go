@@ -247,7 +247,7 @@ type JobhireJobPost struct {
 	JopoNumber         sql.NullString `db:"jopo_number" json:"jopoNumber"`
 	JopoTitle          string  `db:"jopo_title" json:"jopoTitle"`
 	JopoStartDate      sql.NullTime   `db:"jopo_start_date" json:"jopoStartDate"`
-	JopoEndDate        sql.NullTime   `db:"jopo_end_date" json:"jopoEndDate"`
+	JopoEndDate        sql.NullTime    `db:"jopo_end_date" json:"jopoEndDate"`
 	JopoMinSalary      sql.NullInt32  `db:"jopo_min_salary" json:"jopoMinSalary"`
 	JopoMaxSalary      sql.NullInt32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
 	JopoMinExperience  sql.NullInt32  `db:"jopo_min_experience" json:"jopoMinExperience"`
@@ -337,8 +337,9 @@ type MasterEducation struct {
 }
 
 type MasterIndustry struct {
-	InduCode string         `db:"indu_code" json:"induCode"`
+	InduCodeID string         `db:"indu_code_id" json:"induCode"`
 	InduName sql.NullString `db:"indu_name" json:"induName"`
+	
 }
 
 type MasterJobRole struct {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"codeid.revampacademy/models"
+
 )
 
 // ------------------------------   JOB CATEGORY -----------------------------
@@ -378,7 +379,7 @@ RETURNING *
 		JopoNumber         string `db:"jopo_number" json:"jopoNumber"`
 		JopoTitle          string `db:"jopo_title" json:"jopoTitle"`
 		JopoStartDate      time.Time   `db:"jopo_start_date" json:"jopoStartDate"`
-		JopoEndDate        time.Time   `db:"jopo_end_date" json:"jopoEndDate"`
+		JopoEndDate        int32  `db:"jopo_end_date" json:"jopoEndDate"`
 		JopoMinSalary      int32  `db:"jopo_min_salary" json:"jopoMinSalary"`
 		JopoMaxSalary      int32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
 		JopoMinExperience  int32  `db:"jopo_min_experience" json:"jopoMinExperience"`
@@ -484,4 +485,33 @@ RETURNING *
 			JopoInduCode: i.JopoInduCode,
 			JopoStatus:         i.JopoStatus,
 		}, nil
+		}
+		
+
+const UpdateJobPostImpl = `-- name: UpdateJobPostImpl :exec
+UPDATE 
+	jobHire.job_post
+  		set jopo_title = $2,
+		jopo_min_salary = $3,
+		jopo_max_salary = $4,
+		jopo_start_date = $5,
+		jopo_end_date = $6,
+		jopo_min_experience = $7
+WHERE jopo_entity_id = $1
+`
+
+		func (q *Queries) UpdateJobPostImpl(ctx context.Context, arg CreateJobPostParams) error {
+			_, err := q.db.ExecContext(ctx, UpdateJobPostImpl, arg.JopoEntityID, arg.JopoTitle, arg.JopoMinSalary, arg.JopoMaxSalary, arg.JopoStartDate, arg.JopoEndDate, arg.JopoMinExperience)
+			return err
+		}
+
+
+const DeleteJobPostImpl = `-- name: DeleteJobPostImpl :exec
+DELETE FROM jobHire.job_post
+WHERE jopo_entity_id = $1
+`
+
+		func (q *Queries) DeleteJobPostImpl(ctx context.Context, jopoEntityID int32) error {
+			_, err := q.db.ExecContext(ctx, DeleteJobPostImpl, jopoEntityID)
+			return err
 		}

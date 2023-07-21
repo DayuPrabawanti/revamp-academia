@@ -13,6 +13,53 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+const GetMasterIndustry = `-- name: GetMasterIndustry :one
+SELECT indu_code_id , indu_name FROM master.industry
+WHERE indu_code_id = $1
+`
+
+func (q *Queries) GetMasterIndustry(ctx context.Context, InduCodeID int32) (MasterIndustry, error) {
+	row := q.db.QueryRowContext(ctx, GetMasterIndustry, InduCodeID)
+	var i MasterIndustry
+	err := row.Scan(
+		&i.InduCodeID,
+		&i.InduName,
+	)
+	return i, err
+}
+
+
+const ListMasterIndustry = `-- name: ListMasterIndustry :many
+SELECT indu_code_id, indu_name, FROM master.industry
+ORDER BY indu_code_id`
+
+func (q *Queries) ListMasterIndustry(ctx context.Context) ([]MasterIndustry, error) {
+	rows, err := q.db.QueryContext(ctx, ListMasterIndustry)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MasterIndustry
+	for rows.Next() {
+		var i MasterIndustry
+		if err := rows.Scan(
+			&i.InduCodeID,
+			&i.InduName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+
 const createAddrees = `-- name: CreateAddrees :one
 
 INSERT INTO users.users_address

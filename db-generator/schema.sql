@@ -1098,7 +1098,7 @@ ALTER TABLE master.education OWNER TO postgres;
 --
 
 CREATE TABLE master.industry (
-    indu_code character varying(15) NOT NULL,
+    indu_code_id character integer NOT NULL,
     indu_name character varying(85)
 );
 

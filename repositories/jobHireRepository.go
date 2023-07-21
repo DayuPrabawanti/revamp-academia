@@ -24,8 +24,6 @@ type JobPostRepository struct {
     transaction *sql.Tx
 }
 
-
-
 // --------------------------- JOB CATEGORY --------------------------- 
 
 func NewJobCategoryRepository(dbHandler *sql.DB) *JobCategoryRepository {
@@ -302,4 +300,39 @@ func (jobPost JobPostRepository) GetJobPostRepo(ctx *gin.Context, id int32) (*mo
 						}
 						return jobClient, nil
 		}
-		
+	
+			func (jobPost JobPostRepository) UpdateJobPostRepo(ctx *gin.Context, CreateJobPostParams *dbContext.CreateJobPostParams) *models.ResponseError {
+
+									store := dbContext.New(jobPost.dbHandler)
+									err := store.UpdateJobPostImpl(ctx, *CreateJobPostParams)
+
+									if err != nil {
+										return &models.ResponseError{
+											Message: "error when update",
+											Status:  http.StatusInternalServerError,
+										}
+									}
+									return &models.ResponseError{
+										Message: "data has been update",
+										Status:  http.StatusOK,
+									}
+			}
+
+				func (jobPost JobPostRepository) DeleteJobPostRepo(ctx *gin.Context, id int64) *models.ResponseError {
+
+								store := dbContext.New(jobPost.dbHandler)
+								err := store.DeleteJobPostImpl(ctx, int32(id))
+
+								if err != nil {
+									return &models.ResponseError{
+										Message: "error when update",
+										Status:  http.StatusInternalServerError,
+									}
+								}
+								return &models.ResponseError{
+									Message: "data has been deleted",
+									Status:  http.StatusOK,
+								}
+				}
+
+

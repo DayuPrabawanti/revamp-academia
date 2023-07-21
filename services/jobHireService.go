@@ -7,6 +7,7 @@ import (
 	"codeid.revampacademy/repositories"
 	"codeid.revampacademy/repositories/dbContext"
 	"github.com/gin-gonic/gin"
+
 )
 
 type JobCategoryService struct {
@@ -20,6 +21,7 @@ type JobClientService struct {
 type JobPostService struct {
 	JobPostServiceRepo *repositories.JobPostRepository
 }
+
 
 
 // --------------------------- JOB CATEGORY --------------------------- 
@@ -158,7 +160,20 @@ func (jpost JobPostService) GetJobPostService(ctx *gin.Context, id int32) (*mode
 					}
 					return jpost.JobPostServiceRepo.CreateJobPostRepo(ctx,CreateJobPostParams)
 		}
-		
+
+			func (jpost JobPostService) UpdateJobPostService(ctx *gin.Context, CreateJobPostParams *dbContext.CreateJobPostParams, id int64) *models.ResponseError {
+								responseErr := validateJobPost(CreateJobPostParams)
+								if responseErr != nil {
+									return responseErr
+								}
+
+								return jpost.JobPostServiceRepo.UpdateJobPostRepo(ctx, CreateJobPostParams)
+			}
+
+				func (jpost JobPostService) DeleteJobPostServoce(ctx *gin.Context, id int64) *models.ResponseError {
+								return jpost.JobPostServiceRepo.DeleteJobPostRepo(ctx, id)
+				}
+
 
 func validateJobPost(jobPostParams *dbContext.CreateJobPostParams) *models.ResponseError {
 	if jobPostParams.JopoEntityID == 0 {
@@ -177,3 +192,4 @@ func validateJobPost(jobPostParams *dbContext.CreateJobPostParams) *models.Respo
 
 	return nil
 }
+
