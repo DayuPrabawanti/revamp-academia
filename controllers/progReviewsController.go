@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/services"
 	"github.com/gin-gonic/gin"
@@ -21,6 +23,26 @@ func (progReviewsController ProgReviewsController) GetListProgReviews(ctx *gin.C
 	response, responseErr := progReviewsController.progReviewsService.GetListProgReviews(ctx)
 
 	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (progReviewsController ProgReviewsController) GetProgramReviews(ctx *gin.Context) {
+
+	prowUserEntityId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	response, responseErr := progReviewsController.progReviewsService.GetProgramReviews(ctx, int64(prowUserEntityId))
+	if responseErr != nil {
+
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}

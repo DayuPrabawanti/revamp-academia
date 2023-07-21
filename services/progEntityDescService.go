@@ -19,3 +19,7 @@ func NewProgEntityDescService(progEntityDescRepository *repositories.ProgEntityD
 func (ped ProgEntityDescService) GetListProgEntityDesc(ctx *gin.Context) ([]*models.CurriculumProgramEntityDescription, *models.ResponseError) {
 	return ped.progEntityDescRepository.GetListProgEntityDesc(ctx)
 }
+
+func (ped ProgEntityDescService) GetProgEntityDesc(ctx *gin.Context, id int64) (*models.CurriculumProgramEntityDescription, *models.ResponseError) {
+	return ped.progEntityDescRepository.GetProgEntityDesc(ctx, id)
+}

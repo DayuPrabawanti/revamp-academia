@@ -71,9 +71,9 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.POST("/sectionDetail", sectionDetailController.CreateSectionDetail)
 
-	// router.PUT("/sections/:id", sectionController.UpdateSections)
+	router.PUT("/sectionDetail/:id", sectionDetailController.UpdateSectionDetail)
 
-	// router.DELETE("/sections/:id", sectionController.DeleteSections)
+	router.DELETE("/sectionDetail/:id", sectionDetailController.DeleteSectionDetail)
 
 	// SECTION DETAIL MATERIAL
 
@@ -85,6 +85,14 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.GET("/sectionDetailMaterial", sectionDetailMaterialController.GetListSectionDetailMaterial)
 
+	router.GET("/sectionDetailMaterial/:id", sectionDetailMaterialController.GetSectionDetailMaterial)
+
+	router.POST("/sectionDetailMaterial", sectionDetailMaterialController.CreatesectiondetailMaterial)
+
+	router.PUT("/sectionDetailMaterial/:id", sectionDetailMaterialController.UpdateSectionDetailMaterial)
+
+	router.DELETE("/sectionDetailMaterial/:id", sectionDetailMaterialController.DeleteSectionDetailMaterial)
+
 	// PROGRAM ENTITY DESC
 
 	progEntityDescRepository := repositories.NewProgEntityDescRepository(dbHandler)
@@ -95,6 +103,14 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	router.GET("/progEntityDesc", progEntityDescController.GetListProgEntityDesc)
 
+	router.GET("/progEntityDesc/:id", progEntityDescController.GetProgEntityDesc)
+
+	// router.POST("/sectionDetailMaterial", sectionDetailMaterialController.CreatesectiondetailMaterial)
+
+	// router.PUT("/sectionDetailMaterial/:id", sectionDetailMaterialController.UpdateSectionDetailMaterial)
+
+	// router.DELETE("/sectionDetailMaterial/:id", sectionDetailMaterialController.DeleteSectionDetailMaterial)
+
 	// PROGRAM REVIEWS
 
 	progReviewsRepository := repositories.NewProgReviewsRepository(dbHandler)
@@ -104,6 +120,8 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	progReviewsController := controllers.NewProgReviewsController(progReviewsService)
 
 	router.GET("/progReviews", progReviewsController.GetListProgReviews)
+
+	router.GET("/progReviews/:id", progReviewsController.GetProgramReviews)
 
 	// GROUP
 

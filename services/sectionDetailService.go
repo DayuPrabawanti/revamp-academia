@@ -25,31 +25,31 @@ func (sd SectionDetailService) GetListSectionDetail(ctx *gin.Context) ([]*models
 	return sd.sectionDetailRepository.GetListSectionDetail(ctx)
 }
 
-func (se SectionDetailService) GetSectionDetail(ctx *gin.Context, id int64) (*models.CurriculumSectionDetail, *models.ResponseError) {
-	return se.sectionDetailRepository.GetSectionDetail(ctx, id)
+func (sd SectionDetailService) GetSectionDetail(ctx *gin.Context, id int64) (*models.CurriculumSectionDetail, *models.ResponseError) {
+	return sd.sectionDetailRepository.GetSectionDetail(ctx, id)
 }
 
-func (se SectionDetailService) CreateSectionDetail(ctx *gin.Context, sectionDetailParams *dbcontext.CreatesectionDetailParams) (*models.CurriculumSectionDetail, *models.ResponseError) {
+func (sd SectionDetailService) CreateSectionDetail(ctx *gin.Context, sectionDetailParams *dbcontext.CreatesectionDetailParams) (*models.CurriculumSectionDetail, *models.ResponseError) {
 	responseErr := validateSectionDetail(sectionDetailParams)
 	if responseErr != nil {
 		return nil, responseErr
 	}
 
-	return se.sectionDetailRepository.CreateSectionDetail(ctx, sectionDetailParams)
+	return sd.sectionDetailRepository.CreateSectionDetail(ctx, sectionDetailParams)
 }
 
-// func (se SectionService) UpdateSections(ctx *gin.Context, sectionParams *dbcontext.CreatesectionsParams, id int64) *models.ResponseError {
-// 	responseErr := validateSections(sectionParams)
-// 	if responseErr != nil {
-// 		return responseErr
-// 	}
+func (sd SectionDetailService) UpdateSectionDetail(ctx *gin.Context, sectionDetailParams *dbcontext.CreatesectionDetailParams, id int64) *models.ResponseError {
+	responseErr := validateSectionDetail(sectionDetailParams)
+	if responseErr != nil {
+		return responseErr
+	}
 
-// 	return se.sectionRepository.UpdateSections(ctx, sectionParams)
-// }
+	return sd.sectionDetailRepository.UpdateSectionDetail(ctx, sectionDetailParams)
+}
 
-// func (se SectionService) DeleteSections(ctx *gin.Context, id int64) *models.ResponseError {
-// 	return se.sectionRepository.DeleteSections(ctx, id)
-// }
+func (sd SectionDetailService) DeleteSectionDetail(ctx *gin.Context, id int64) *models.ResponseError {
+	return sd.sectionDetailRepository.DeleteSectionDetail(ctx, id)
+}
 
 func validateSectionDetail(sectionDetailParams *dbcontext.CreatesectionDetailParams) *models.ResponseError {
 	if sectionDetailParams.SecdID == 0 {

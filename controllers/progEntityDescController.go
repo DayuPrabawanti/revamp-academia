@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/services"
 	"github.com/gin-gonic/gin"
@@ -21,6 +23,26 @@ func (progEntityDescController ProgEntityDescController) GetListProgEntityDesc(c
 	response, responseErr := progEntityDescController.progEntityDescService.GetListProgEntityDesc(ctx)
 
 	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (progEntityDescController ProgEntityDescController) GetProgEntityDesc(ctx *gin.Context) {
+
+	predProgEntityID, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	response, responseErr := progEntityDescController.progEntityDescService.GetProgEntityDesc(ctx, int64(predProgEntityID))
+	if responseErr != nil {
+
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}

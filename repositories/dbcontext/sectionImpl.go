@@ -135,6 +135,7 @@ func (q *Queries) Createsections(ctx context.Context, arg CreatesectionsParams) 
 
 const updateSections = `-- name: updateSections :exec
 UPDATE curriculum.sections
+SET
 sect_prog_entity_id = $2, 
 sect_title = $3, 
 sect_description = $4, 

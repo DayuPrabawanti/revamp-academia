@@ -98,7 +98,7 @@ func (sectionController SectionController) UpdateSections(ctx *gin.Context) {
 	}
 
 	var section dbcontext.CreatesectionsParams
-	err = json.Unmarshal(body, &sectId)
+	err = json.Unmarshal(body, &section)
 	if err != nil {
 		log.Println("Error while unmarshaling update sections request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -106,10 +106,10 @@ func (sectionController SectionController) UpdateSections(ctx *gin.Context) {
 	}
 
 	response := sectionController.sectionService.UpdateSections(ctx, &section, int64(sectId))
-	if response != nil {
+	/* 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return
-	}
+	} */
 
 	ctx.JSON(http.StatusOK, response)
 

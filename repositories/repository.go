@@ -309,6 +309,40 @@ func (sd SectionDetailRepository) CreateSectionDetail(ctx *gin.Context, sectionD
 	return sectionDetail, nil
 }
 
+func (sd SectionDetailRepository) UpdateSectionDetail(ctx *gin.Context, sectionDetailParams *dbcontext.CreatesectionDetailParams) *models.ResponseError {
+
+	store := dbcontext.New(sd.dbHandler)
+	err := store.UpdateSectionDetail(ctx, *sectionDetailParams)
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}
+
+func (sd SectionDetailRepository) DeleteSectionDetail(ctx *gin.Context, id int64) *models.ResponseError {
+
+	store := dbcontext.New(sd.dbHandler)
+	err := store.DeleteSectionDetail(ctx, int16(id))
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when delete",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been deleted",
+		Status:  http.StatusOK,
+	}
+}
+
 // SECTION DETAIL MATERIAL
 
 type SectionDetailMaterialRepository struct {
@@ -322,9 +356,9 @@ func NewSectionDetailMaterialRepository(dbHandler *sql.DB) *SectionDetailMateria
 	}
 }
 
-func (sd SectionDetailMaterialRepository) GetListSectionDetailMaterial(ctx *gin.Context) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+func (sdm SectionDetailMaterialRepository) GetListSectionDetailMaterial(ctx *gin.Context) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
 
-	store := dbcontext.New(sd.dbHandler)
+	store := dbcontext.New(sdm.dbHandler)
 	sectionDetailMaterials, err := store.ListSectionDetailMaterial(ctx)
 
 	listSectionDetailMaterial := make([]*models.CurriculumSectionDetailMaterial, 0)
@@ -350,6 +384,69 @@ func (sd SectionDetailMaterialRepository) GetListSectionDetailMaterial(ctx *gin.
 	}
 
 	return listSectionDetailMaterial, nil
+}
+
+func (sdm SectionDetailMaterialRepository) GetSectionDetailMaterial(ctx *gin.Context, id int64) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+
+	store := dbcontext.New(sdm.dbHandler)
+	sectionDetailMaterial, err := store.GetSectionDetailMaterial(ctx, int16(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &sectionDetailMaterial, nil
+}
+
+func (sdm SectionDetailMaterialRepository) CreatesectiondetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+
+	store := dbcontext.New(sdm.dbHandler)
+	sectionDetailMaterial, err := store.CreatesectiondetailMaterial(ctx, *sectionDetailMaterialParams)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return sectionDetailMaterial, nil
+}
+
+func (sdm SectionDetailMaterialRepository) UpdateSectionDetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) *models.ResponseError {
+
+	store := dbcontext.New(sdm.dbHandler)
+	err := store.UpdateSectionDetailMaterial(ctx, *sectionDetailMaterialParams)
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}
+
+func (sdm SectionDetailMaterialRepository) DeleteSectionDetailMaterial(ctx *gin.Context, id int64) *models.ResponseError {
+
+	store := dbcontext.New(sdm.dbHandler)
+	err := store.DeleteSectionDetailMaterial(ctx, int16(id))
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when delete",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been deleted",
+		Status:  http.StatusOK,
+	}
 }
 
 // PROGRAM ENTITY DESCRIPTION
@@ -394,6 +491,21 @@ func (ped ProgEntityDescRepository) GetListProgEntityDesc(ctx *gin.Context) ([]*
 	return listProgEntityDesc, nil
 }
 
+func (ped ProgEntityDescRepository) GetProgEntityDesc(ctx *gin.Context, id int64) (*models.CurriculumProgramEntityDescription, *models.ResponseError) {
+
+	store := dbcontext.New(ped.dbHandler)
+	programEntityDescription, err := store.GetProgEntityDesc(ctx, int16(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return (*models.CurriculumProgramEntityDescription)(&programEntityDescription), nil
+}
+
 // PROGRAM REVIEWS
 
 type ProgReviewsRepository struct {
@@ -433,6 +545,21 @@ func (pr ProgReviewsRepository) GetListProgReviews(ctx *gin.Context) ([]*models.
 	}
 
 	return listProgReviews, nil
+}
+
+func (pr ProgReviewsRepository) GetProgramReviews(ctx *gin.Context, id int64) (*models.CurriculumProgramReview, *models.ResponseError) {
+
+	store := dbcontext.New(pr.dbHandler)
+	programReviews, err := store.GetProgramReviews(ctx, int16(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &programReviews, nil
 }
 
 // GROUP
@@ -563,25 +690,25 @@ func (per ProgramEntityRepository) GetListMasterCategory(ctx *gin.Context) ([]*m
 	return listSections, nil
 }
 
-// func (pe ProgramEntityRepository) CreateGroup(ctx *gin.Context, groupParams *dbcontext.CreateGroup) (*models.Group, *models.ResponseError) {
-// 	// Buat CurriculumProgramEntity
-// 	programEntity, err := pe.CreateProgramEntity(ctx, &groupParams.CreateProgramEntityParams)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+func (pe ProgramEntityRepository) CreateGroup(ctx *gin.Context, groupParams *dbcontext.CreateGroupParams) (*models.Group, *models.ResponseError) {
+	// Buat CurriculumProgramEntity
+	programEntity, err := pe.CreateProgramEntity(ctx, &groupParams.CreateProgramEntityParams)
+	if err != nil {
+		return nil, err
+	}
 
-// 	// Buat CurriculumSection
-// 	//gabungParams.CreatesectionsParams.SectID = gabungParams.Createprogram_entityParams.ProgEntityID
-// 	section, err := pe.Createsections(ctx, &groupParams.CreatesectionsParams)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+	// Buat CurriculumSection
+	//gabungParams.CreatesectionsParams.SectID = gabungParams.Createprogram_entityParams.ProgEntityID
+	section, err := pe.Createsections(ctx, &groupParams.CreatesectionsParams)
+	if err != nil {
+		return nil, err
+	}
 
-// 	// Buat Gabung
-// 	group := &models.Group{
-// 		CurriculumProgramEntity: *programEntity,
-// 		CurriculumSection:       *section,
-// 	}
+	// Buat Gabung
+	group := &models.Group{
+		CurriculumProgramEntity: *programEntity,
+		CurriculumSection:       *section,
+	}
 
-// 	return group, nil
-// }
+	return group, nil
+}

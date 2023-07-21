@@ -9,7 +9,7 @@ import (
 const listProgReviews = `-- name: ListProgReviews :many
 SELECT prow_user_entity_id, prow_prog_entity_id, prow_review, prow_rating, prow_modified_date 
 FROM curriculum.program_reviews
-ORDER BY prog_entity_id
+ORDER BY prow_user_entity_id
 `
 
 func (q *Queries) ListProgReviews(ctx context.Context) ([]models.CurriculumProgramReview, error) {
@@ -39,4 +39,23 @@ func (q *Queries) ListProgReviews(ctx context.Context) ([]models.CurriculumProgr
 		return nil, err
 	}
 	return items, nil
+}
+
+const getProgramReviews = `-- name: GetProgramReviews :one
+SELECT prow_user_entity_id, prow_prog_entity_id, prow_review, prow_rating, prow_modified_date 
+FROM curriculum.program_reviews
+	WHERE prow_user_entity_id = $1
+`
+
+func (q *Queries) GetProgramReviews(ctx context.Context, prowUserEntityId int16) (models.CurriculumProgramReview, error) {
+	row := q.db.QueryRowContext(ctx, getProgramReviews, prowUserEntityId)
+	var i models.CurriculumProgramReview
+	err := row.Scan(
+		&i.ProwUserEntityID,
+		&i.ProwProgEntityID,
+		&i.ProwReview,
+		&i.ProwRating,
+		&i.ProwModifiedDate,
+	)
+	return i, err
 }

@@ -19,3 +19,7 @@ func NewProgReviewsService(progReviewsRepository *repositories.ProgReviewsReposi
 func (pr ProgReviewService) GetListProgReviews(ctx *gin.Context) ([]*models.CurriculumProgramReview, *models.ResponseError) {
 	return pr.progReviewsRepository.GetListProgReviews(ctx)
 }
+
+func (pr ProgReviewService) GetProgramReviews(ctx *gin.Context, id int64) (*models.CurriculumProgramReview, *models.ResponseError) {
+	return pr.progReviewsRepository.GetProgramReviews(ctx, id)
+}

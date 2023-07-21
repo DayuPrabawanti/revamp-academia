@@ -80,56 +80,56 @@ func (sectionDetailController SectionDetailController) CreateSectionDetail(ctx *
 
 }
 
-// func (sectionController SectionController) UpdateSections(ctx *gin.Context) {
+func (sectionDetailController SectionDetailController) UpdateSectionDetail(ctx *gin.Context) {
 
-// 	sectId, err := strconv.Atoi(ctx.Param("id"))
+	secdId, err := strconv.Atoi(ctx.Param("id"))
 
-// 	if err != nil {
-// 		log.Println("Error while reading paramater id", err)
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 		return
-// 	}
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-// 	body, err := io.ReadAll(ctx.Request.Body)
-// 	if err != nil {
-// 		log.Println("Error while reading update sections request body", err)
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading update sections request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-// 	var section dbcontext.CreatesectionsParams
-// 	err = json.Unmarshal(body, &sectId)
-// 	if err != nil {
-// 		log.Println("Error while unmarshaling update sections request body", err)
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
+	var sectionDetail dbcontext.CreatesectionDetailParams
+	err = json.Unmarshal(body, &sectionDetail)
+	if err != nil {
+		log.Println("Error while unmarshaling update sections request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-// 	response := sectionController.sectionService.UpdateSections(ctx, &section, int64(sectId))
-// 	if response != nil {
-// 		ctx.AbortWithStatusJSON(response.Status, response)
-// 		return
-// 	}
+	response := sectionDetailController.sectionDetailService.UpdateSectionDetail(ctx, &sectionDetail, int64(secdId))
+	// if response != nil {
+	// 	ctx.AbortWithStatusJSON(response.Status, response)
+	// 	return
+	// }
 
-// 	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 
-// }
+}
 
-// func (sectionController SectionController) DeleteSections(ctx *gin.Context) {
+func (sectionDetailController SectionDetailController) DeleteSectionDetail(ctx *gin.Context) {
 
-// 	sectId, err := strconv.Atoi(ctx.Param("id"))
+	secdId, err := strconv.Atoi(ctx.Param("id"))
 
-// 	if err != nil {
-// 		log.Println("Error while reading paramater id", err)
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 		return
-// 	}
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-// 	responseErr := sectionController.sectionService.DeleteSections(ctx, int64(sectId))
-// 	if responseErr != nil {
-// 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
-// 		return
-// 	}
+	responseErr := sectionDetailController.sectionDetailService.DeleteSectionDetail(ctx, int64(secdId))
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
 
-// 	ctx.Status(http.StatusNoContent)
-// }
+	ctx.Status(http.StatusNoContent)
+}

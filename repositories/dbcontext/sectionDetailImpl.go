@@ -133,3 +133,39 @@ func (q *Queries) CreateSectionDetail(ctx context.Context, arg CreatesectionDeta
 		SecdSectID:       i.SecdSectID,
 	}, nil
 }
+
+const updateSectionDetail = `-- name: UpdateSectionDetail :exec
+UPDATE curriculum.section_detail
+SET
+secd_title = $2, 
+secd_preview = $3, 
+secd_score = $4, 
+secd_note = $5, 
+secd_minute = $6, 
+secd_modified_date = $7, 
+secd_sect_id = $8
+WHERE secd_id = $1
+`
+
+func (q *Queries) UpdateSectionDetail(ctx context.Context, arg CreatesectionDetailParams) error {
+	_, err := q.db.ExecContext(ctx, updateSectionDetail,
+		arg.SecdID,
+		arg.SecdTitle,
+		arg.SecdPreview,
+		arg.SecdScore,
+		arg.SecdNote,
+		arg.SecdMinute,
+		arg.SecdModifiedDate,
+		arg.SecdSectID)
+	return err
+}
+
+const deleteSectionDetail = `-- name: DeleteSectionDetail :exec
+DELETE FROM curriculum.section_detail
+WHERE secd_id = $1
+`
+
+func (q *Queries) DeleteSectionDetail(ctx context.Context, secdId int16) error {
+	_, err := q.db.ExecContext(ctx, deleteSectionDetail, secdId)
+	return err
+}

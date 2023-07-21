@@ -41,3 +41,22 @@ func (q *Queries) ListProgEntityDesc(ctx context.Context) ([]models.CurriculumPr
 	}
 	return items, nil
 }
+
+const getProgEntityDesc = `-- name: GetProgEntityDesc :one
+SELECT pred_prog_entity_id, pred_item_learning, pred_item_include, pred_requirement, pred_description, pred_target_level 
+FROM curriculum.program_entity_description
+	WHERE pred_prog_entity_id = $1
+`
+
+func (q *Queries) GetProgEntityDesc(ctx context.Context, predProgEntityID int16) (models.CurriculumProgramEntityDescription, error) {
+	row := q.db.QueryRowContext(ctx, getProgEntityDesc, predProgEntityID)
+	var i models.CurriculumProgramEntityDescription
+	err := row.Scan(
+		&i.PredProgEntityID,
+		&i.PredItemLearning,
+		&i.PredItemInclude,
+		&i.PredRequirement,
+		&i.PredDescription,
+	)
+	return i, err
+}

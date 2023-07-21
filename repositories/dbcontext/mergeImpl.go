@@ -47,3 +47,84 @@ func (q *Queries) Group(ctx context.Context) ([]models.Group, error) {
 	}
 	return items, nil
 }
+
+// const getGroup = `-- name: GetGroup :one
+// SELECT secd_id, secd_title, secd_preview, secd_score, secd_note, secd_minute, secd_modified_date, secd_sect_id
+// FROM curriculum.section_detail
+// 	WHERE secd_id = $1
+// `
+
+// func (q *Queries) GetSectionDetail(ctx context.Context, secdId int16) (models.CurriculumSectionDetail, error) {
+// 	row := q.db.QueryRowContext(ctx, getSectionDetail, secdId)
+// 	var i models.CurriculumSectionDetail
+// 	err := row.Scan(
+// 		&i.SecdID,
+// 		&i.SecdTitle,
+// 		&i.SecdPreview,
+// 		&i.SecdScore,
+// 		&i.SecdNote,
+// 		&i.SecdMinute,
+// 		&i.SecdModifiedDate,
+// 		&i.SecdSectID,
+// 	)
+// 	return i, err
+// }
+
+type CreateGroupParams struct {
+	CreateProgramEntityParams CreateProgramEntityParams
+	CreatesectionsParams      CreatesectionsParams
+}
+
+// const createGroup = `-- name: CreateGroup :many
+
+// INSERT INTO curriculum.sections (sect_id,
+// sect_prog_entity_id,
+// sect_title,
+// sect_description,
+// sect_total_section,
+// sect_total_lecture,
+// sect_total_minute,
+// sect_modified_date)
+// VALUES($1,$2,$3,$4,$5,$6,$7,$8)
+// RETURNING *
+// `
+
+// func (q *Queries) Createsections(ctx context.Context, arg CreatesectionsParams) (*models.CurriculumSection, *models.ResponseError) {
+// 	row := q.db.QueryRowContext(ctx, createsections,
+// 		arg.SectID,
+// 		arg.SectProgEntityID,
+// 		arg.SectTitle,
+// 		arg.SectDescription,
+// 		arg.SectTotalSection,
+// 		arg.SectTotalLecture,
+// 		arg.SectTotalMinute,
+// 		arg.SectModifiedDate,
+// 	)
+// 	i := models.CurriculumSection{}
+// 	err := row.Scan(
+// 		&i.SectID,
+// 		&i.SectProgEntityID,
+// 		&i.SectTitle,
+// 		&i.SectDescription,
+// 		&i.SectTotalSection,
+// 		&i.SectTotalLecture,
+// 		&i.SectTotalMinute,
+// 		&i.SectModifiedDate,
+// 	)
+// 	if err != nil {
+// 		return nil, &models.ResponseError{
+// 			Message: err.Error(),
+// 			Status:  http.StatusInternalServerError,
+// 		}
+// 	}
+// 	return &models.CurriculumSection{
+// 		SectID:           i.SectID,
+// 		SectProgEntityID: i.SectProgEntityID,
+// 		SectTitle:        i.SectTitle,
+// 		SectDescription:  i.SectDescription,
+// 		SectTotalSection: i.SectTotalSection,
+// 		SectTotalLecture: i.SectTotalLecture,
+// 		SectTotalMinute:  i.SectTotalMinute,
+// 		SectModifiedDate: i.SectModifiedDate,
+// 	}, nil
+// }
