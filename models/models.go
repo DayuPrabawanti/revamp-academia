@@ -398,19 +398,11 @@ type MasterWorkingType struct {
 	WotyName sql.NullString `db:"woty_name" json:"wotyName"`
 }
 
-
-type FintechTopup struct{
-	PaymentBank 
-	PaymentFintech
-}
-
-
 type PaymentBank struct {
-	BankEntityID     int32  `db:"bank_entity_id" json:"bankEntityId"`
-	BankCode         string `db:"bank_code" json:"bankCode"`
-	BankName         string `db:"bank_name" json:"bankName"`
+	BankEntityID     int32          `db:"bank_entity_id" json:"bankEntityId"`
+	BankCode         sql.NullString `db:"bank_code" json:"bankCode"`
+	BankName         sql.NullString `db:"bank_name" json:"bankName"`
 	BankModifiedDate sql.NullTime   `db:"bank_modified_date" json:"bankModifiedDate"`
-
 }
 
 type PaymentFintech struct {

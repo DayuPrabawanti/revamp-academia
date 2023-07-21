@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/repositories/dbContext"
+	repositories "codeid.revampacademy/repositories/paymentRepositories"
+	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
