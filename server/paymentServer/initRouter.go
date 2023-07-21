@@ -8,7 +8,7 @@ import (
 func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	router := gin.Default()
 
-	paymentRoute := router.Group("/api/fintech/")
+	paymentRoute := router.Group("/api/fintech")
 
 	// Router (API) end-point Mockup 2
 	paymentRoute.GET("/fintech", controllerMgr.PaymentFintechController.GetListPaymentFintech)
