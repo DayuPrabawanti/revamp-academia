@@ -1,4 +1,4 @@
-package boocampService
+package bootcampService
 
 import (
 	"codeid.revampacademy/models"

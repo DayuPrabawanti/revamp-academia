@@ -2,14 +2,15 @@ package bootcampService
 
 import (
 	"codeid.revampacademy/models"
+	"codeid.revampacademy/repositories/bootcampRepository"
 	"github.com/gin-gonic/gin"
 )
 
 type ProgramEntityService struct {
-	programEntityRepository *repositories.ProgramentityRepository
+	programEntityRepository *bootcampRepository.ProgramentityRepository
 }
 
-func NewProgramEntityService(programEntityRepository *repositories.ProgramentityRepository) *ProgramEntityService {
+func NewProgramEntityService(programEntityRepository *bootcampRepository.ProgramentityRepository) *ProgramEntityService {
 	return &ProgramEntityService{
 		programEntityRepository: programEntityRepository,
 	}
