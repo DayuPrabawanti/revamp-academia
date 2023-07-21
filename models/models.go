@@ -15,6 +15,16 @@ import (
 // type UsersUserList []UsersUser
 // type UsersUsersEducationList []UsersUsersEducation
 
+
+type Gabung struct{
+	UsersUser					UsersUser
+	UsersUsersEmail				UsersUsersEmail
+	UsersUsersEducation			UsersUsersEducation
+	UsersPhoneNumberType 		UsersPhoneNumberType 
+	CurriculumProgramEntity		CurriculumProgramEntity
+	BootcampProgramApply		BootcampProgramApply	
+}
+
 type BootcampBatchEvaluationMockup struct {
 	BootcampBatch                  BootcampBatch
 	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation

@@ -58,11 +58,11 @@ func (q *Queries) ListBootcampBatchEvaluation(ctx context.Context, batchId int32
 	return items, nil
 }
 
-const listProgramEntity = `-- name: ListProgramEntity :many
-SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_trainee, prog_image, prog_best_seller, prog_price, prog_language, prog_modified_date, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status 
-	FROM curriculum.program_entity
-	ORDER BY prog_title
-`
+// const listProgramEntity = `-- name: ListProgramEntity :many
+// SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_trainee, prog_image, prog_best_seller, prog_price, prog_language, prog_modified_date, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status
+// 	FROM curriculum.program_entity
+// 	ORDER BY prog_title
+// `
 
 func (q *Queries) ListProgramEntity(ctx context.Context) ([]models.CurriculumProgramEntity, error) {
 	rows, err := q.db.QueryContext(ctx, listProgramEntity)
@@ -107,10 +107,10 @@ func (q *Queries) ListProgramEntity(ctx context.Context) ([]models.CurriculumPro
 	return items, nil
 }
 
-const listUsers = `-- name: ListUsers :many
-SELECT user_entity_id, user_name, user_password, user_first_name, user_last_name, user_birth_date, user_email_promotion, user_demographic, user_modified_date, user_photo, user_current_role FROM users.users
-ORDER BY user_name
-`
+// const listUsers = `-- name: ListUsers :many
+// SELECT user_entity_id, user_name, user_password, user_first_name, user_last_name, user_birth_date, user_email_promotion, user_demographic, user_modified_date, user_photo, user_current_role FROM users.users
+// ORDER BY user_name
+// `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]models.UsersUser, error) {
 	rows, err := q.db.QueryContext(ctx, listUsers)
