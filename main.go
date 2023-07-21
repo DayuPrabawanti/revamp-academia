@@ -27,10 +27,8 @@ func main() {
 	// queries := repositories.New(dbHandler)
 	log.Println("Inisializing HTTP Server")
 	httpServer := server.InitHttpServer(config, dbHandler)
-	httpServerhr := server.InitHttpServer(config, dbHandler)
 
 	httpServer.GetStart()
-	httpServerhr.GetStart()
 
 }
 

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 -- name: GetMasterAddress :one
 SELECT * FROM master.address
 WHERE addr_id = $1;
@@ -37,6 +38,8 @@ WHERE city_id = $1;
 
 =======
 >>>>>>> origin/bootcamp-module
+=======
+>>>>>>> origin/sales-module
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;
@@ -475,14 +478,18 @@ ORDER BY emp_emp_number;
 INSERT INTO hr.employee (emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 RETURNING emp_entity_id;
 <<<<<<< HEAD
+<<<<<<< HEAD
 RETURNING *;
 =======
 >>>>>>> origin/bootcamp-module
+=======
+>>>>>>> origin/sales-module
 
 -- name: DeleteEmployee :exec
 DELETE FROM hr.employee
 WHERE emp_entity_id = $1;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 -- name: UpdateEmployee :exec
@@ -506,6 +513,11 @@ UPDATE hr.employee
   set emp_marital_status = $2,
   emp_gender = $3
 >>>>>>> origin/bootcamp-module
+=======
+UPDATE hr.employee
+  set emp_marital_status = $2,
+  emp_gender = $3
+>>>>>>> origin/sales-module
 WHERE emp_entity_id = $1;
 
 -- hr.employee_department_history

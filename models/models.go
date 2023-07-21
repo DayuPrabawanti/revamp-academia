@@ -152,6 +152,14 @@ type BootcampProgramApplyProgress struct {
 	ParogStatus       sql.NullString `db:"parog_status" json:"parogStatus"`
 }
 
+type MergeMockUser struct {
+	Users     UsersUser
+	Education UsersUsersEducation
+	Media     UsersUsersMedium
+}
+
+
+
 type CurriculumProgramEntity struct {
 	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
 	ProgTitle        string         `db:"prog_title" json:"progTitle"`
@@ -521,60 +529,60 @@ type PaymentUsersAccount struct {
 
 type SalesCartItem struct {
 	CaitID           int32          `db:"cait_id" json:"caitId"`
-	CaitQuantity     sql.NullInt32  `db:"cait_quantity" json:"caitQuantity"`
+	CaitQuantity     int32          `db:"cait_quantity" json:"caitQuantity"`
 	CaitUnitPrice    sql.NullString `db:"cait_unit_price" json:"caitUnitPrice"`
-	CaitModifiedDate sql.NullTime   `db:"cait_modified_date" json:"caitModifiedDate"`
-	CaitUserEntityID sql.NullInt32  `db:"cait_user_entity_id" json:"caitUserEntityId"`
-	CaitProgEntityID sql.NullInt32  `db:"cait_prog_entity_id" json:"caitProgEntityId"`
+	CaitModifiedDate sql.NullString `db:"cait_modified_date" json:"caitModifiedDate"`
+	CaitUserEntityID int32          `db:"cait_user_entity_id" json:"caitUserEntityId"`
+	CaitProgEntityID int32          `db:"cait_prog_entity_id" json:"caitProgEntityId"`
 }
 
 type SalesSalesOrderDetail struct {
-	SodeID           int32          `db:"sode_id" json:"sodeId"`
-	SodeQty          sql.NullInt32  `db:"sode_qty" json:"sodeQty"`
-	SodeUnitPrice    sql.NullString `db:"sode_unit_price" json:"sodeUnitPrice"`
-	SodeUnitDiscount sql.NullString `db:"sode_unit_discount" json:"sodeUnitDiscount"`
-	SodeLineTotal    sql.NullInt32  `db:"sode_line_total" json:"sodeLineTotal"`
-	SodeModifiedDate sql.NullTime   `db:"sode_modified_date" json:"sodeModifiedDate"`
-	SodeSoheID       sql.NullInt32  `db:"sode_sohe_id" json:"sodeSoheId"`
-	SodeProgEntityID sql.NullInt32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
+	SodeID           int32  `db:"sode_id" json:"sodeId"`
+	SodeQty          int32  `db:"sode_qty" json:"sodeQty"`
+	SodeUnitPrice    string `db:"sode_unit_price" json:"sodeUnitPrice"`
+	SodeUnitDiscount string `db:"sode_unit_discount" json:"sodeUnitDiscount"`
+	SodeLineTotal    int32  `db:"sode_line_total" json:"sodeLineTotal"`
+	SodeModifiedDate string `db:"sode_modified_date" json:"sodeModifiedDate"`
+	SodeSoheID       int32  `db:"sode_sohe_id" json:"sodeSoheId"`
+	SodeProgEntityID int32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
 }
 
 type SalesSalesOrderHeader struct {
-	SoheID             int32          `db:"sohe_id" json:"soheId"`
-	SoheOrderDate      sql.NullTime   `db:"sohe_order_date" json:"soheOrderDate"`
-	SoheDueDate        sql.NullTime   `db:"sohe_due_date" json:"soheDueDate"`
-	SoheShipDate       sql.NullTime   `db:"sohe_ship_date" json:"soheShipDate"`
-	SoheOrderNumber    sql.NullString `db:"sohe_order_number" json:"soheOrderNumber"`
-	SoheAccountNumber  sql.NullString `db:"sohe_account_number" json:"soheAccountNumber"`
-	SoheTrpaCodeNumber sql.NullString `db:"sohe_trpa_code_number" json:"soheTrpaCodeNumber"`
-	SoheSubtotal       sql.NullString `db:"sohe_subtotal" json:"soheSubtotal"`
-	SoheTax            sql.NullString `db:"sohe_tax" json:"soheTax"`
-	SoheTotalDue       sql.NullInt32  `db:"sohe_total_due" json:"soheTotalDue"`
-	SoheLicenseCode    sql.NullString `db:"sohe_license_code" json:"soheLicenseCode"`
-	SoheModifiedDate   sql.NullTime   `db:"sohe_modified_date" json:"soheModifiedDate"`
-	SoheUserEntityID   sql.NullInt32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
-	SoheStatus         sql.NullString `db:"sohe_status" json:"soheStatus"`
+	SoheID             int32  `db:"sohe_id" json:"soheId"`
+	SoheOrderDate      string `db:"sohe_order_date" json:"soheOrderDate"`
+	SoheDueDate        string `db:"sohe_due_date" json:"soheDueDate"`
+	SoheShipDate       string `db:"sohe_ship_date" json:"soheShipDate"`
+	SoheOrderNumber    string `db:"sohe_order_number" json:"soheOrderNumber"`
+	SoheAccountNumber  string `db:"sohe_account_number" json:"soheAccountNumber"`
+	SoheTrpaCodeNumber string `db:"sohe_trpa_code_number" json:"soheTrpaCodeNumber"`
+	SoheSubtotal       string `db:"sohe_subtotal" json:"soheSubtotal"`
+	SoheTax            string `db:"sohe_tax" json:"soheTax"`
+	SoheTotalDue       int32  `db:"sohe_total_due" json:"soheTotalDue"`
+	SoheLicenseCode    string `db:"sohe_license_code" json:"soheLicenseCode"`
+	SoheModifiedDate   string `db:"sohe_modified_date" json:"soheModifiedDate"`
+	SoheUserEntityID   int32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
+	SoheStatus         string `db:"sohe_status" json:"soheStatus"`
 }
 
 type SalesSpecialOffer struct {
 	SpofID           int32          `db:"spof_id" json:"spofId"`
-	SpofDescription  sql.NullString `db:"spof_description" json:"spofDescription"`
-	SpofDiscount     sql.NullInt32  `db:"spof_discount" json:"spofDiscount"`
-	SpofType         sql.NullString `db:"spof_type" json:"spofType"`
-	SpofStartDate    sql.NullTime   `db:"spof_start_date" json:"spofStartDate"`
-	SpofEndDate      sql.NullTime   `db:"spof_end_date" json:"spofEndDate"`
-	SpofMinQty       sql.NullInt32  `db:"spof_min_qty" json:"spofMinQty"`
-	SpofMaxQty       sql.NullInt32  `db:"spof_max_qty" json:"spofMaxQty"`
-	SpofModifiedDate sql.NullTime   `db:"spof_modified_date" json:"spofModifiedDate"`
-	SpofCateID       sql.NullInt32  `db:"spof_cate_id" json:"spofCateId"`
+	SpofDescription  string         `db:"spof_description" json:"spofDescription"`
+	SpofDiscount     int32          `db:"spof_discount" json:"spofDiscount"`
+	SpofType         sql.NullInt32  `db:"spof_type" json:"spofType"`
+	SpofStartDate    string         `db:"spof_start_date" json:"spofStartDate"`
+	SpofEndDate      string         `db:"spof_end_date" json:"spofEndDate"`
+	SpofMinQty       int32          `db:"spof_min_qty" json:"spofMinQty"`
+	SpofMaxQty       int32          `db:"spof_max_qty" json:"spofMaxQty"`
+	SpofModifiedDate sql.NullString `db:"spof_modified_date" json:"spofModifiedDate"`
+	SpofCateID       int32          `db:"spof_cate_id" json:"spofCateId"`
 }
 
 type SalesSpecialOfferProgram struct {
-	SocoID           int32          `db:"soco_id" json:"socoId"`
-	SocoSpofID       int32          `db:"soco_spof_id" json:"socoSpofId"`
-	SocoProgEntityID int32          `db:"soco_prog_entity_id" json:"socoProgEntityId"`
-	SocoStatus       sql.NullString `db:"soco_status" json:"socoStatus"`
-	SocoModifiedDate sql.NullTime   `db:"soco_modified_date" json:"socoModifiedDate"`
+	SocoID           int32  `db:"soco_id" json:"socoId"`
+	SocoSpofID       int32  `db:"soco_spof_id" json:"socoSpofId"`
+	SocoProgEntityID int32  `db:"soco_prog_entity_id" json:"socoProgEntityId"`
+	SocoStatus       string `db:"soco_status" json:"socoStatus"`
+	SocoModifiedDate string `db:"soco_modified_date" json:"socoModifiedDate"`
 }
 
 type UsersBusinessEntity struct {
@@ -582,74 +590,74 @@ type UsersBusinessEntity struct {
 }
 
 type UsersPhoneNumberType struct {
-	PontyCode         string       `db:"ponty_code" json:"pontyCode"`
-	PontyModifiedDate sql.NullTime `db:"ponty_modified_date" json:"pontyModifiedDate"`
+	PontyCode         string `db:"ponty_code" json:"pontyCode"`
+	PontyModifiedDate string `db:"ponty_modified_date" json:"pontyModifiedDate"`
 }
 
 type UsersRole struct {
-	RoleID           int32          `db:"role_id" json:"roleId"`
-	RoleName         sql.NullString `db:"role_name" json:"roleName"`
-	RoleType         sql.NullString `db:"role_type" json:"roleType"`
-	RoleModifiedDate sql.NullTime   `db:"role_modified_date" json:"roleModifiedDate"`
+	RoleID           int32  `db:"role_id" json:"roleId"`
+	RoleName         string `db:"role_name" json:"roleName"`
+	RoleType         string `db:"role_type" json:"roleType"`
+	RoleModifiedDate string `db:"role_modified_date" json:"roleModifiedDate"`
 }
 
 type UsersUser struct {
 	UserEntityID       int32          `db:"user_entity_id" json:"userEntityId"`
-	UserName           sql.NullString `db:"user_name" json:"userName"`
-	UserPassword       sql.NullString `db:"user_password" json:"userPassword"`
-	UserFirstName      sql.NullString `db:"user_first_name" json:"userFirstName"`
-	UserLastName       sql.NullString `db:"user_last_name" json:"userLastName"`
-	UserBirthDate      sql.NullTime   `db:"user_birth_date" json:"userBirthDate"`
-	UserEmailPromotion sql.NullInt32  `db:"user_email_promotion" json:"userEmailPromotion"`
-	UserDemographic    sql.NullString `db:"user_demographic" json:"userDemographic"`
-	UserModifiedDate   sql.NullTime   `db:"user_modified_date" json:"userModifiedDate"`
-	UserPhoto          sql.NullString `db:"user_photo" json:"userPhoto"`
-	UserCurrentRole    sql.NullInt32  `db:"user_current_role" json:"userCurrentRole"`
+	UserName           string         `db:"user_name" json:"userName"`
+	UserPassword       string         `db:"user_password" json:"userPassword"`
+	UserFirstName      string         `db:"user_first_name" json:"userFirstName"`
+	UserLastName       string         `db:"user_last_name" json:"userLastName"`
+	UserBirthDate      sql.NullString `db:"user_birth_date" json:"userBirthDate"`
+	UserEmailPromotion int32          `db:"user_email_promotion" json:"userEmailPromotion"`
+	UserDemographic    string         `db:"user_demographic" json:"userDemographic"`
+	UserModifiedDate   string         `db:"user_modified_date" json:"userModifiedDate"`
+	UserPhoto          string         `db:"user_photo" json:"userPhoto"`
+	UserCurrentRole    int32          `db:"user_current_role" json:"userCurrentRole"`
 }
 
 type UsersUsersAddress struct {
-	EtadAddrID       int32         `db:"etad_addr_id" json:"etadAddrId"`
-	EtadModifiedDate sql.NullTime  `db:"etad_modified_date" json:"etadModifiedDate"`
-	EtadEntityID     sql.NullInt32 `db:"etad_entity_id" json:"etadEntityId"`
-	EtadAdtyID       sql.NullInt32 `db:"etad_adty_id" json:"etadAdtyId"`
+	EtadAddrID       int32  `db:"etad_addr_id" json:"etadAddrId"`
+	EtadModifiedDate string `db:"etad_modified_date" json:"etadModifiedDate"`
+	EtadEntityID     int32  `db:"etad_entity_id" json:"etadEntityId"`
+	EtadAdtyID       int32  `db:"etad_adty_id" json:"etadAdtyId"`
 }
 
 type UsersUsersEducation struct {
-	UsduID           int32          `db:"usdu_id" json:"usduId"`
-	UsduEntityID     int32          `db:"usdu_entity_id" json:"usduEntityId"`
-	UsduSchool       sql.NullString `db:"usdu_school" json:"usduSchool"`
-	UsduDegree       sql.NullString `db:"usdu_degree" json:"usduDegree"`
-	UsduFieldStudy   sql.NullString `db:"usdu_field_study" json:"usduFieldStudy"`
-	UsduGraduateYear sql.NullString `db:"usdu_graduate_year" json:"usduGraduateYear"`
-	UsduStartDate    sql.NullTime   `db:"usdu_start_date" json:"usduStartDate"`
-	UsduEndDate      sql.NullTime   `db:"usdu_end_date" json:"usduEndDate"`
-	UsduGrade        sql.NullString `db:"usdu_grade" json:"usduGrade"`
-	UsduActivities   sql.NullString `db:"usdu_activities" json:"usduActivities"`
-	UsduDescription  sql.NullString `db:"usdu_description" json:"usduDescription"`
-	UsduModifiedDate sql.NullTime   `db:"usdu_modified_date" json:"usduModifiedDate"`
+	UsduID           int32  `db:"usdu_id" json:"usduId"`
+	UsduEntityID     int32  `db:"usdu_entity_id" json:"usduEntityId"`
+	UsduSchool       string `db:"usdu_school" json:"usduSchool"`
+	UsduDegree       string `db:"usdu_degree" json:"usduDegree"`
+	UsduFieldStudy   string `db:"usdu_field_study" json:"usduFieldStudy"`
+	UsduGraduateYear string `db:"usdu_graduate_year" json:"usduGraduateYear"`
+	UsduStartDate    string `db:"usdu_start_date" json:"usduStartDate"`
+	UsduEndDate      string `db:"usdu_end_date" json:"usduEndDate"`
+	UsduGrade        string `db:"usdu_grade" json:"usduGrade"`
+	UsduActivities   string `db:"usdu_activities" json:"usduActivities"`
+	UsduDescription  string `db:"usdu_description" json:"usduDescription"`
+	UsduModifiedDate string `db:"usdu_modified_date" json:"usduModifiedDate"`
 }
 
 type UsersUsersEmail struct {
-	PmailEntityID     int32          `db:"pmail_entity_id" json:"pmailEntityId"`
-	PmailID           int32          `db:"pmail_id" json:"pmailId"`
-	PmailAddress      sql.NullString `db:"pmail_address" json:"pmailAddress"`
-	PmailModifiedDate sql.NullTime   `db:"pmail_modified_date" json:"pmailModifiedDate"`
+	PmailEntityID     int32  `db:"pmail_entity_id" json:"pmailEntityId"`
+	PmailID           int32  `db:"pmail_id" json:"pmailId"`
+	PmailAddress      string `db:"pmail_address" json:"pmailAddress"`
+	PmailModifiedDate string `db:"pmail_modified_date" json:"pmailModifiedDate"`
 }
 
 type UsersUsersExperience struct {
-	UsexID              int32          `db:"usex_id" json:"usexId"`
-	UsexEntityID        int32          `db:"usex_entity_id" json:"usexEntityId"`
-	UsexTitle           sql.NullString `db:"usex_title" json:"usexTitle"`
-	UsexProfileHeadline sql.NullString `db:"usex_profile_headline" json:"usexProfileHeadline"`
-	UsexEmploymentType  sql.NullString `db:"usex_employment_type" json:"usexEmploymentType"`
-	UsexCompanyName     sql.NullString `db:"usex_company_name" json:"usexCompanyName"`
-	UsexIsCurrent       sql.NullString `db:"usex_is_current" json:"usexIsCurrent"`
-	UsexStartDate       sql.NullTime   `db:"usex_start_date" json:"usexStartDate"`
-	UsexEndDate         sql.NullTime   `db:"usex_end_date" json:"usexEndDate"`
-	UsexIndustry        sql.NullString `db:"usex_industry" json:"usexIndustry"`
-	UsexDescription     sql.NullString `db:"usex_description" json:"usexDescription"`
-	UsexExperienceType  sql.NullString `db:"usex_experience_type" json:"usexExperienceType"`
-	UsexCityID          sql.NullInt32  `db:"usex_city_id" json:"usexCityId"`
+	UsexID              int32  `db:"usex_id" json:"usexId"`
+	UsexEntityID        int32  `db:"usex_entity_id" json:"usexEntityId"`
+	UsexTitle           string `db:"usex_title" json:"usexTitle"`
+	UsexProfileHeadline string `db:"usex_profile_headline" json:"usexProfileHeadline"`
+	UsexEmploymentType  string `db:"usex_employment_type" json:"usexEmploymentType"`
+	UsexCompanyName     string `db:"usex_company_name" json:"usexCompanyName"`
+	UsexIsCurrent       string `db:"usex_is_current" json:"usexIsCurrent"`
+	UsexStartDate       string `db:"usex_start_date" json:"usexStartDate"`
+	UsexEndDate         string `db:"usex_end_date" json:"usexEndDate"`
+	UsexIndustry        string `db:"usex_industry" json:"usexIndustry"`
+	UsexDescription     string `db:"usex_description" json:"usexDescription"`
+	UsexExperienceType  string `db:"usex_experience_type" json:"usexExperienceType"`
+	UsexCityID          int32  `db:"usex_city_id" json:"usexCityId"`
 }
 
 type UsersUsersExperiencesSkill struct {
@@ -658,40 +666,40 @@ type UsersUsersExperiencesSkill struct {
 }
 
 type UsersUsersLicense struct {
-	UsliID           int32          `db:"usli_id" json:"usliId"`
-	UsliLicenseCode  sql.NullString `db:"usli_license_code" json:"usliLicenseCode"`
-	UsliModifiedDate sql.NullTime   `db:"usli_modified_date" json:"usliModifiedDate"`
-	UsliStatus       sql.NullString `db:"usli_status" json:"usliStatus"`
-	UsliEntityID     int32          `db:"usli_entity_id" json:"usliEntityId"`
+	UsliID           int32  `db:"usli_id" json:"usliId"`
+	UsliLicenseCode  string `db:"usli_license_code" json:"usliLicenseCode"`
+	UsliModifiedDate string `db:"usli_modified_date" json:"usliModifiedDate"`
+	UsliStatus       string `db:"usli_status" json:"usliStatus"`
+	UsliEntityID     int32  `db:"usli_entity_id" json:"usliEntityId"`
 }
 
 type UsersUsersMedium struct {
-	UsmeID           int32          `db:"usme_id" json:"usmeId"`
-	UsmeEntityID     int32          `db:"usme_entity_id" json:"usmeEntityId"`
-	UsmeFileLink     sql.NullString `db:"usme_file_link" json:"usmeFileLink"`
-	UsmeFilename     sql.NullString `db:"usme_filename" json:"usmeFilename"`
-	UsmeFilesize     sql.NullInt32  `db:"usme_filesize" json:"usmeFilesize"`
-	UsmeFiletype     sql.NullString `db:"usme_filetype" json:"usmeFiletype"`
-	UsmeNote         sql.NullString `db:"usme_note" json:"usmeNote"`
-	UsmeModifiedDate sql.NullTime   `db:"usme_modified_date" json:"usmeModifiedDate"`
+	UsmeID           int32  `db:"usme_id" json:"usmeId"`
+	UsmeEntityID     int32  `db:"usme_entity_id" json:"usmeEntityId"`
+	UsmeFileLink     string `db:"usme_file_link" json:"usmeFileLink"`
+	UsmeFilename     string `db:"usme_filename" json:"usmeFilename"`
+	UsmeFilesize     int32  `db:"usme_filesize" json:"usmeFilesize"`
+	UsmeFiletype     string `db:"usme_filetype" json:"usmeFiletype"`
+	UsmeNote         string `db:"usme_note" json:"usmeNote"`
+	UsmeModifiedDate string `db:"usme_modified_date" json:"usmeModifiedDate"`
 }
 
 type UsersUsersPhone struct {
-	UspoEntityID     int32          `db:"uspo_entity_id" json:"uspoEntityId"`
-	UspoNumber       string         `db:"uspo_number" json:"uspoNumber"`
-	UspoModifiedDate sql.NullTime   `db:"uspo_modified_date" json:"uspoModifiedDate"`
-	UspoPontyCode    sql.NullString `db:"uspo_ponty_code" json:"uspoPontyCode"`
+	UspoEntityID     int32  `db:"uspo_entity_id" json:"uspoEntityId"`
+	UspoNumber       string `db:"uspo_number" json:"uspoNumber"`
+	UspoModifiedDate string `db:"uspo_modified_date" json:"uspoModifiedDate"`
+	UspoPontyCode    string `db:"uspo_ponty_code" json:"uspoPontyCode"`
 }
 
 type UsersUsersRole struct {
-	UsroEntityID     int32        `db:"usro_entity_id" json:"usroEntityId"`
-	UsroRoleID       int32        `db:"usro_role_id" json:"usroRoleId"`
-	UsroModifiedDate sql.NullTime `db:"usro_modified_date" json:"usroModifiedDate"`
+	UsroEntityID     int32  `db:"usro_entity_id" json:"usroEntityId"`
+	UsroRoleID       int32  `db:"usro_role_id" json:"usroRoleId"`
+	UsroModifiedDate string `db:"usro_modified_date" json:"usroModifiedDate"`
 }
 
 type UsersUsersSkill struct {
-	UskiID           int32          `db:"uski_id" json:"uskiId"`
-	UskiEntityID     int32          `db:"uski_entity_id" json:"uskiEntityId"`
-	UskiModifiedDate sql.NullTime   `db:"uski_modified_date" json:"uskiModifiedDate"`
-	UskiSktyName     sql.NullString `db:"uski_skty_name" json:"uskiSktyName"`
+	UskiID           int32  `db:"uski_id" json:"uskiId"`
+	UskiEntityID     int32  `db:"uski_entity_id" json:"uskiEntityId"`
+	UskiModifiedDate string `db:"uski_modified_date" json:"uskiModifiedDate"`
+	UskiSktyName     string `db:"uski_skty_name" json:"uskiSktyName"`
 }

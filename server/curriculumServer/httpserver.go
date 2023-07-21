@@ -9,16 +9,19 @@ import (
 	"codeid.revampacademy/controllers/hrController"
 	"codeid.revampacademy/controllers/jobhireController"
 	"codeid.revampacademy/controllers/paymentControllers"
+	"codeid.revampacademy/controllers/salesControllers"
 	"codeid.revampacademy/repositories/bootcampRepository"
 	repo "codeid.revampacademy/repositories/curriculumRepositories"
 	"codeid.revampacademy/repositories/hrRepository"
 	"codeid.revampacademy/repositories/jobhireRepositories"
 	"codeid.revampacademy/repositories/paymentRepositories"
+	"codeid.revampacademy/repositories/salesRepositories"
 	"codeid.revampacademy/services/bootcampService"
 	services "codeid.revampacademy/services/curriculumServices"
 	"codeid.revampacademy/services/hrService"
 	"codeid.revampacademy/services/jobhireService"
 	"codeid.revampacademy/services/paymentServices"
+	"codeid.revampacademy/services/salesService"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
@@ -32,6 +35,7 @@ type HttpServer struct {
 	paymentControllersManager paymentControllers.ControllersManager
 	jobhirecontrollerManager  jobhireController.ControllerManager
 	bootcampcontrollerManager bootcampController.ControllerManager
+	salescontrollerManager    salesControllers.ControllerManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -55,12 +59,17 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	bootcampserviceManager := bootcampService.NewServiceManager(bootcamprepositoryManager)
 	bootcampcontrollerManager := bootcampController.NewControllerManager(bootcampserviceManager)
 
+	salesrepositoryManager := salesRepositories.NewRepositoryManager(dbHandler)
+	salesserviceManager := salesService.NewServiceManager(salesrepositoryManager)
+	salescontrollerManager := salesControllers.NewControllerManager(salesserviceManager)
+
 	router := gin.Default()
 	InitRouter(router, controllerManager)
 	InitRouterHR(router, hrcontrollerManager)
 	InitRouterPayment(router, paymentcontrollersManager)
 	InitRouterJobhire(router, jobhirecontrollerManager)
 	InitRouterBootcamp(router, bootcampcontrollerManager)
+	InitRouterSales(router, salescontrollerManager)
 
 	//router.POST("/creategabungmockup", progentityController.CreateGabungbyMockup)
 	//router.PUT("/updategabung/:id", progentityController.UpdateGabung)
@@ -73,6 +82,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 		paymentControllersManager: *paymentcontrollersManager,
 		jobhirecontrollerManager:  *jobhirecontrollerManager,
 		bootcampcontrollerManager: *bootcampcontrollerManager,
+		salescontrollerManager:    *salescontrollerManager,
 	}
 }
 
