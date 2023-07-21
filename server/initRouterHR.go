@@ -1,4 +1,4 @@
-package curriculumServer
+package server
 
 import (
 	"codeid.revampacademy/controllers/hrController"

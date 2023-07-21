@@ -1,11 +1,11 @@
-package curriculumServer
+package server
 
 import (
 	controllers "codeid.revampacademy/controllers/curriculumControllers"
 	"github.com/gin-gonic/gin"
 )
 
-func InitRouter(router *gin.Engine, controllerMrg *controllers.ControllerManager) *gin.Engine {
+func InitRouterCurriculum(router *gin.Engine, controllerMrg *controllers.ControllerManager) *gin.Engine {
 
 	progentityRoute := router.Group("/curriculum")
 	{

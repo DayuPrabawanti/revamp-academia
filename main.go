@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"codeid.revampacademy/config"
-	server "codeid.revampacademy/server/curriculumServer"
+	server "codeid.revampacademy/server"
 
 	_ "github.com/lib/pq"
 )

@@ -1,4 +1,4 @@
-package curriculumServer
+package server
 
 import (
 	salescontrollers "codeid.revampacademy/controllers/salesControllers"

@@ -1,5 +1,8 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/users-module
 -- name: GetMasterAddress :one
 SELECT * FROM master.address
 WHERE addr_id = $1;
@@ -36,10 +39,13 @@ DELETE FROM master.city
 WHERE city_id = $1;
 
 
+<<<<<<< HEAD
 =======
 >>>>>>> origin/bootcamp-module
 =======
 >>>>>>> origin/sales-module
+=======
+>>>>>>> origin/users-module
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;
@@ -479,16 +485,20 @@ INSERT INTO hr.employee (emp_entity_id, emp_emp_number, emp_national_id, emp_bir
 RETURNING emp_entity_id;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 RETURNING *;
 =======
 >>>>>>> origin/bootcamp-module
 =======
 >>>>>>> origin/sales-module
+=======
+>>>>>>> origin/users-module
 
 -- name: DeleteEmployee :exec
 DELETE FROM hr.employee
 WHERE emp_entity_id = $1;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -518,6 +528,11 @@ UPDATE hr.employee
   set emp_marital_status = $2,
   emp_gender = $3
 >>>>>>> origin/sales-module
+=======
+UPDATE hr.employee
+  set emp_marital_status = $2,
+  emp_gender = $3
+>>>>>>> origin/users-module
 WHERE emp_entity_id = $1;
 
 -- hr.employee_department_history

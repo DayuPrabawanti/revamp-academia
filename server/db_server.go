@@ -1,4 +1,4 @@
-package salesServer
+package server
 
 import (
 	"database/sql"

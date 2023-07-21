@@ -1,4 +1,4 @@
-package curriculumServer
+package server
 
 import (
 	controllers "codeid.revampacademy/controllers/paymentControllers"

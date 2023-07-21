@@ -3,7 +3,7 @@
 //   sqlc v1.19.0
 // source: query.sql
 
-package models
+package gen
 
 import (
 	"context"
@@ -690,6 +690,62 @@ func (q *Queries) CreateLicense(ctx context.Context, arg CreateLicenseParams) (i
 	var usli_id int32
 	err := row.Scan(&usli_id)
 	return usli_id, err
+}
+
+const createMasterAddress = `-- name: CreateMasterAddress :one
+INSERT INTO master.address (addr_id, addr_line1, addr_line2, addr_postal_code, addr_spatial_location, addr_modified_date, addr_city_id)
+VALUES($1, $2, $3, $4, $5, $6, $7)
+RETURNING addr_id
+`
+
+type CreateMasterAddressParams struct {
+	AddrID              int32          `db:"addr_id" json:"addrId"`
+	AddrLine1           sql.NullString `db:"addr_line1" json:"addrLine1"`
+	AddrLine2           sql.NullString `db:"addr_line2" json:"addrLine2"`
+	AddrPostalCode      sql.NullString `db:"addr_postal_code" json:"addrPostalCode"`
+	AddrSpatialLocation sql.NullString `db:"addr_spatial_location" json:"addrSpatialLocation"`
+	AddrModifiedDate    sql.NullTime   `db:"addr_modified_date" json:"addrModifiedDate"`
+	AddrCityID          sql.NullInt32  `db:"addr_city_id" json:"addrCityId"`
+}
+
+func (q *Queries) CreateMasterAddress(ctx context.Context, arg CreateMasterAddressParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createMasterAddress,
+		arg.AddrID,
+		arg.AddrLine1,
+		arg.AddrLine2,
+		arg.AddrPostalCode,
+		arg.AddrSpatialLocation,
+		arg.AddrModifiedDate,
+		arg.AddrCityID,
+	)
+	var addr_id int32
+	err := row.Scan(&addr_id)
+	return addr_id, err
+}
+
+const createMasterCity = `-- name: CreateMasterCity :one
+INSERT INTO master.city (city_id, city_name, city_modified_date, city_prov_id)
+VALUES($1, $2, $3, $4)
+RETURNING city_id
+`
+
+type CreateMasterCityParams struct {
+	CityID           int32          `db:"city_id" json:"cityId"`
+	CityName         sql.NullString `db:"city_name" json:"cityName"`
+	CityModifiedDate sql.NullTime   `db:"city_modified_date" json:"cityModifiedDate"`
+	CityProvID       sql.NullInt32  `db:"city_prov_id" json:"cityProvId"`
+}
+
+func (q *Queries) CreateMasterCity(ctx context.Context, arg CreateMasterCityParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createMasterCity,
+		arg.CityID,
+		arg.CityName,
+		arg.CityModifiedDate,
+		arg.CityProvID,
+	)
+	var city_id int32
+	err := row.Scan(&city_id)
+	return city_id, err
 }
 
 const createMedia = `-- name: CreateMedia :one
@@ -2575,9 +2631,9 @@ WHERE usme_id = $1
 `
 
 // Users Media
-func (q *Queries) GetMedia(ctx context.Context, usmeID int32) (UsersUsersMedium, error) {
+func (q *Queries) GetMedia(ctx context.Context, usmeID int32) (UsersUsersMedia, error) {
 	row := q.db.QueryRowContext(ctx, getMedia, usmeID)
-	var i UsersUsersMedium
+	var i UsersUsersMedia
 	err := row.Scan(
 		&i.UsmeID,
 		&i.UsmeEntityID,
@@ -3973,15 +4029,15 @@ SELECT usme_id, usme_entity_id, usme_file_link, usme_filename, usme_filesize, us
 ORDER BY usme_id
 `
 
-func (q *Queries) ListMedia(ctx context.Context) ([]UsersUsersMedium, error) {
+func (q *Queries) ListMedia(ctx context.Context) ([]UsersUsersMedia, error) {
 	rows, err := q.db.QueryContext(ctx, listMedia)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []UsersUsersMedium
+	var items []UsersUsersMedia
 	for rows.Next() {
-		var i UsersUsersMedium
+		var i UsersUsersMedia
 		if err := rows.Scan(
 			&i.UsmeID,
 			&i.UsmeEntityID,
