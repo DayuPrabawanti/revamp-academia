@@ -1828,6 +1828,26 @@ func (q *Queries) DeleteLicense(ctx context.Context, usliID int32) error {
 	return err
 }
 
+const deleteMasterAddress = `-- name: DeleteMasterAddress :exec
+DELETE FROM master.address
+WHERE addr_id = $1
+`
+
+func (q *Queries) DeleteMasterAddress(ctx context.Context, addrID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteMasterAddress, addrID)
+	return err
+}
+
+const deleteMasterCity = `-- name: DeleteMasterCity :exec
+DELETE FROM master.city
+WHERE city_id = $1
+`
+
+func (q *Queries) DeleteMasterCity(ctx context.Context, cityID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteMasterCity, cityID)
+	return err
+}
+
 const deleteMedia = `-- name: DeleteMedia :exec
 DELETE FROM users.users_media
 WHERE usme_id = $1
@@ -2507,6 +2527,43 @@ func (q *Queries) GetLicense(ctx context.Context, usliID int32) (UsersUsersLicen
 		&i.UsliModifiedDate,
 		&i.UsliStatus,
 		&i.UsliEntityID,
+	)
+	return i, err
+}
+
+const getMasterAddress = `-- name: GetMasterAddress :one
+SELECT addr_id, addr_line1, addr_line2, addr_postal_code, addr_spatial_location, addr_modified_date, addr_city_id FROM master.address
+WHERE addr_id = $1
+`
+
+func (q *Queries) GetMasterAddress(ctx context.Context, addrID int32) (MasterAddress, error) {
+	row := q.db.QueryRowContext(ctx, getMasterAddress, addrID)
+	var i MasterAddress
+	err := row.Scan(
+		&i.AddrID,
+		&i.AddrLine1,
+		&i.AddrLine2,
+		&i.AddrPostalCode,
+		&i.AddrSpatialLocation,
+		&i.AddrModifiedDate,
+		&i.AddrCityID,
+	)
+	return i, err
+}
+
+const getMasterCity = `-- name: GetMasterCity :one
+SELECT city_id, city_name, city_modified_date, city_prov_id FROM master.city
+WHERE city_id = $1
+`
+
+func (q *Queries) GetMasterCity(ctx context.Context, cityID int32) (MasterCity, error) {
+	row := q.db.QueryRowContext(ctx, getMasterCity, cityID)
+	var i MasterCity
+	err := row.Scan(
+		&i.CityID,
+		&i.CityName,
+		&i.CityModifiedDate,
+		&i.CityProvID,
 	)
 	return i, err
 }
@@ -3828,6 +3885,75 @@ func (q *Queries) ListLicense(ctx context.Context) ([]UsersUsersLicense, error) 
 			&i.UsliModifiedDate,
 			&i.UsliStatus,
 			&i.UsliEntityID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMasterAddress = `-- name: ListMasterAddress :many
+SELECT addr_id, addr_line1, addr_line2, addr_postal_code, addr_spatial_location, addr_modified_date, addr_city_id FROM master.address
+ORDER BY addr_id
+`
+
+func (q *Queries) ListMasterAddress(ctx context.Context) ([]MasterAddress, error) {
+	rows, err := q.db.QueryContext(ctx, listMasterAddress)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MasterAddress
+	for rows.Next() {
+		var i MasterAddress
+		if err := rows.Scan(
+			&i.AddrID,
+			&i.AddrLine1,
+			&i.AddrLine2,
+			&i.AddrPostalCode,
+			&i.AddrSpatialLocation,
+			&i.AddrModifiedDate,
+			&i.AddrCityID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMasterCity = `-- name: ListMasterCity :many
+SELECT city_id, city_name, city_modified_date, city_prov_id FROM master.city
+ORDER BY city_id
+`
+
+func (q *Queries) ListMasterCity(ctx context.Context) ([]MasterCity, error) {
+	rows, err := q.db.QueryContext(ctx, listMasterCity)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MasterCity
+	for rows.Next() {
+		var i MasterCity
+		if err := rows.Scan(
+			&i.CityID,
+			&i.CityName,
+			&i.CityModifiedDate,
+			&i.CityProvID,
 		); err != nil {
 			return nil, err
 		}

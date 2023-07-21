@@ -73,6 +73,12 @@ type TalentsMockup struct{
 }
 
 
+type MergeJobAndMaster struct{
+	JobHirePost JobhireJobPost
+	MasterAddress MasterAddress
+	MasterCity MasterCity
+	
+}
 
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
@@ -304,7 +310,7 @@ type JobhireEmployeeRange struct {
 
 type JobhireJobCategory struct {
 	JocaID           int32          `db:"joca_id" json:"jocaId"`
-	JocaName         sql.NullString `db:"joca_name" json:"jocaName"`
+	JocaName         string `db:"joca_name" json:"jocaName"`
 	JocaModifiedDate sql.NullTime   `db:"joca_modified_date" json:"jocaModifiedDate"`
 }
 
@@ -336,7 +342,7 @@ type JobhireJobPost struct {
 	JopoJoroID         sql.NullInt32  `db:"jopo_joro_id" json:"jopoJoroId"`
 	JopoJotyID         sql.NullInt32  `db:"jopo_joty_id" json:"jopoJotyId"`
 	JopoJocaID         sql.NullInt32  `db:"jopo_joca_id" json:"jopoJocaId"`
-	JopoAddrID         sql.NullInt32  `db:"jopo_addr_id" json:"jopoAddrId"`
+	JopoAddrID         int32  `db:"jopo_addr_id" json:"jopoAddrId"`
 	JopoWorkCode       sql.NullString `db:"jopo_work_code" json:"jopoWorkCode"`
 	JopoEduCode        sql.NullString `db:"jopo_edu_code" json:"jopoEduCode"`
 	JopoInduCode       sql.NullString `db:"jopo_indu_code" json:"jopoInduCode"`
@@ -377,7 +383,7 @@ type MasterAddress struct {
 	AddrPostalCode      sql.NullString `db:"addr_postal_code" json:"addrPostalCode"`
 	AddrSpatialLocation sql.NullString `db:"addr_spatial_location" json:"addrSpatialLocation"`
 	AddrModifiedDate    sql.NullTime   `db:"addr_modified_date" json:"addrModifiedDate"`
-	AddrCityID          sql.NullInt32  `db:"addr_city_id" json:"addrCityId"`
+	AddrCityID          int32  `db:"addr_city_id" json:"addrCityId"`
 }
 
 type MasterAddressType struct {

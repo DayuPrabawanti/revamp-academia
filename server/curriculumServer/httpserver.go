@@ -6,12 +6,15 @@ import (
 
 	controllers "codeid.revampacademy/controllers/curriculumControllers"
 	"codeid.revampacademy/controllers/hrController"
+	"codeid.revampacademy/controllers/jobhireController"
 	"codeid.revampacademy/controllers/paymentControllers"
 	repo "codeid.revampacademy/repositories/curriculumRepositories"
 	"codeid.revampacademy/repositories/hrRepository"
+	"codeid.revampacademy/repositories/jobhireRepositories"
 	"codeid.revampacademy/repositories/paymentRepositories"
 	services "codeid.revampacademy/services/curriculumServices"
 	"codeid.revampacademy/services/hrService"
+	"codeid.revampacademy/services/jobhireService"
 	"codeid.revampacademy/services/paymentServices"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
@@ -24,6 +27,7 @@ type HttpServer struct {
 	controllerManager         controllers.ControllerManager
 	hrcontrollerManager       hrController.ControllerManager
 	paymentControllersManager paymentControllers.ControllersManager
+	jobhirecontrollerManager  jobhireController.ControllerManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
@@ -39,10 +43,15 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 	paymentservicesManager := paymentServices.NewServicesManager(paymentrepositoriesManager)
 	paymentcontrollersManager := paymentControllers.NewControllersManager(paymentservicesManager)
 
+	jobhirerepositoryManager := jobhireRepositories.NewRepositoryManager(dbHandler)
+	jobhireserviceManager := jobhireService.NewServiceManager(jobhirerepositoryManager)
+	jobhirecontrollerManager := jobhireController.NewControllerManager(jobhireserviceManager)
+
 	router := gin.Default()
 	InitRouter(router, controllerManager)
 	InitRouterHR(router, hrcontrollerManager)
 	InitRouterPayment(router, paymentcontrollersManager)
+	InitRouterJobhire(router, jobhirecontrollerManager)
 
 	//router.POST("/creategabungmockup", progentityController.CreateGabungbyMockup)
 	//router.PUT("/updategabung/:id", progentityController.UpdateGabung)
@@ -53,6 +62,7 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 		controllerManager:         *controllerManager,
 		hrcontrollerManager:       *hrcontrollerManager,
 		paymentControllersManager: *paymentcontrollersManager,
+		jobhirecontrollerManager:  *jobhirecontrollerManager,
 	}
 }
 
