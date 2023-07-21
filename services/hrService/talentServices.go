@@ -1,16 +1,16 @@
-package services
+package hrService
 
 import (
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
+	hr "codeid.revampacademy/repositories/hrRepository"
 	"github.com/gin-gonic/gin"
 )
 
 type TalentsMockupService struct {
-	talentRepository *repositories.TalentsMockupRepository
+	talentRepository *hr.TalentsMockupRepository
 }
 
-func NewTalentMockupService(talentRepository *repositories.TalentsMockupRepository) *TalentsMockupService {
+func NewTalentMockupService(talentRepository *hr.TalentsMockupRepository) *TalentsMockupService {
 	return &TalentsMockupService{
 		// struct				parameter
 		talentRepository: talentRepository,
