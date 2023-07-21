@@ -1,6 +1,6 @@
 [database]
 
-connection_string = "host=localhost port=5432 user=postgres password=admin dbname=modulsales sslmode=disable"
+connection_string = "host=localhost port=5432 user=postgres password=admin dbname=revampacademia sslmode=disable"
 max_idle_connections = 5
 max_open_connections = 20
 connection_max_lifetime = "60s"
@@ -10,5 +10,5 @@ driver_name = "postgres"
 
 [http]
 
-server_address = ":8888"
+server_address = ":8886"
 ###############################################################################

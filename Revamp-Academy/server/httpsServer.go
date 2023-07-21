@@ -4,66 +4,35 @@ import (
 	"database/sql"
 	"log"
 
-	"codeid.revampacademy/controller"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/controller/salesController"
+	"codeid.revampacademy/repositories/salesRepositories"
+	"codeid.revampacademy/services/salesServices"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
 type HttpServer struct {
-	config                 *viper.Viper
-	router                 *gin.Engine
-	CartItemsController    *controller.CartItemsController
-	controllerMockup       *controller.ControllerMock
-	specialOfferController *controller.SpecialOfferController
+	config *viper.Viper
+	router *gin.Engine
+
+	ControllerManager salesController.ControllerManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
 
-	cartItemsRepository := repositories.NewCartItemsRepository(dbHandler)
+	repositoryManager := salesRepositories.NewRepositoryManager(dbHandler)
 
-	cartItemsService := services.NewCartItemsRepository(cartItemsRepository)
+	serviceManager := salesServices.NewServiceManager(repositoryManager)
 
-	cartItemsController := controller.NewCartItemsController(cartItemsService)
+	controllerManager := salesController.NewControllerManager(serviceManager)
 
-	repositoryMock := repositories.NewRepositoryMock(dbHandler)
-
-	serviceMock := services.NewServiceMock(repositoryMock)
-
-	controllerMock := controller.NewRepositoryMock(serviceMock)
-
-	specialOfferRepository := repositories.NewSpecialOfferRepository(dbHandler)
-
-	specialOfferService := services.NewSpecialOfferService(specialOfferRepository)
-
-	specialOfferController := controller.NewSpecialController(specialOfferService)
-
-	router := gin.Default()
-	// router endpoint
-
-	//cartitems
-	// router.GET("/cartItems", cartItemsController.GetListCartItems)
-	router.GET("/cartItems/:id", cartItemsController.Getcart_items)
-	// router.POST("/cartItems", cartItemsController.CreatecartItems)
-
-	// router.PUT("/cartItems/:id", cartItemsController.UpdatecartItems)
-	// router.DELETE("/cartItems/:id", cartItemsController.DeletecartItems)
-
-	//curriculum.prog_entity
-	router.GET("/api/bootcamp/search", controllerMock.GetMockup1)
-
-	//specialoffer
-	router.GET("/specialOffer", specialOfferController.GetListSpecialOffer)
-	router.GET("/specialOffer/:id", specialOfferController.GetSpecial_offer)
-	router.POST("/specialOffer", specialOfferController.CreateSpecialOffer)
+	// router := gin.Default()
+	router := InitRouter(controllerManager)
 
 	return HttpServer{
-		config:                 config,
-		router:                 router,
-		CartItemsController:    cartItemsController,
-		controllerMockup:       controllerMock,
-		specialOfferController: specialOfferController,
+		config:            config,
+		router:            router,
+		ControllerManager: *controllerManager,
 	}
 }
 

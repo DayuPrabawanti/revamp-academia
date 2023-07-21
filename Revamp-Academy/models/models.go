@@ -434,12 +434,12 @@ type PaymentUsersAccount struct {
 }
 
 type SalesCartItem struct {
-	CaitID           int32        `db:"cait_id" json:"caitId"`
-	CaitQuantity     int32        `db:"cait_quantity" json:"caitQuantity"`
-	CaitUnitPrice    string       `db:"cait_unit_price" json:"caitUnitPrice"`
-	CaitModifiedDate sql.NullTime `db:"cait_modified_date" json:"caitModifiedDate"`
-	CaitUserEntityID int32        `db:"cait_user_entity_id" json:"caitUserEntityId"`
-	CaitProgEntityID int32        `db:"cait_prog_entity_id" json:"caitProgEntityId"`
+	CaitID           int32          `db:"cait_id" json:"caitId"`
+	CaitQuantity     int32          `db:"cait_quantity" json:"caitQuantity"`
+	CaitUnitPrice    sql.NullString `db:"cait_unit_price" json:"caitUnitPrice"`
+	CaitModifiedDate sql.NullTime   `db:"cait_modified_date" json:"caitModifiedDate"`
+	CaitUserEntityID int32          `db:"cait_user_entity_id" json:"caitUserEntityId"`
+	CaitProgEntityID int32          `db:"cait_prog_entity_id" json:"caitProgEntityId"`
 }
 
 type SalesSalesOrderDetail struct {
@@ -471,16 +471,16 @@ type SalesSalesOrderHeader struct {
 }
 
 type SalesSpecialOffer struct {
-	SpofID           int32        `db:"spof_id" json:"spofId"`
-	SpofDescription  string       `db:"spof_description" json:"spofDescription"`
-	SpofDiscount     int32        `db:"spof_discount" json:"spofDiscount"`
-	SpofType         string       `db:"spof_type" json:"spofType"`
-	SpofStartDate    sql.NullTime `db:"spof_start_date" json:"spofStartDate"`
-	SpofEndDate      sql.NullTime `db:"spof_end_date" json:"spofEndDate"`
-	SpofMinQty       int32        `db:"spof_min_qty" json:"spofMinQty"`
-	SpofMaxQty       int32        `db:"spof_max_qty" json:"spofMaxQty"`
-	SpofModifiedDate sql.NullTime `db:"spof_modified_date" json:"spofModifiedDate"`
-	SpofCateID       int32        `db:"spof_cate_id" json:"spofCateId"`
+	SpofID           int32          `db:"spof_id" json:"spofId"`
+	SpofDescription  string         `db:"spof_description" json:"spofDescription"`
+	SpofDiscount     int32          `db:"spof_discount" json:"spofDiscount"`
+	SpofType         sql.NullString `db:"spof_type" json:"spofType"`
+	SpofStartDate    sql.NullTime   `db:"spof_start_date" json:"spofStartDate"`
+	SpofEndDate      sql.NullTime   `db:"spof_end_date" json:"spofEndDate"`
+	SpofMinQty       int32          `db:"spof_min_qty" json:"spofMinQty"`
+	SpofMaxQty       int32          `db:"spof_max_qty" json:"spofMaxQty"`
+	SpofModifiedDate sql.NullTime   `db:"spof_modified_date" json:"spofModifiedDate"`
+	SpofCateID       int32          `db:"spof_cate_id" json:"spofCateId"`
 }
 
 type SalesSpecialOfferProgram struct {
@@ -529,18 +529,18 @@ type UsersUsersAddress struct {
 }
 
 type UsersUsersEducation struct {
-	UsduID           int32        `db:"usdu_id" json:"usduId"`
-	UsduEntityID     int32        `db:"usdu_entity_id" json:"usduEntityId"`
-	UsduSchool       string       `db:"usdu_school" json:"usduSchool"`
-	UsduDegree       string       `db:"usdu_degree" json:"usduDegree"`
-	UsduFieldStudy   string       `db:"usdu_field_study" json:"usduFieldStudy"`
-	UsduGraduateYear string       `db:"usdu_graduate_year" json:"usduGraduateYear"`
-	UsduStartDate    sql.NullTime `db:"usdu_start_date" json:"usduStartDate"`
-	UsduEndDate      sql.NullTime `db:"usdu_end_date" json:"usduEndDate"`
-	UsduGrade        string       `db:"usdu_grade" json:"usduGrade"`
-	UsduActivities   string       `db:"usdu_activities" json:"usduActivities"`
-	UsduDescription  string       `db:"usdu_description" json:"usduDescription"`
-	UsduModifiedDate sql.NullTime `db:"usdu_modified_date" json:"usduModifiedDate"`
+	UsduID           int32          `db:"usdu_id" json:"usduId"`
+	UsduEntityID     int32          `db:"usdu_entity_id" json:"usduEntityId"`
+	UsduSchool       string         `db:"usdu_school" json:"usduSchool"`
+	UsduDegree       string         `db:"usdu_degree" json:"usduDegree"`
+	UsduFieldStudy   string         `db:"usdu_field_study" json:"usduFieldStudy"`
+	UsduGraduateYear sql.NullString `db:"usdu_graduate_year" json:"usduGraduateYear"`
+	UsduStartDate    sql.NullTime   `db:"usdu_start_date" json:"usduStartDate"`
+	UsduEndDate      sql.NullTime   `db:"usdu_end_date" json:"usduEndDate"`
+	UsduGrade        string         `db:"usdu_grade" json:"usduGrade"`
+	UsduActivities   string         `db:"usdu_activities" json:"usduActivities"`
+	UsduDescription  sql.NullString `db:"usdu_description" json:"usduDescription"`
+	UsduModifiedDate sql.NullTime   `db:"usdu_modified_date" json:"usduModifiedDate"`
 }
 
 type UsersUsersEmail struct {
