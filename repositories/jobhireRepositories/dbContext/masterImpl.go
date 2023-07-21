@@ -1,4 +1,4 @@
-package jobhireContext
+package dbContext
 
 import (
 	"context"

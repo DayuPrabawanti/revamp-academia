@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/jobhireContext"
+	"codeid.revampacademy/repositories/jobhireRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +22,7 @@ func NewJobPostRepo(dbHandler *sql.DB) *JobHirePostRepo {
 }
 
 func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context) ([]*models.JobhireJobPost, *models.ResponseError) {
-	market := jobhireContext.New(jp.dbHandler)
+	market := dbContext.New(jp.dbHandler)
 	jobPost, err := market.GetListJobPost(ctx)
 
 	listjobPost := make([]*models.JobhireJobPost, 0)
@@ -67,7 +67,7 @@ func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context) ([]*models.JobhireJob
 }
 
 func (jp JobHirePostRepo) GetListJobPostMerge(ctx *gin.Context) ([]*models.MergeJobAndMaster, *models.ResponseError) {
-	market := jobhireContext.New(jp.dbHandler)
+	market := dbContext.New(jp.dbHandler)
 	jobPost, err := market.ListJobPost(ctx)
 
 	listjobPost := make([]*models.MergeJobAndMaster, 0)

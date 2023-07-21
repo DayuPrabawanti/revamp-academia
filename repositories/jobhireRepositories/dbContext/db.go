@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.19.0
 
-package jobhireContext
+package dbContext
 
 import (
 	"context"

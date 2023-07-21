@@ -5,8 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	// "codeid.revampacademy/repositories/dbContext"
-	"codeid.revampacademy/repositories/dbContext/jobhireContext"
+	"codeid.revampacademy/repositories/jobhireRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +21,7 @@ func NewCategoryRepo(dbHandler *sql.DB) *CategoryRepo {
 }
 
 func (cr CategoryRepo) GetListCategoryJob(ctx *gin.Context) ([]*models.JobhireJobCategory, *models.ResponseError) {
-	market := jobhireContext.New(cr.dbHandler)
+	market := dbContext.New(cr.dbHandler)
 	categories, err := market.ListCategories(ctx)
 
 	listCategories := make([]*models.JobhireJobCategory, 0)

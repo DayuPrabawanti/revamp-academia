@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/jobhireContext"
+	"codeid.revampacademy/repositories/jobhireRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ func NewMasterRepo(dbHandler *sql.DB) *MasterRepo {
 }
 
 func (mr MasterRepo) GetListMasterAddress(ctx *gin.Context) ([]*models.MasterAddress, *models.ResponseError) {
-	market := jobhireContext.New(mr.dbHandler)
+	market := dbContext.New(mr.dbHandler)
 	address, err := market.ListMasterAddress(ctx)
 
 	listAddress := make([]*models.MasterAddress, 0)
@@ -50,7 +50,7 @@ func (mr MasterRepo) GetListMasterAddress(ctx *gin.Context) ([]*models.MasterAdd
 }
 
 func (mr MasterRepo) GetListMasterCity(ctx *gin.Context) ([]*models.MasterCity, *models.ResponseError) {
-	market := jobhireContext.New(mr.dbHandler)
+	market := dbContext.New(mr.dbHandler)
 	city, err := market.ListMasterCity(ctx)
 
 	listCity := make([]*models.MasterCity, 0)
