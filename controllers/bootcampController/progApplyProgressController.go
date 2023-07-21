@@ -1,18 +1,18 @@
-package controllers
+package bootcampController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/services/bootcampService"
 	"github.com/gin-gonic/gin"
 )
 
 type ProgramApplyProgressController struct {
-	programApplyProgressService *services.ProgramApplyProgressService
+	programApplyProgressService *bootcampService.ProgramApplyProgressService
 }
 
 // declare constructor
-func NewProgramApplyProgressController(programApplyProgressService *services.ProgramApplyProgressService) *ProgramApplyProgressController {
+func NewProgramApplyProgressController(programApplyProgressService *bootcampService.ProgramApplyProgressService) *ProgramApplyProgressController {
 	return &ProgramApplyProgressController{
 		programApplyProgressService: programApplyProgressService,
 	}

@@ -1,16 +1,16 @@
-package services
+package bootcampService
 
 import (
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
+	"codeid.revampacademy/repositories/bootcampRepository"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchTraineeService struct {
-	batchTraineeRepository *repositories.BatchTraineeRepository
+	batchTraineeRepository *bootcampRepository.BatchTraineeRepository
 }
 
-func NewBatchTraineeService(batchTraineeRepository *repositories.BatchTraineeRepository) *BatchTraineeService {
+func NewBatchTraineeService(batchTraineeRepository *bootcampRepository.BatchTraineeRepository) *BatchTraineeService {
 	return &BatchTraineeService{
 		batchTraineeRepository: batchTraineeRepository,
 	}

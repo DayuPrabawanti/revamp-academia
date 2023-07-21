@@ -1,4 +1,4 @@
-package controllers
+package bootcampController
 
 import (
 	"encoding/json"
@@ -7,17 +7,17 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/bootcamp/dbContext"
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
+	"codeid.revampacademy/services/bootcampService"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchController struct {
-	batchService *services.BatchService
+	batchService *bootcampService.BatchService
 }
 
 // declare constructor
-func NewBatchController(batchService *services.BatchService) *BatchController {
+func NewBatchController(batchService *bootcampService.BatchService) *BatchController {
 	return &BatchController{
 		batchService: batchService,
 	}

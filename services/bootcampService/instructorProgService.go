@@ -1,16 +1,16 @@
-package services
+package bootcampService
 
 import (
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
+	"codeid.revampacademy/repositories/bootcampRepository"
 	"github.com/gin-gonic/gin"
 )
 
 type InstructorProgramService struct {
-	instructorProgramRepository *repositories.InstructorProgramRepository
+	instructorProgramRepository *bootcampRepository.InstructorProgramRepository
 }
 
-func NewInstructorProgramService(instructorProgramRepository *repositories.InstructorProgramRepository) *InstructorProgramService {
+func NewInstructorProgramService(instructorProgramRepository *bootcampRepository.InstructorProgramRepository) *InstructorProgramService {
 	return &InstructorProgramService{
 		instructorProgramRepository: instructorProgramRepository,
 	}

@@ -7,14 +7,27 @@ package models
 import (
 	"database/sql"
 	"time"
-
 )
 
-type Group struct{
-	BootcampBatch 					BootcampBatch
-	BootcampBatchTraineeEvaluation 	BootcampBatchTraineeEvaluation	
-	CurriculumProgramEntity 		CurriculumProgramEntity
-	UsersUser 						UsersUser
+type BootcampBatchList []BootcampBatch
+type BootcampBatchTraineeEvaluationList []BootcampBatchTraineeEvaluation
+type CurriculumProgramEntityList []CurriculumProgramEntity
+type UsersUserList []UsersUser
+type UsersUsersEducationList []UsersUsersEducation
+
+type BootcampBatchEvaluationMockup struct {
+	BootcampBatch                  BootcampBatch
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	CurriculumProgramEntity        CurriculumProgramEntity
+	UsersUser                      UsersUser
+}
+
+type EvaluationCandidateMockup struct {
+	BootcampBatch                  BootcampBatch
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	CurriculumProgramEntity        CurriculumProgramEntity
+	UsersUser                      UsersUser
+	UsersUsersEducation            UsersUsersEducation
 }
 
 type BootcampBatch struct {
@@ -112,7 +125,7 @@ type CurriculumProgramEntity struct {
 }
 
 type CurriculumProgramEntityDescription struct {
-	PredProgEntityID int32                 `db:"pred_prog_entity_id" json:"predProgEntityId"`
+	PredProgEntityID int32          `db:"pred_prog_entity_id" json:"predProgEntityId"`
 	PredItemLearning sql.NullString `db:"pred_item_learning" json:"predItemLearning"`
 	PredItemInclude  sql.NullString `db:"pred_item_include" json:"predItemInclude"`
 	PredRequirement  sql.NullString `db:"pred_requirement" json:"predRequirement"`
@@ -275,7 +288,7 @@ type JobhireJobPost struct {
 }
 
 type JobhireJobPostDesc struct {
-	JopoEntityID       int32                 `db:"jopo_entity_id" json:"jopoEntityId"`
+	JopoEntityID       int32          `db:"jopo_entity_id" json:"jopoEntityId"`
 	JopoDescription    sql.NullString `db:"jopo_description" json:"jopoDescription"`
 	JopoResponsibility sql.NullString `db:"jopo_responsibility" json:"jopoResponsibility"`
 	JopoTarget         sql.NullString `db:"jopo_target" json:"jopoTarget"`

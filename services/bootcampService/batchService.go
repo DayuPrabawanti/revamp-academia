@@ -1,19 +1,19 @@
-package services
+package bootcampService
 
 import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/repositories/bootcamp/dbContext"
+	"codeid.revampacademy/repositories/bootcampRepository"
+	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchService struct {
-	batchRepository *repositories.BatchRepository
+	batchRepository *bootcampRepository.BatchRepository
 }
 
-func NewBatchService(batchRepository *repositories.BatchRepository) *BatchService {
+func NewBatchService(batchRepository *bootcampRepository.BatchRepository) *BatchService {
 	return &BatchService{
 		batchRepository: batchRepository,
 	}
@@ -48,6 +48,10 @@ func (bs BatchService) UpdateBatch(ctx *gin.Context, batchParams *dbContext.Crea
 func (bs BatchService) DeleteBatch(ctx *gin.Context, id int64) *models.ResponseError {
 	return bs.batchRepository.DeleteBatch(ctx, id)
 }
+
+// func (bs BatchService) GetBatchEvaluationView(ctx *gin.Context, batchID int64) (*models.BootcampBatchEvaluationView, *models.ResponseError) {
+// 	return bs.batchRepository.GetBatchEvaluationView(ctx, batchID)
+// }
 
 func validateBatch(batchParams *dbContext.CreateBatchParams) *models.ResponseError {
 	if batchParams.BatchID == 0 {

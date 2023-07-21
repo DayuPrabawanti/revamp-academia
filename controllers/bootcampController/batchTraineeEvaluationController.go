@@ -1,18 +1,18 @@
-package controllers
+package bootcampController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/services/bootcampService"
 	"github.com/gin-gonic/gin"
 )
 
 type BatchTraineeEvaluationController struct {
-	batchTraineeEvaluationService *services.BatchTraineeEvaluationService
+	batchTraineeEvaluationService *bootcampService.BatchTraineeEvaluationService
 }
 
 // declare constructor
-func NewBatchTraineeEvaluationController(batchTraineeEvaluationService *services.BatchTraineeEvaluationService) *BatchTraineeEvaluationController {
+func NewBatchTraineeEvaluationController(batchTraineeEvaluationService *bootcampService.BatchTraineeEvaluationService) *BatchTraineeEvaluationController {
 	return &BatchTraineeEvaluationController{
 		batchTraineeEvaluationService: batchTraineeEvaluationService,
 	}
