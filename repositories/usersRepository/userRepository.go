@@ -57,7 +57,7 @@ func (cr UserRepository) GetListUsers(ctx *gin.Context) ([]*models.UsersUser, *m
 func (cr UserRepository) GetUser(ctx *gin.Context, id int32) (*models.UsersUser, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
-	category, err := store.GetUser(ctx, int32(id))
+	user, err := store.GetUser(ctx, int32(id))
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -66,7 +66,7 @@ func (cr UserRepository) GetUser(ctx *gin.Context, id int32) (*models.UsersUser,
 		}
 	}
 
-	return &category, nil
+	return &user, nil
 }
 
 func (cr UserRepository) CreateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams) (*models.UsersUser, *models.ResponseError) {

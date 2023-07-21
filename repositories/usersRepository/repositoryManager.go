@@ -7,6 +7,7 @@ type RepositoryManager struct {
 	UserEmailRepository
 	UserPhoneRepository
 	SignUpRepository
+	UserExperienceRepository
 }
 
 // constructor
@@ -16,5 +17,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserEmailRepository(dbHandler),
 		*NewUserPhoneRepository(dbHandler),
 		*NewSignUpRepository(dbHandler),
+		*NewUserExperienceRepository(dbHandler),
 	}
 }

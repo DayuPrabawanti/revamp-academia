@@ -46,5 +46,15 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		// userSignup.PUT("/:id", controllerMgr.CategoryController.UpdateCategory)
 		// userSignup.DELETE("/:id", controllerMgr.CategoryController.DeleteCategory)
 	}
+
+	userExperienceRoute := routers.Group("/usersexperience")
+	{
+			// Router endpoint (url) http category
+		userExperienceRoute.GET("/", controllerMgr.UserExperienceController.GetListUserExperience)
+		userExperienceRoute.GET("/:id", controllerMgr.UserExperienceController.GetExperience)
+		userExperienceRoute.POST("/", controllerMgr.UserExperienceController.CreateExperience)
+		userExperienceRoute.PUT("/:id", controllerMgr.UserExperienceController.UpdateExperience)
+		userExperienceRoute.DELETE("/:id", controllerMgr.UserExperienceController.DeleteExperience)
+	}
 	return routers
 }
