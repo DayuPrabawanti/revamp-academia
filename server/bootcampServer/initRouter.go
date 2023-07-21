@@ -19,6 +19,10 @@ func InitRouter(router *gin.Engine, controllerMgr *bootcampController.Controller
 
 		batchRoute.GET("/batch/search", controllerMgr.BatchController.SearchBatch)
 		batchRoute.GET("/batch/paging", controllerMgr.BatchController.PagingBatch)
+
+		// evaluation
+		batchRoute.GET("/batch/evaluation/view", controllerMgr.BootcampBatchEvaluationController.GetListBootcampBatchEvaluation)
+
 	}
 	return router
 }
