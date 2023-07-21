@@ -37,6 +37,7 @@ func (tdmr TalentsDetailMockupRepository) GetListTalentDetailMockup(ctx *gin.Con
 			UsersUsersEmail:         v.UsersUsersEmail,
 			HrEmployee:              v.HrEmployee,
 			BootcampBatch:           v.BootcampBatch,
+			BootcampBatchTrainee:    v.BootcampBatchTrainee,
 			CurriculumProgramEntity: v.CurriculumProgramEntity,
 		}
 		listTalentDetail = append(listTalentDetail, talents)
@@ -50,4 +51,19 @@ func (tdmr TalentsDetailMockupRepository) GetListTalentDetailMockup(ctx *gin.Con
 	}
 
 	return listTalentDetail, nil
+}
+
+func (tdmr TalentsDetailMockupRepository) GetTalentDetail(ctx *gin.Context, id int64) (*models.TalentsDetailMockup, *models.ResponseError) {
+
+	store := dbContext.New(tdmr.dbHandler)
+	talentDetails, err := store.GetTalentDetail(ctx, int32(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &talentDetails, nil
 }

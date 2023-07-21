@@ -58,16 +58,20 @@ func InitRouter(routers *gin.Engine, controllerMgr *hrController.ControllerManag
 		payHistoryRoute.DELETE("/:id", controllerMgr.PayHistoryController.DeletePayHistory)
 	}
 
-	talentDetailRoute := routers.Group("/talentdetail")
+	talentDetailRoute := routers.Group("/api/hr")
 	{
 		// routers endpoint/url http category
-		talentDetailRoute.GET("", controllerMgr.TalentsDetailMockupController.GetListTalentDetailMockupDetail)
+		talentDetailRoute.GET("/talentdetail", controllerMgr.TalentsDetailMockupController.GetListTalentDetailMockupDetail)
+		talentDetailRoute.GET("/talentdetail/:id", controllerMgr.TalentsDetailMockupController.GetTalentDetail)
+
 	}
 
-	talentRoute := routers.Group("/talent")
+	talentRoute := routers.Group("/api/hr")
 	{
 		// routers endpoint/url http category
-		talentRoute.GET("", controllerMgr.TalentsMockupController.GetListTalentMockup)
+		talentRoute.GET("/talent", controllerMgr.TalentsMockupController.GetListTalentMockup)
+		talentRoute.GET("/talent/search", controllerMgr.TalentsMockupController.SearchTalent)
+		talentRoute.GET("/talent/paging", controllerMgr.TalentsMockupController.PagingTalent)
 	}
 	return routers
 }

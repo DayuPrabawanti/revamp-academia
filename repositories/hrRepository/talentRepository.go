@@ -29,11 +29,13 @@ func (tmr TalentsMockupRepository) GetListTalentMockup(ctx *gin.Context) ([]*mod
 
 	for _, v := range talent {
 		talents := &models.TalentsMockup{
-			HrEmployee:      v.HrEmployee,
-			UsersUser:       v.UsersUser,
-			UsersUsersSkill: v.UsersUsersSkill,
-			BootcampBatch:   v.BootcampBatch,
-			MasterSkillType: v.MasterSkillType,
+			MasterCategory:          v.MasterCategory,
+			MasterSkillType:         v.MasterSkillType,
+			UsersUser:               v.UsersUser,
+			UsersUsersSkill:         v.UsersUsersSkill,
+			HrEmployee:              v.HrEmployee,
+			BootcampBatch:           v.BootcampBatch,
+			CurriculumProgramEntity: v.CurriculumProgramEntity,
 		}
 		listTalent = append(listTalent, talents)
 	}
@@ -46,4 +48,34 @@ func (tmr TalentsMockupRepository) GetListTalentMockup(ctx *gin.Context) ([]*mod
 	}
 
 	return listTalent, nil
+}
+
+func (tl TalentsMockupRepository) SearchTalent(ctx *gin.Context, userName, userSkill, batchName, status string) ([]models.TalentsMockup, *models.ResponseError) {
+	// Perform validation, if needed, for batchName and status
+	// If validation fails, return appropriate response error
+
+	store := dbContext.New(tl.dbHandler)
+	talents, err := store.SearchTalent(ctx, userName, userSkill, batchName, status)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to search talents",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return talents, nil
+}
+
+func (tl TalentsMockupRepository) PagingTalent(ctx *gin.Context, offset, pageSize int) ([]models.TalentsMockup, *models.ResponseError) {
+
+	store := dbContext.New(tl.dbHandler)
+	talents, err := store.PagingTalent(ctx, offset, pageSize)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to fetch talents",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return talents, nil
 }

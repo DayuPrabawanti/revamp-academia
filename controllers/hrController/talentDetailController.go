@@ -1,7 +1,9 @@
 package hrController
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/services/hrService"
 	"github.com/gin-gonic/gin"
@@ -29,4 +31,24 @@ func (talentDetailController TalentsDetailMockupController) GetListTalentDetailM
 	ctx.JSON(http.StatusOK, responses)
 
 	// ctx.JSON(http.StatusOK, "Hello gin framework")
+}
+
+func (talentDetailController TalentsDetailMockupController) GetTalentDetail(ctx *gin.Context) {
+
+	user_entity_id, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	response, responseErr := talentDetailController.talentDetailService.GetTalentDetail(ctx, int64(user_entity_id))
+	if responseErr != nil {
+
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }

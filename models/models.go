@@ -29,15 +29,18 @@ type TalentsDetailMockup struct{
 	UsersUsersEmail		UsersUsersEmail
 	HrEmployee 			HrEmployee
 	BootcampBatch 		BootcampBatch
+	BootcampBatchTrainee BootcampBatchTrainee
 	CurriculumProgramEntity CurriculumProgramEntity
 }
 
 type TalentsMockup struct{
-	BootcampBatch BootcampBatch
-	UsersUser UsersUser
-	UsersUsersSkill UsersUsersSkill
-	MasterSkillType MasterSkillType
-	HrEmployee HrEmployee 
+	MasterCategory		MasterCategory
+	MasterSkillType		MasterSkillType
+	UsersUser 			UsersUser
+	UsersUsersSkill		UsersUsersSkill
+	HrEmployee 			HrEmployee
+	BootcampBatch 		BootcampBatch
+	CurriculumProgramEntity CurriculumProgramEntity
 }
 
 type BootcampBatch struct {

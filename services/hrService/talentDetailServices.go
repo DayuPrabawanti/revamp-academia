@@ -20,3 +20,7 @@ func NewTalentDetailMockupService(talentDetailRepository *hrRepository.TalentsDe
 func (tdms TalentsDetailMockupService) GetListTalentDetailMockup(ctx *gin.Context) ([]*models.TalentsDetailMockup, *models.ResponseError) {
 	return tdms.talentDetailRepository.GetListTalentDetailMockup(ctx)
 }
+
+func (tdms TalentsDetailMockupService) GetTalentDetail(ctx *gin.Context, id int64) (*models.TalentsDetailMockup, *models.ResponseError) {
+	return tdms.talentDetailRepository.GetTalentDetail(ctx, id)
+}
