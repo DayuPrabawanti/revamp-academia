@@ -8,6 +8,7 @@ import (
 
 const listBootcampBatchEvaluations = `-- name: Group :many
 SELECT 
+    b.batch_id,  
     b.batch_name,  
     pe.prog_title,
     us.user_photo,
@@ -23,11 +24,12 @@ JOIN
 JOIN 
     bootcamp.batch_trainee_evaluation bte ON b.batch_id = bte.btev_batch_id
 ORDER BY
-    b.batch_name;
+	b.batch_id;
 `
 
-func (q *Queries) ListBootcampBatchEvaluation(ctx context.Context) ([]models.BootcampBatchEvaluationMockup, error) {
-	rows, err := q.db.QueryContext(ctx, listBootcampBatchEvaluations)
+func (q *Queries) ListBootcampBatchEvaluation(ctx context.Context, batchId int32) ([]models.BootcampBatchEvaluationMockup, error) {
+	rows, err := q.db.QueryContext(ctx, listBootcampBatchEvaluations, batchId)
+
 	if err != nil {
 		return nil, err
 	}

@@ -16,6 +16,6 @@ func NewBootcampBatchEvaluationService(bootcampBatchEvaluationRepository *bootca
 	}
 }
 
-func (bes BootcampBatchEvaluationService) GetListBootcampBatchEvaluation(ctx *gin.Context) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
-	return bes.bootcampBatchEvaluationRepository.GetListBootcampBatchEvaluation(ctx)
+func (bes BootcampBatchEvaluationService) GetListBootcampBatchEvaluation(ctx *gin.Context, batchId int32) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
+	return bes.bootcampBatchEvaluationRepository.GetListBootcampBatchEvaluation(ctx, batchId)
 }

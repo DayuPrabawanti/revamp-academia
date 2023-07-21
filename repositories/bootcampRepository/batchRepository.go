@@ -163,33 +163,6 @@ func (br BatchRepository) GetListUsers(ctx *gin.Context) ([]*models.UsersUser, *
 	return listUsers, nil
 }
 
-func (br BatchRepository) GetListBootcampBatchEvaluation(ctx *gin.Context) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
-
-	store := dbContext.New(br.dbHandler)
-	bootcampBatchEvs, err := store.ListBootcampBatchEvaluation(ctx)
-
-	listBootcampBatchEvaluations := make([]*models.BootcampBatchEvaluationMockup, 0)
-
-	for _, v := range bootcampBatchEvs {
-		bootcampBatchEv := &models.BootcampBatchEvaluationMockup{
-			BootcampBatch:                  v.BootcampBatch,
-			BootcampBatchTraineeEvaluation: v.BootcampBatchTraineeEvaluation,
-			CurriculumProgramEntity:        v.CurriculumProgramEntity,
-			UsersUser:                      v.UsersUser,
-		}
-		listBootcampBatchEvaluations = append(listBootcampBatchEvaluations, bootcampBatchEv)
-	}
-
-	if err != nil {
-		return nil, &models.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
-	}
-
-	return listBootcampBatchEvaluations, nil
-}
-
 func (br BatchRepository) GetBatch(ctx *gin.Context, id int64) (*models.BootcampBatch, *models.ResponseError) {
 
 	store := dbContext.New(br.dbHandler)

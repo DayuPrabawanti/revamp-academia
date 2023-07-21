@@ -20,10 +20,10 @@ func NewBootcampBatchEvaluationRepository(dbHandler *sql.DB) *BootcampBatchEvalu
 	}
 }
 
-func (ber BootcampBatchEvaluationRepository) GetListBootcampBatchEvaluation(ctx *gin.Context) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
+func (ber BootcampBatchEvaluationRepository) GetListBootcampBatchEvaluation(ctx *gin.Context, batchId int32) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
 
 	store := dbContext.New(ber.dbHandler)
-	bootcampBatchEvs, err := store.ListBootcampBatchEvaluation(ctx)
+	bootcampBatchEvs, err := store.ListBootcampBatchEvaluation(ctx, batchId)
 
 	listBootcampBatchEvaluations := make([]*models.BootcampBatchEvaluationMockup, 0)
 
