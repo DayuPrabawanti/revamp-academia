@@ -14,14 +14,14 @@ func getConfigFileName() string {
 	env := os.Getenv("ENV")
 
 	if env != "" {
-		return "revamp_academy" + env
+		return "revamp_academia" + env
 	}
 	// == file revamp_academy.toml
-	return "revamp_academy"
+	return "revamp_academia"
 }
 
 func main() {
-	log.Println("Starting revamp_academy restapi")
+	log.Println("Starting revamp_academia restapi")
 
 	log.Println("Initializing configuration")
 	config := config.InitConfig(getConfigFileName())

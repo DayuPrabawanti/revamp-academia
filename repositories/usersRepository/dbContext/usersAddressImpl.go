@@ -3,6 +3,8 @@ package dbContext
 import (
 	"context"
 	"database/sql"
+	"net/http"
+	"time"
 
 	"codeid.revampacademy/models"
 )
@@ -46,3 +48,61 @@ func (q *Queries) ListAddress(ctx context.Context) ([]models.UsersUsersAddress, 
 	}
 	return items, nil
 }
+
+const getAddress = `-- name: GetAddress :one
+
+SELECT etad_addr_id, etad_modified_date, etad_entity_id, etad_adty_id FROM users.users_address
+WHERE etad_addr_id = $1
+`
+
+// Users Addrress
+func (q *Queries) GetAddress(ctx context.Context, etadAddrID int32) (models.UsersUsersAddress, error) {
+	row := q.db.QueryRowContext(ctx, getAddress, etadAddrID)
+	var i models.UsersUsersAddress
+	err := row.Scan(
+		&i.EtadAddrID,
+		&i.EtadModifiedDate,
+		&i.EtadEntityID,
+		&i.EtadAdtyID,
+	)
+	return i, err
+}
+
+const createAddrees = `-- name: CreateAddrees :one
+
+INSERT INTO users.users_address
+(etad_addr_id, etad_modified_date, etad_entity_id, etad_adty_id)
+VALUES($1,$2,$3,$4)
+RETURNING *
+`
+
+func (q *Queries) CreateAddrees(ctx context.Context, arg CreateAddreesParams) (*models.UsersUsersAddress, *models.ResponseError) {
+	row := q.db.QueryRowContext(ctx, createAddrees,
+		arg.EtadAddrID,
+		sql.NullTime{Time:time.Now(), Valid:true},
+		arg.EtadEntityID,
+		arg.EtadAdtyID,
+	)
+	i := models.UsersUsersAddress{}
+	err := row.Scan(
+		&i.EtadAddrID,
+		&i.EtadModifiedDate,
+		&i.EtadEntityID,
+		&i.EtadAdtyID,
+	)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.UsersUsersAddress{
+		EtadAddrID: i.EtadAddrID,
+		EtadModifiedDate: i.EtadModifiedDate,
+		EtadEntityID: i.EtadEntityID,
+		EtadAdtyID: i.EtadAdtyID,
+	}, nil
+}
+
+

@@ -63,10 +63,18 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userMedia.GET("/", controllerMgr.UserMediaController.GetListUserMedia)
 		userMedia.GET("/:id", controllerMgr.UserMediaController.GetUserMedia)
 		userMedia.POST("/", controllerMgr.UserMediaController.CreateUserMedia)
-
 		userMedia.PUT("/:id", controllerMgr.UserMediaController.UpdateMedia)
 		userMedia.DELETE("/:id", controllerMgr.UserMediaController.DeleteMedia)
 	}
 
+	userAddressRoute := routers.Group("/usersaddress")
+	{
+		// Router endpoint (url) http category
+		userAddressRoute.GET("/", controllerMgr.UserAddressController.GetListUserAddress)
+		userAddressRoute.GET("/:id", controllerMgr.UserAddressController.GetAddress)
+		userAddressRoute.POST("/", controllerMgr.UserAddressController.CreateAddrees)
+		// userAddressRoute.PUT("/:id", controllerMgr.UserAddressController.UpdateExperience)
+		// userAddressRoute.DELETE("/:id", controllerMgr.UserAddressController.DeleteExperience)
+	}
 	return routers
 }
