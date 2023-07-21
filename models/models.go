@@ -38,7 +38,6 @@ type CreateCurriculumProgramEntity struct {
 	ProgDurationType string    `db:"prog_duration_type" json:"progDurationType"`
 	ProgCateID       int32     `db:"prog_cate_id" json:"progCateId"`
 
-	// "github.com/tabbed/pqtype"
 }
 
 
@@ -72,6 +71,8 @@ type TalentsMockup struct{
 	BootcampBatch 		BootcampBatch
 	CurriculumProgramEntity CurriculumProgramEntity
 }
+
+
 
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
@@ -343,7 +344,6 @@ type JobhireJobPost struct {
 }
 
 type JobhireJobPostDesc struct {
-	
 	JopoEntityID       int32                 `db:"jopo_entity_id" json:"jopoEntityId"`
 	JopoDescription    sql.NullString `db:"jopo_description" json:"jopoDescription"`
 	JopoResponsibility sql.NullString `db:"jopo_responsibility" json:"jopoResponsibility"`
@@ -391,7 +391,6 @@ type MasterCategory struct {
 	CateName         string        `db:"cate_name" json:"cateName"`
 	CateCateID       sql.NullInt32 `db:"cate_cate_id" json:"cateCateId"`
 	CateModifiedDate time.Time     `db:"cate_modified_date" json:"cateModifiedDate"`
-	
 }
 
 type MasterCity struct {
@@ -689,5 +688,4 @@ type UsersUsersSkill struct {
 	UskiEntityID     int32          `db:"uski_entity_id" json:"uskiEntityId"`
 	UskiModifiedDate sql.NullTime   `db:"uski_modified_date" json:"uskiModifiedDate"`
 	UskiSktyName     sql.NullString `db:"uski_skty_name" json:"uskiSktyName"`
-	
 }
