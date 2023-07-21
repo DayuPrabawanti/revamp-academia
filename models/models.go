@@ -582,7 +582,7 @@ type UsersUsersLicense struct {
 	UsliEntityID     int32          `db:"usli_entity_id" json:"usliEntityId"`
 }
 
-type UsersUsersMedium struct {
+type UsersUsersMedia struct {
 	UsmeID           int32          `db:"usme_id" json:"usmeId"`
 	UsmeEntityID     int32          `db:"usme_entity_id" json:"usmeEntityId"`
 	UsmeFileLink     sql.NullString `db:"usme_file_link" json:"usmeFileLink"`

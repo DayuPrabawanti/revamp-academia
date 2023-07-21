@@ -8,6 +8,7 @@ type ControllerManager struct {
 	UserPhoneController
 	SignUpController
 	UserExperienceController
+	UserMediaController
 }
 
 // constructor
@@ -18,5 +19,6 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserPhoneController(&serviceMgr.UserPhoneService),
 		*NewSignUpController(&serviceMgr.SignUpService),
 		*NewUserExperienceController(&serviceMgr.UserExperienceService),
+		*NewUserMediaController(&serviceMgr.UserMediaService),
 	}
 }

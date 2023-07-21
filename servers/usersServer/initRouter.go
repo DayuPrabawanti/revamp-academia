@@ -19,7 +19,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 	userEmailRoute := routers.Group("/usersemail")
 	{
-			// Router endpoint (url) http category
+		// Router endpoint (url) http category
 		userEmailRoute.GET("/", controllerMgr.UserEmailController.GetListUsersEmail)
 		userEmailRoute.GET("/:id", controllerMgr.UserEmailController.GetEmail)
 		userEmailRoute.POST("/", controllerMgr.UserEmailController.CreateEmail)
@@ -29,7 +29,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 	userPhoneRoute := routers.Group("/usersphone")
 	{
-			// Router endpoint (url) http category
+		// Router endpoint (url) http category
 		userPhoneRoute.GET("/", controllerMgr.UserPhoneController.GetListUsersPhone)
 		userPhoneRoute.GET("/:id", controllerMgr.UserPhoneController.GetPhone)
 		userPhoneRoute.POST("/", controllerMgr.UserPhoneController.CreatePhones)
@@ -39,7 +39,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 	userSignup := routers.Group("/userssignup")
 	{
-			// Router endpoint (url) http category
+		// Router endpoint (url) http category
 		// userSignup.GET("/", controllerMgr.SignUpController.GetListCategory)
 		// userSignup.GET("/:id", controllerMgr.CategoryController.GetCategory)
 		userSignup.POST("/", controllerMgr.SignUpController.CreateSignUp)
@@ -49,12 +49,24 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 	userExperienceRoute := routers.Group("/usersexperience")
 	{
-			// Router endpoint (url) http category
+		// Router endpoint (url) http category
 		userExperienceRoute.GET("/", controllerMgr.UserExperienceController.GetListUserExperience)
 		userExperienceRoute.GET("/:id", controllerMgr.UserExperienceController.GetExperience)
 		userExperienceRoute.POST("/", controllerMgr.UserExperienceController.CreateExperience)
 		userExperienceRoute.PUT("/:id", controllerMgr.UserExperienceController.UpdateExperience)
 		userExperienceRoute.DELETE("/:id", controllerMgr.UserExperienceController.DeleteExperience)
 	}
+
+	userMedia := routers.Group("/usermedia")
+	{
+		// Router endpoint userMedia
+		userMedia.GET("/", controllerMgr.UserMediaController.GetListUserMedia)
+		userMedia.GET("/:id", controllerMgr.UserMediaController.GetUserMedia)
+		userMedia.POST("/", controllerMgr.UserMediaController.CreateUserMedia)
+
+		userMedia.PUT("/:id", controllerMgr.UserMediaController.UpdateMedia)
+		userMedia.DELETE("/:id", controllerMgr.UserMediaController.DeleteMedia)
+	}
+
 	return routers
 }
