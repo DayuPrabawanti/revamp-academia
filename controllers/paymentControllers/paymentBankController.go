@@ -12,44 +12,42 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PaymentAccountController struct {
-	paymentAccountService *services.PaymentAccountService
+type PaymentBankController struct {
+	paymentBankService *services.PaymentBankService
 }
 
-// Declare constructor
-func NewPaymentAccountController(paymentAccountService *services.PaymentAccountService) *PaymentAccountController {
-	return &PaymentAccountController{
-		paymentAccountService: paymentAccountService,
+// fungsi deklarasi variabel controller
+func NewPaymentBankController(paymentBankService *services.PaymentBankService) *PaymentBankController {
+	return &PaymentBankController{
+		paymentBankService: paymentBankService,
 	}
 }
 
-// Method
-func (paymentAccountController PaymentAccountController) GetListPaymentAccount(ctx *gin.Context) {
-	response, responseErr := paymentAccountController.paymentAccountService.GetListPaymentAccount(ctx)
+// method utk ambil getlist payment
+func (PaymentBankController PaymentBankController) GetListPaymentBank(ctx *gin.Context) {
+	response, responseErr := PaymentBankController.paymentBankService.GetListPaymentBank(ctx)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
-
-	// ctx.JSON(http.StatusOK, "Hello Gin Framework!")
 }
 
-func (paymentAccountController PaymentAccountController) GetPaymentAccountByName(ctx *gin.Context) {
-	paymentAccountName := ctx.Query("name")
+// method utk ambil getbyname payment
+func (paymentBankController PaymentBankController) GetPaymentBankByName(ctx *gin.Context) {
+	bankName := ctx.Query("name")
 
-	response, responseErr := paymentAccountController.paymentAccountService.GetPaymentAccountByName(ctx, paymentAccountName)
+	response, responseErr := paymentBankController.paymentBankService.GetPaymentBankByName(ctx, string(bankName))
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
-
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount(ctx *gin.Context) {
+// method utk create paymentbank
+func (paymentBankController PaymentBankController) CreateNewPaymentBank(ctx *gin.Context) {
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -58,15 +56,15 @@ func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount
 		return
 	}
 
-	var paymentAccount dbContext.CreatePaymentUsers_accountParams
-	err = json.Unmarshal(body, &paymentAccount)
+	var paymentBank dbContext.CreatePaymentBankParams
+	err = json.Unmarshal(body, &paymentBank)
 	if err != nil {
 		log.Println("Error while unmarshaling create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response, responseErr := paymentAccountController.paymentAccountService.CreateNewPaymentAccount(ctx, &paymentAccount)
+	response, responseErr := paymentBankController.paymentBankService.CreateNewPaymentBank(ctx, &paymentBank)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
@@ -76,8 +74,9 @@ func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount
 
 }
 
-func (paymentAccountController PaymentAccountController) UpdatePaymentAccountById(ctx *gin.Context) {
-	fintEntityId, err := strconv.Atoi(ctx.Param("id"))
+func (paymentBankController PaymentBankController) UpdatePaymentBank(ctx *gin.Context) {
+
+	bankEntityID, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)
@@ -92,26 +91,28 @@ func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByI
 		return
 	}
 
-	var paymentAccount dbContext.CreatePaymentUsers_accountParams
-	err = json.Unmarshal(body, &paymentAccount)
+	var paymentBank dbContext.CreatePaymentBankParams
+	err = json.Unmarshal(body, &paymentBank)
 	if err != nil {
 		log.Println("Error while unmarshaling update category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response := paymentAccountController.paymentAccountService.UpdatePaymentAccountById(ctx, &paymentAccount, int64(fintEntityId))
+	response := paymentBankController.paymentBankService.UpdatePaymentBank(ctx, &paymentBank, int64(bankEntityID))
 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, response)
+
 }
 
-func (paymentAccountController PaymentAccountController) DeletePaymentAccountById(ctx *gin.Context) {
+// method utk delet payment bank
+func (paymentBankController PaymentBankController) DeletePaymentBank(ctx *gin.Context) {
 
-	paymwntAccountId, err := strconv.Atoi(ctx.Param("id"))
+	bankEntityID, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)
@@ -119,7 +120,7 @@ func (paymentAccountController PaymentAccountController) DeletePaymentAccountByI
 		return
 	}
 
-	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountById(ctx, int64(paymwntAccountId))
+	responseErr := paymentBankController.paymentBankService.DeletePaymentBank(ctx, int64(bankEntityID))
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
