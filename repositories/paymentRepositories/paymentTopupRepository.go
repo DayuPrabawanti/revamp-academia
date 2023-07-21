@@ -20,10 +20,24 @@ func NewPaymentTopupRepository(dbHandler *sql.DB) *PaymentTopupRepository {
 	}
 }
 
-func (ptr PaymentTopupRepository) GetTopupDetail(ctx *gin.Context, sourceBankEntityID int32, targetFintechEntityID int32) (*dbContext.TopupDetail, *models.ResponseError) {
+func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
 
 	store := dbContext.New(ptr.dbHandler)
-	paymentTopup, err := store.GetTopupDetail(ctx, sourceBankEntityID, targetFintechEntityID)
+	paymentTopups, err := store.ListTopupDetail(ctx)
+
+	listPaymentTopups := make([]*dbContext.TopupDetail, 0)
+
+	for _, v := range paymentTopups {
+		paymentTopup := &dbContext.TopupDetail{
+			SourceName:    v.SourceName,
+			SourceAccount: v.SourceAccount,
+			SourceSaldo:   v.SourceSaldo,
+			TargetName:    v.TargetName,
+			TargetAccount: v.TargetAccount,
+			TargetSaldo:   v.TargetSaldo,
+		}
+		listPaymentTopups = append(listPaymentTopups, paymentTopup)
+	}
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -32,5 +46,5 @@ func (ptr PaymentTopupRepository) GetTopupDetail(ctx *gin.Context, sourceBankEnt
 		}
 	}
 
-	return paymentTopup, nil
+	return listPaymentTopups, nil
 }
