@@ -17,6 +17,6 @@ func NewPaymentTopupService(paymentTopupRepository *repositories.PaymentTopupRep
 	}
 }
 
-func (pts PaymentTopupService) GetTopupDetail(ctx *gin.Context, sourceBankEntityID int32, targetFintechEntityID int32) (*dbContext.TopupDetail, *models.ResponseError) {
-	return pts.paymentTopupRepository.GetTopupDetail(ctx, sourceBankEntityID, targetFintechEntityID)
+func (pts PaymentTopupService) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
+	return pts.paymentTopupRepository.GetListTopupDetail(ctx)
 }
