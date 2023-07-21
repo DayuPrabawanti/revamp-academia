@@ -1,17 +1,18 @@
-package controller
+package jobhireController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/service"
+	// "codeid.revampacademy/service"
+	"codeid.revampacademy/service/jobhireService"
 	"github.com/gin-gonic/gin"
 )
 
 type CategoryController struct {
-	categoryService *service.CategoryService
+	categoryService *jobhireService.CategoryService
 }
 
-func NewCategoryController(categoryService *service.CategoryService) *CategoryController {
+func NewCategoryController(categoryService *jobhireService.CategoryService) *CategoryController {
 	return &CategoryController{
 		categoryService: categoryService,
 	}

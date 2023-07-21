@@ -5,9 +5,13 @@ import (
 	"database/sql"
 	"log"
 
-	"codeid.revampacademy/controller"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/service"
+	// "codeid.revampacademy/controller"
+	"codeid.revampacademy/controller/jobhireController"
+	"codeid.revampacademy/service/jobhireService"
+
+	// "codeid.revampacademy/repositories"
+	"codeid.revampacademy/repositories/jobhireRepositories"
+	// "codeid.revampacademy/service"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
@@ -17,41 +21,22 @@ type HttpServer struct {
 	router *gin.Engine
 	// categoryController *controller.CategoryController
 	// masterController *controller.MasterController
-	jobHireController *controller.JobHire
+	jobHireController *jobhireController.ControllerManager
 }
 
 func InitHttpServer(cfg *viper.Viper, dbHandler *sql.DB) HttpServer {
 
 	//set router from gin first
-	router := gin.Default()
+	repositoryManager := jobhireRepositories.NewRepositoryManager(dbHandler)
+	serviceManager := jobhireService.NewServiceManager(repositoryManager)
+	controllerManager := jobhireController.NewControllerManager(serviceManager)
 
-	categoryRepo := repositories.NewCategoryRepo(dbHandler)
-	categoryService := service.NewCategoryService(categoryRepo)
-	categoryControl := controller.NewCategoryController(categoryService)
-
-	//buat router Endpoint
-	router.GET("/listJobCategory", categoryControl.GetListCategoryControl)
-
-	masterRepo := repositories.NewMasterRepo(dbHandler)
-	masterService := service.NewMasterService(masterRepo)
-	masterController := controller.NewMasterController(masterService)
-
-	//make endpoint route
-	router.GET("/listaddress", masterController.GetListAddressControl)
-	router.GET("listcity", masterController.GetListCityControl)
-
-	jobRepo := repositories.NewJobPostRepo(dbHandler)
-	jobService := service.NewJobService(jobRepo)
-	jobController := controller.NewJobControll(jobService)
-
-	router.GET("/jobs", jobController.GetJobPostMergeControl)
-	router.GET("/dumpJobs", jobController.GetJobPostControl)
+	router := InitRouter(controllerManager)
 
 	return HttpServer{
-		config: cfg,
-		router: router,
-		// router:             JobHireEndpointRoute(cfg, dbHandler),
-		jobHireController: jobController,
+		config:            cfg,
+		router:            router,
+		jobHireController: controllerManager,
 	}
 }
 

@@ -1,11 +1,11 @@
-package repositories
+package jobhireRepositories
 
 import (
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext"
+	"codeid.revampacademy/repositories/jobhireRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 

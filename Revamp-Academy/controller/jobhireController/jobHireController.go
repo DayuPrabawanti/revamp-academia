@@ -1,23 +1,24 @@
-package controller
+package jobhireController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/service"
+	// "codeid.revampacademy/service"
+	"codeid.revampacademy/service/jobhireService"
 	"github.com/gin-gonic/gin"
 )
 
-type JobHire struct {
-	jobservice *service.JobService
+type JobHireController struct {
+	jobservice *jobhireService.JobService
 }
 
-func NewJobControll(jobService *service.JobService) *JobHire {
-	return &JobHire{
+func NewJobControll(jobService *jobhireService.JobService) *JobHireController {
+	return &JobHireController{
 		jobservice: jobService,
 	}
 }
 
-func (jh JobHire) GetJobPostControl(ctx *gin.Context) {
+func (jh JobHireController) GetJobPostControl(ctx *gin.Context) {
 	response, responseErr := jh.jobservice.GetListJobPost(ctx)
 
 	if responseErr != nil {
@@ -26,7 +27,7 @@ func (jh JobHire) GetJobPostControl(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (jh JobHire) GetJobPostMergeControl(ctx *gin.Context) {
+func (jh JobHireController) GetJobPostMergeControl(ctx *gin.Context) {
 	response, responseErr := jh.jobservice.GetListJobMerge(ctx)
 
 	if responseErr != nil {

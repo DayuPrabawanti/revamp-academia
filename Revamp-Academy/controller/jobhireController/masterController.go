@@ -1,17 +1,18 @@
-package controller
+package jobhireController
 
 import (
 	"net/http"
 
-	"codeid.revampacademy/service"
+	// "codeid.revampacademy/service"
+	"codeid.revampacademy/service/jobhireService"
 	"github.com/gin-gonic/gin"
 )
 
 type MasterController struct {
-	masterService *service.MasterService
+	masterService *jobhireService.MasterService
 }
 
-func NewMasterController(masterService *service.MasterService) *MasterController {
+func NewMasterController(masterService *jobhireService.MasterService) *MasterController {
 	return &MasterController{
 		masterService: masterService,
 	}

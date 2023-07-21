@@ -1,16 +1,18 @@
-package service
+package jobhireService
 
 import (
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories"
+	"codeid.revampacademy/repositories/jobhireRepositories"
+
+	// "codeid.revampacademy/jobhireRepositories"
 	"github.com/gin-gonic/gin"
 )
 
 type MasterService struct {
-	masterRepo *repositories.MasterRepo
+	masterRepo *jobhireRepositories.MasterRepo
 }
 
-func NewMasterService(masterRepo *repositories.MasterRepo) *MasterService {
+func NewMasterService(masterRepo *jobhireRepositories.MasterRepo) *MasterService {
 	return &MasterService{
 		masterRepo: masterRepo,
 	}
