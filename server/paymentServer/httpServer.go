@@ -18,13 +18,13 @@ type HttpServer struct {
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
-	router := gin.Default()
-
 	repositoriesManager := repositories.NewRepositoriesManager(dbHandler)
 
 	servicesManager := services.NewServicesManager(repositoriesManager)
 
 	controllersManager := controllers.NewControllersManager(servicesManager)
+
+	router := InitRouter(controllersManager)
 
 	return HttpServer{
 		config:             config,
