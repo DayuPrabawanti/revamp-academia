@@ -8,36 +8,38 @@ import (
 	"codeid.revampacademy/models"
 )
 
+const createUsers = `-- name: CreateUsers :one
+
+INSERT INTO users.users 
+(user_entity_id,user_first_name, user_last_name, user_birth_date, user_photo)
+VALUES($1,$2,$3,$4)
+RETURNING *
+`
+
 type CreateMergeMock struct {
 	CreateUsersParams
 	CreateEducationParams
 	CreateMediaParams
 }
-
-const createUsers = `-- name: CreateUsers :one
-
-INSERT INTO users.users 
-(user_first_name, user_last_name, user_birth_date, user_photo)
-VALUES($1,$2,$3,$4)
-RETURNING *
-`
-
 type CreateUsersParams struct {
-	UserFirstName string       `db:"user_first_name" json:"userFirstName"`
-	UserLastName  string       `db:"user_last_name" json:"userLastName"`
-	UserBirthDate sql.NullTime `db:"user_birth_date" json:"userBirthDate"`
-	UserPhoto     string       `db:"user_photo" json:"userPhoto"`
+	UserEntityID  int32          `db:"user_entity_id" json:"userEntityId"`
+	UserFirstName string         `db:"user_first_name" json:"userFirstName"`
+	UserLastName  string         `db:"user_last_name" json:"userLastName"`
+	UserBirthDate sql.NullString `db:"user_birth_date" json:"userBirthDate"`
+	UserPhoto     string         `db:"user_photo" json:"userPhoto"`
 }
 
-func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) (*CreateUsersParams, *models.ResponseError) {
+func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createUsers,
+		arg.UserEntityID,
 		arg.UserFirstName,
 		arg.UserLastName,
 		arg.UserBirthDate,
 		arg.UserPhoto,
 	)
-	i := CreateUsersParams{}
+	i := models.UsersUser{}
 	err := row.Scan(
+		&i.UserEntityID,
 		&i.UserFirstName,
 		&i.UserLastName,
 		&i.UserBirthDate,
@@ -49,7 +51,8 @@ func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) 
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateUsersParams{
+	return &models.UsersUser{
+		UserEntityID:  i.UserEntityID,
 		UserFirstName: i.UserFirstName,
 		UserLastName:  i.UserLastName,
 		UserBirthDate: i.UserBirthDate,
@@ -72,14 +75,14 @@ type CreateEducationParams struct {
 	UsduDescription string `db:"usdu_description" json:"usduDescription"`
 }
 
-func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducationParams) (*CreateEducationParams, *models.ResponseError) {
+func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducationParams) (*models.UsersUsersEducation, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createEducation,
 		arg.UsduSchool,
 		arg.UsduDegree,
 		arg.UsduFieldStudy,
 		arg.UsduDescription,
 	)
-	i := CreateEducationParams{}
+	i := models.UsersUsersEducation{}
 	err := row.Scan(
 		&i.UsduSchool,
 		&i.UsduDegree,
@@ -92,7 +95,7 @@ func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducation
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateEducationParams{
+	return &models.UsersUsersEducation{
 		UsduSchool:      i.UsduDegree,
 		UsduDegree:      i.UsduDegree,
 		UsduFieldStudy:  i.UsduFieldStudy,
@@ -103,10 +106,9 @@ func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducation
 const createMedia = `-- name: CreateMedia :one
 
 INSERT INTO users.users_media
-(usme_id, usme_entity_id, usme_file_link, usme_filename,
-usme_filesize, usme_filetype, usme_note, usme_modified_date)
-VALUES($1,$2,$3,$4,$5,$6,$7,$8)
-RETURNING usme_id
+(usme_filename, usme_filesize, usme_filetype)
+VALUES($1,$2,$3)
+RETURNING *
 `
 
 type CreateMediaParams struct {
@@ -115,13 +117,13 @@ type CreateMediaParams struct {
 	UsmeFiletype string `db:"usme_filetype" json:"usmeFiletype"`
 }
 
-func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) (*CreateMediaParams, *models.ResponseError) {
+func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) (*models.UsersUsersMedium, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createMedia,
 		arg.UsmeFilename,
 		arg.UsmeFilesize,
 		arg.UsmeFiletype,
 	)
-	i := CreateMediaParams{}
+	i := models.UsersUsersMedium{}
 	err := row.Scan(
 		&i.UsmeFilename,
 		&i.UsmeFilesize,
@@ -133,7 +135,7 @@ func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) 
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateMediaParams{
+	return &models.UsersUsersMedium{
 		UsmeFilename: arg.UsmeFilename,
 		UsmeFilesize: arg.UsmeFilesize,
 		UsmeFiletype: arg.UsmeFiletype,
@@ -147,7 +149,7 @@ WHERE user_entity_id = $1
 `
 
 // users
-func (q *Queries) GetUsers(ctx context.Context, userEntityID int32) (models.UsersUser, error) {
+func (q *Queries) GetUsersId(ctx context.Context, userEntityID int32) (models.UsersUser, error) {
 	row := q.db.QueryRowContext(ctx, getUsers, userEntityID)
 	var i models.UsersUser
 	err := row.Scan(
@@ -164,4 +166,48 @@ func (q *Queries) GetUsers(ctx context.Context, userEntityID int32) (models.User
 		&i.UserCurrentRole,
 	)
 	return i, err
+}
+
+const listUserGrup = `-- name: ListUserGroup :many
+select us.user_entity_id,us.user_first_name,us.user_last_name,us.user_birth_date,us.user_photo,usdu.usdu_school
+,usdu.usdu_field_study,usdu.usdu_degree,usdu.usdu_description,usme.usme_filename
+,usme.usme_filesize,usme.usme_filetype 
+from users.users us join users.users_education usdu on us.user_entity_id = usdu_entity_id
+join users.users_media usme on us.user_entity_id = usme.usme_entity_id
+`
+
+func (q *Queries) ListUserGroup(ctx context.Context) ([]CreateMergeMock, error) {
+	rows, err := q.db.QueryContext(ctx, listUserGrup)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CreateMergeMock
+	for rows.Next() {
+		var i CreateMergeMock
+		if err := rows.Scan(
+			&i.UserEntityID,
+			&i.UserFirstName,
+			&i.UserLastName,
+			&i.UserBirthDate,
+			&i.UserPhoto,
+			&i.UsduSchool,
+			&i.UsduDegree,
+			&i.UsduFieldStudy,
+			&i.UsduDescription,
+			&i.UsmeFilename,
+			&i.UsmeFilesize,
+			&i.UsmeFiletype,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

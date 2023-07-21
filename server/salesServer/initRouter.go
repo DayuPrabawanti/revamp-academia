@@ -21,6 +21,7 @@ func InitRouter(controllerMgr *salescontrollers.ControllerManager) *gin.Engine {
 		//api mockup3
 		cateRouter.POST("/save", controllerMgr.ControlMock3.CreateMergeUsers)
 		cateRouter.GET("/applyRegular/:id", controllerMgr.ControlMock3.GetUsers)
+		cateRouter.GET("/get", controllerMgr.ControlMock3.GetListGroup)
 
 	}
 	return router
