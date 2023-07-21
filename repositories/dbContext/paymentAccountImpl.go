@@ -11,7 +11,9 @@ import (
 
 const listPaymentUsers_account = `-- name: ListPaymentUsers_account :many
 
-SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status FROM payment.users_account ORDER BY usac_account_number
+SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status 
+	FROM payment.users_account 
+	ORDER BY usac_account_number
 `
 
 func (q *Queries) ListPaymentUsers_account(ctx context.Context) ([]models.PaymentUsersAccount, error) {
@@ -49,8 +51,9 @@ func (q *Queries) ListPaymentUsers_account(ctx context.Context) ([]models.Paymen
 
 const getPaymentUsers_account = `-- name: GetPaymentUsers_account :one
 
-
-SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status FROM payment.users_account WHERE usac_account_number = $1
+SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status 
+	FROM payment.users_account 
+	WHERE usac_account_number = $1
 `
 
 // payment.users_account

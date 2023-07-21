@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"codeid.revampacademy/config"
-	"codeid.revampacademy/server"
+	server "codeid.revampacademy/server/paymentServer"
 
 	_ "github.com/lib/pq"
 )

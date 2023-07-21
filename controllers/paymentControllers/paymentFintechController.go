@@ -8,7 +8,7 @@ import (
 	"strconv"
 
 	"codeid.revampacademy/repositories/dbContext"
-	"codeid.revampacademy/services"
+	services "codeid.revampacademy/services/paymentServices"
 	"github.com/gin-gonic/gin"
 )
 
