@@ -12,32 +12,24 @@ import (
 )
 
 type HttpServer struct {
-	config                *viper.Viper
-	router                *gin.Engine
-	paymentBankController *controllers.PaymentBankController
+	config             *viper.Viper
+	router             *gin.Engine
+	ControllersManager controllers.ControllersManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
+	repositoriesManager := repositories.NewRepositoriesManager(dbHandler)
 
-	paymentBankRepository := repositories.NewPaymentBankRepository(dbHandler)
+	ServicesManager := services.NewServicesManager(repositoriesManager)
 
-	paymentBankService := services.NewPaymentBankService(paymentBankRepository)
+	controllersManager := controllers.NewControllersManager(ServicesManager)
 
-	paymentBankController := controllers.NewPaymentBankController(paymentBankService)
-
-	router := gin.Default()
-
-	router.GET("/api/fintech/bank", paymentBankController.GetListPaymentBank)
-	router.GET("/api/fintech/bank/search", paymentBankController.GetPaymentBankByName)
-
-	router.POST("/api/fintech/bank/create", paymentBankController.CreateNewPaymentBank)
-	router.PUT("/api/fintech/bank/update/:id", paymentBankController.UpdatePaymentBank)
-	router.DELETE("api/fintech/bank/delete/:id", paymentBankController.DeletePaymentBank)
+	router := InitRouter(controllersManager)
 
 	return HttpServer{
-		config:                config,
-		router:                router,
-		paymentBankController: paymentBankController,
+		config:             config,
+		router:             router,
+		ControllersManager: *controllersManager,
 	}
 }
 
@@ -49,3 +41,32 @@ func (hs HttpServer) Start() {
 		log.Fatalf("Error while starting HTTP Server: %v", err)
 	}
 }
+
+// paymentBankRepository := repositories.NewPaymentBankRepository(dbHandler)
+// paymentBankService := services.NewPaymentBankService(paymentBankRepository)
+// paymentBankController := controllers.NewPaymentBankController(paymentBankService)
+
+// paymentTransactioRepository := repositories.NewPaymentTransactionRepository(dbHandler)
+// paymentTransactionService := services.NewPaymentTransactionService(paymentTransactioRepository)
+// paymentTransactionController := controllers.NewPaymentTransactionController(paymentTransactionService)
+
+// router := gin.Default()
+
+// // mockuop 1:bank
+// router.GET("/api/fintech/bank", paymentBankController.GetListPaymentBank)
+// router.GET("/api/fintech/bank/search", paymentBankController.GetPaymentBankByName)
+// router.POST("/api/fintech/bank/create", paymentBankController.CreateNewPaymentBank)
+// router.PUT("/api/fintech/bank/update/:id", paymentBankController.UpdatePaymentBank)
+// router.DELETE("api/fintech/bank/delete/:id", paymentBankController.DeletePaymentBank)
+
+// // mockuop 7:transacation
+// router.GET("/api/fintech/transaction", paymentTransactionController.GetListPaymentTransaction)
+// router.GET("api/fintech/transaction/search", paymentTransactionController.GetPaymentTransactionById)
+// router.POST("api/fintech/transaction/create", paymentTransactionController.CreateNewPaymentTransaction)
+// router.PUT("api/fintech/transaction/update/:id", paymentTransactionController.UpdatePaymentTransaction)
+// router.DELETE("api/fintech/transaction/delete/:id", paymentTransactionController.DeletePaymentTransaction)
+// return HttpServer{
+// 	config:                config,
+// 	router:                router,
+// 	paymentBankController: paymentBankController,
+// }
