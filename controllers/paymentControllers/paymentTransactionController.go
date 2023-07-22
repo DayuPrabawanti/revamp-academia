@@ -33,15 +33,9 @@ func (paymentTransactionController PaymentTransactionController) GetListPaymentT
 }
 
 func (PaymentTransactionController PaymentTransactionController) GetPaymentTransactionById(ctx *gin.Context) {
-	trpaID, err := strconv.Atoi(ctx.Param("id"))
+	accountID := ctx.Query("accountID")
 
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, int64(trpaID))
+	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, accountID)
 	if responseErr != nil {
 
 		ctx.JSON(responseErr.Status, responseErr)

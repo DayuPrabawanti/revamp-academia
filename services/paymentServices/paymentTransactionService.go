@@ -23,8 +23,8 @@ func (ptr PaymentTransactionService) GetListPaymentTransaction(ctx *gin.Context)
 	return ptr.paymentTransactionRepository.GetListPaymentTransaction(ctx)
 }
 
-func (ptr PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context, id int64) (*models.PaymentTransactionPayment, *models.ResponseError) {
-	return ptr.paymentTransactionRepository.GetPaymentTransactionById(ctx, id)
+func (ptr PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context, accountID string) (*models.PaymentTransactionPayment, *models.ResponseError) {
+	return ptr.paymentTransactionRepository.GetPaymentTransactionById(ctx, accountID)
 }
 
 func (ptr PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) (*models.PaymentTransactionPayment, *models.ResponseError) {
