@@ -68,5 +68,16 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userMedia.DELETE("/:id", controllerMgr.UserMediaController.DeleteMedia)
 	}
 
+	userLicense := routers.Group("/uselicense")
+	{
+		// Router endpoint userMedia
+		userLicense.GET("/", controllerMgr.UserLicenseController.GetListUserLicense)
+		userLicense.GET("/:id", controllerMgr.UserLicenseController.GetUsersLicense)
+		userLicense.POST("/", controllerMgr.UserLicenseController.CreateUserLicense)
+
+		userLicense.PUT("/:id", controllerMgr.UserLicenseController.UpdateUserLicense)
+		userLicense.DELETE("/:id", controllerMgr.UserLicenseController.DeleteLicense)
+	}
+
 	return routers
 }

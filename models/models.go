@@ -578,7 +578,7 @@ type UsersUsersLicense struct {
 	UsliID           int32          `db:"usli_id" json:"usliId"`
 	UsliLicenseCode  sql.NullString `db:"usli_license_code" json:"usliLicenseCode"`
 	UsliModifiedDate sql.NullTime   `db:"usli_modified_date" json:"usliModifiedDate"`
-	UsliStatus       sql.NullString `db:"usli_status" json:"usliStatus"`
+	UsliStatus       string `db:"usli_status" json:"usliStatus"`
 	UsliEntityID     int32          `db:"usli_entity_id" json:"usliEntityId"`
 }
 

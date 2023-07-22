@@ -11,6 +11,7 @@ type ServiceManager struct {
 	SignUpService
 	UserExperienceService
 	UserMediaService
+	UserLicenseService
 }
 
 // constructor
@@ -22,5 +23,6 @@ func NewServiceManager(repoMgr *usersRepository.RepositoryManager) *ServiceManag
 		SignUpService:         *NewSignUpService(&repoMgr.SignUpRepository),
 		UserExperienceService: *NewUserExperienceService(&repoMgr.UserExperienceRepository),
 		UserMediaService:      *NewUserMediaService(&repoMgr.UserMediaRepository),
+		UserLicenseService:    *NewUserLicenseService(&repoMgr.UserLicenseRepository),
 	}
 }
