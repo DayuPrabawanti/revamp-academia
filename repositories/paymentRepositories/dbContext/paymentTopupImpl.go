@@ -19,45 +19,52 @@ type TopupDetail struct {
 	TargetSaldo   float64
 }
 
-const getTopupDetail = `-- name: GetTopupDetail :one
+const listTopupDetail = `-- name: ListTopupDetail :many
 
 SELECT
 			b.bank_code,
 			b.bank_entity_id,
-			bs.usac_saldo,
+			fs.usac_saldo,
 			f.fint_code,
 			f.fint_entity_id,
 			fs.usac_saldo
 		FROM
-			payment.bank b
+			payment.users_account fs
 		JOIN
-			payment.users_account bs ON b.bank_entity_id = bs.usac_bank_entity_id
+			payment.bank b ON fs.usac_bank_entity_id = b.bank_entity_id
 		JOIN
-			payment.fintech f ON f.fint_entity_id = targetFintechEntityID
-		JOIN
-			payment.users_account fs ON f.fint_entity_id = fs.usac_user_entity_id
-		WHERE
-			b.bank_entity_id = $1 OR f.fint_entity_id = $2
+			payment.fintech f ON fs.usac_bank_entity_id = f.fint_entity_id
 
 `
 
-func (q *Queries) GetTopupDetail(ctx context.Context, sourceBankEntityID int32, targetFintechEntityID int32) (*TopupDetail, error) {
-	var detail TopupDetail
-
-	err := q.db.QueryRowContext(ctx, getTopupDetail, sourceBankEntityID, targetFintechEntityID).Scan(
-		&detail.SourceName,
-		&detail.SourceAccount,
-		&detail.SourceSaldo,
-		&detail.TargetName,
-		&detail.TargetAccount,
-		&detail.TargetSaldo,
-	)
-
+func (q *Queries) ListTopupDetail(ctx context.Context) ([]TopupDetail, error) {
+	rows, err := q.db.QueryContext(ctx, listTopupDetail)
 	if err != nil {
 		return nil, err
 	}
-
-	return &detail, nil
+	defer rows.Close()
+	var items []TopupDetail
+	for rows.Next() {
+		var i TopupDetail
+		if err := rows.Scan(
+			&i.SourceName,
+			&i.SourceAccount,
+			&i.SourceSaldo,
+			&i.TargetName,
+			&i.TargetAccount,
+			&i.TargetSaldo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 func (ps *PaymentService) Topup(ctx context.Context, sourceBankEntityID int32, targetFintechEntityID int32, amount float64) error {

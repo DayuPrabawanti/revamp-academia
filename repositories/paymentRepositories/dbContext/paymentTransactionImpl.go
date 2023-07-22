@@ -51,12 +51,12 @@ func (q *Queries) ListPaymentTransaction_payment(ctx context.Context) ([]models.
 
 const getPaymentTransaction_payment = `-- name: GetPaymentTransaction_payment :one
 SELECT trpa_id, trpa_code_number, trpa_order_number, trpa_debit, trpa_credit, trpa_type, trpa_note, 
-trpa_modified_date, trpa_source_id, trpa_target_id, trpa_user_entity_id FROM payment.transaction_payment WHERE trpa_id = $1
+trpa_modified_date, trpa_source_id, trpa_target_id, trpa_user_entity_id FROM payment.transaction_payment WHERE trpa_user_entity_id = $1
 `
 
 // payment.transaction_payment
-func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, trpaID int32) (models.PaymentTransactionPayment, error) {
-	row := q.db.QueryRowContext(ctx, getPaymentTransaction_payment, trpaID)
+func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, accountID string) (models.PaymentTransactionPayment, error) {
+	row := q.db.QueryRowContext(ctx, getPaymentTransaction_payment, accountID)
 	var i models.PaymentTransactionPayment
 	err := row.Scan(
 		&i.TrpaID,
