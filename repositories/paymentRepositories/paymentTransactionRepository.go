@@ -50,9 +50,9 @@ func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Conte
 	return listPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, id int64) (*models.PaymentTransactionPayment, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, accountID string) (*models.PaymentTransactionPayment, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
-	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, int32(id))
+	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, accountID)
 
 	if err != nil {
 		return nil, &models.ResponseError{
