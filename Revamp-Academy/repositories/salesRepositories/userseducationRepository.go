@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,9 +20,9 @@ func NewEducationRepository(dbHandler *sql.DB) *EducationRepository {
 	}
 }
 
-func (cr EducationRepository) CreateEducation(ctx *gin.Context, educationParams *salesContext.CreateEducationParams) (*models.UsersUsersEducation, *models.ResponseError) {
+func (cr EducationRepository) CreateEducation(ctx *gin.Context, educationParams *dbContext.CreateEducationParams) (*models.UsersUsersEducation, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	education, err := store.CreateEducation(ctx, *educationParams)
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (cr EducationRepository) CreateEducation(ctx *gin.Context, educationParams 
 
 func (cr EducationRepository) GetEducation(ctx *gin.Context, id int32) (*models.UsersUsersEducation, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	education, err := store.GetEducation(ctx, int32(id))
 
 	if err != nil {

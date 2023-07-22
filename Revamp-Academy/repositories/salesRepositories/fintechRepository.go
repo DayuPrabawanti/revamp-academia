@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +22,7 @@ func NewFintechRepository(dbHandler *sql.DB) *FintechRepository {
 
 func (cr FintechRepository) GetPaymentFintech(ctx *gin.Context, id int32) (*models.PaymentFintech, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	specialoffer, err := store.GetPaymentFintech(ctx, int32(id))
 
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +22,7 @@ func NewSpecialOfferRepository(dbHandler *sql.DB) *SpecialOfferRepository {
 
 func (cr SpecialOfferRepository) GetListSpecialOffer(ctx *gin.Context) ([]*models.SalesSpecialOffer, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	specialOffer, err := store.ListSpecial_offer(ctx)
 
 	listSpecial_offer := make([]*models.SalesSpecialOffer, 0)
@@ -54,7 +54,7 @@ func (cr SpecialOfferRepository) GetListSpecialOffer(ctx *gin.Context) ([]*model
 
 func (cr SpecialOfferRepository) GetSpecialOffer(ctx *gin.Context, id int64) (*models.SalesSpecialOffer, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	specialoffer, err := store.GetSpecial_offer(ctx, int32(id))
 
 	if err != nil {
@@ -67,9 +67,9 @@ func (cr SpecialOfferRepository) GetSpecialOffer(ctx *gin.Context, id int64) (*m
 	return &specialoffer, nil
 }
 
-func (cr SpecialOfferRepository) CreateSpecialOffer(ctx *gin.Context, specialofferParams *salesContext.CreateSales_special_offerParams) (*models.SalesSpecialOffer, *models.ResponseError) {
+func (cr SpecialOfferRepository) CreateSpecialOffer(ctx *gin.Context, specialofferParams *dbContext.CreateSales_special_offerParams) (*models.SalesSpecialOffer, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	specialoffer, err := store.CreateSales_special_offer(ctx, *specialofferParams)
 
 	if err != nil {

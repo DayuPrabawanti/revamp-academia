@@ -1,4 +1,4 @@
-package salesContext
+package dbContext
 
 import (
 	"context"
@@ -31,4 +31,39 @@ func (q *Queries) GetProgramEntity(ctx context.Context, nama string) (Createprog
 		&i.ProgDuration,
 	)
 	return i, err
+}
+
+const listprogram_entity = `-- name: Listprogram_entity :many
+select prog_title,prog_headline,prog_learning_type,prog_image,prog_price,prog_duration from curriculum.program_entity 
+where prog_learning_type =$1
+`
+
+func (q *Queries) Listprogram_entity(ctx context.Context, nama string) ([]CreateprogramEntityParams, error) {
+	rows, err := q.db.QueryContext(ctx, listprogram_entity, nama)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CreateprogramEntityParams
+	for rows.Next() {
+		var i CreateprogramEntityParams
+		if err := rows.Scan(
+			&i.ProgTitle,
+			&i.ProgHeadline,
+			&i.ProgLearningType,
+			&i.ProgImage,
+			&i.ProgPrice,
+			&i.ProgDuration,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

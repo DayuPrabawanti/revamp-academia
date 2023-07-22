@@ -10,6 +10,7 @@ type ServiceManager struct {
 	FintechService
 	SpecialOfferService
 	EducationService
+	ServiceMock3
 }
 
 // constructor
@@ -20,5 +21,6 @@ func NewServiceManager(repoMgr *salesRepositories.RepositoryManager) *ServiceMan
 		FintechService:      *NewFintechService(&repoMgr.FintechRepository),
 		SpecialOfferService: *NewSpecialOfferService(&repoMgr.SpecialOfferRepository),
 		EducationService:    *NewEducationService(&repoMgr.EducationRepository),
+		ServiceMock3:        *NewMockupApplyService(&repoMgr.RepoMockup3),
 	}
 }

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
 	"codeid.revampacademy/repositories/salesRepositories"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +19,7 @@ func NewEducationService(educationRepository *salesRepositories.EducationReposit
 	}
 }
 
-func (cs EducationService) CreateEducation(ctx *gin.Context, educationParams *salesContext.CreateEducationParams) (*models.UsersUsersEducation, *models.ResponseError) {
+func (cs EducationService) CreateEducation(ctx *gin.Context, educationParams *dbContext.CreateEducationParams) (*models.UsersUsersEducation, *models.ResponseError) {
 	responseErr := validateEducation(educationParams)
 	if responseErr != nil {
 		return nil, responseErr
@@ -32,7 +32,7 @@ func (cs EducationService) GetEducation(ctx *gin.Context, id int32) (*models.Use
 	return cs.educationRepository.GetEducation(ctx, id)
 }
 
-func validateEducation(educationParams *salesContext.CreateEducationParams) *models.ResponseError {
+func validateEducation(educationParams *dbContext.CreateEducationParams) *models.ResponseError {
 	if educationParams.UsduID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid category id",

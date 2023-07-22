@@ -1,4 +1,4 @@
-package salesContext
+package dbContext
 
 import (
 	"context"
@@ -8,8 +8,7 @@ import (
 	"codeid.revampacademy/models"
 )
 
-const createEducation = `-- name: CreateEducation :one
-
+const createEducations = `-- name: CreateEducation :one
 INSERT INTO users.users_education
 (usdu_id, usdu_entity_id, usdu_school, usdu_degree, usdu_field_study,
 usdu_graduate_year, usdu_start_date, usdu_end_date, usdu_grade,

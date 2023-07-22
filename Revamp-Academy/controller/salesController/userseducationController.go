@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"codeid.revampacademy/services/salesServices"
 	"github.com/gin-gonic/gin"
 )
@@ -32,7 +32,7 @@ func (educationController EducationController) CreateEducation(ctx *gin.Context)
 		return
 	}
 
-	var education salesContext.CreateEducationParams
+	var education dbContext.CreateEducationParams
 	err = json.Unmarshal(body, &education)
 	if err != nil {
 		log.Println("Error while unmarshaling create category request body", err)

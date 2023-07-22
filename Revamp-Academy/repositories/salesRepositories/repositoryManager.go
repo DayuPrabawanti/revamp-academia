@@ -8,6 +8,7 @@ type RepositoryManager struct {
 	FintechRepository
 	SpecialOfferRepository
 	EducationRepository
+	RepoMockup3
 }
 
 // constructor
@@ -18,5 +19,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewFintechRepository(dbHandler),
 		*NewSpecialOfferRepository(dbHandler),
 		*NewEducationRepository(dbHandler),
+		*NewMockupApplyRepo(dbHandler),
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,7 +25,7 @@ func NewCartItemsRepository(dbHandler *sql.DB) *CartItemsRepository {
 
 func (cr CartItemsRepository) Getcart_items(ctx *gin.Context, caitID int32) (*models.SalesCartItem, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	cart_items, err := store.Getcart_items(ctx, caitID)
 
 	if err != nil {
@@ -40,7 +40,7 @@ func (cr CartItemsRepository) Getcart_items(ctx *gin.Context, caitID int32) (*mo
 
 func (cr CartItemsRepository) GetListCartItems(ctx *gin.Context) ([]*models.SalesCartItem, *models.ResponseError) {
 
-	store := salesContext.New(cr.dbHandler)
+	store := dbContext.New(cr.dbHandler)
 	cart_items, err := store.ListCart_item(ctx)
 
 	listCart_item := make([]*models.SalesCartItem, 0)

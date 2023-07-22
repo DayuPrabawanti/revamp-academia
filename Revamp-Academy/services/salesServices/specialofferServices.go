@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	"codeid.revampacademy/repositories/dbContext/salesContext"
 	"codeid.revampacademy/repositories/salesRepositories"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +27,7 @@ func (cs SpecialOfferService) GetSpecialOffer(ctx *gin.Context, id int64) (*mode
 	return cs.specialOfferRepository.GetSpecialOffer(ctx, id)
 }
 
-func (cs SpecialOfferService) CreateSales_special_offer(ctx *gin.Context, specialOfferParams *salesContext.CreateSales_special_offerParams) (*models.SalesSpecialOffer, *models.ResponseError) {
+func (cs SpecialOfferService) CreateSales_special_offer(ctx *gin.Context, specialOfferParams *dbContext.CreateSales_special_offerParams) (*models.SalesSpecialOffer, *models.ResponseError) {
 	responseErr := validateSpecialOffer(specialOfferParams)
 	if responseErr != nil {
 		return nil, responseErr
@@ -36,7 +36,7 @@ func (cs SpecialOfferService) CreateSales_special_offer(ctx *gin.Context, specia
 	return cs.specialOfferRepository.CreateSpecialOffer(ctx, specialOfferParams)
 }
 
-func validateSpecialOffer(specialOfferParams *salesContext.CreateSales_special_offerParams) *models.ResponseError {
+func validateSpecialOffer(specialOfferParams *dbContext.CreateSales_special_offerParams) *models.ResponseError {
 	if specialOfferParams.SpofID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid category id",

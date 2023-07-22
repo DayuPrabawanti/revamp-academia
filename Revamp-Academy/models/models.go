@@ -6,6 +6,12 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+type MergeMockUser struct {
+	Users     UsersUser
+	Education UsersUsersEducation
+	Media     UsersUsersMedium
+}
+
 type BootcampBatch struct {
 	BatchID           int32        `db:"batch_id" json:"batchId"`
 	BatchEntityID     int32        `db:"batch_entity_id" json:"batchEntityId"`
@@ -79,25 +85,25 @@ type BootcampProgramApplyProgress struct {
 }
 
 type CurriculumProgramEntity struct {
-	ProgEntityID     int32        `db:"prog_entity_id" json:"progEntityId"`
-	ProgTitle        string       `db:"prog_title" json:"progTitle"`
-	ProgHeadline     string       `db:"prog_headline" json:"progHeadline"`
-	ProgType         string       `db:"prog_type" json:"progType"`
-	ProgLearningType string       `db:"prog_learning_type" json:"progLearningType"`
-	ProgRating       int32        `db:"prog_rating" json:"progRating"`
-	ProgTotalTrainee int32        `db:"prog_total_trainee" json:"progTotalTrainee"`
-	ProgModifiedDate sql.NullTime `db:"prog_modified_date" json:"progModifiedDate"`
-	ProgImage        string       `db:"prog_image" json:"progImage"`
-	ProgBestSeller   string       `db:"prog_best_seller" json:"progBestSeller"`
-	ProgPrice        int32        `db:"prog_price" json:"progPrice"`
-	ProgLanguage     string       `db:"prog_language" json:"progLanguage"`
-	ProgDuration     int32        `db:"prog_duration" json:"progDuration"`
-	ProgDurationType string       `db:"prog_duration_type" json:"progDurationType"`
-	ProgTagSkill     string       `db:"prog_tag_skill" json:"progTagSkill"`
-	ProgCityID       int32        `db:"prog_city_id" json:"progCityId"`
-	ProgCateID       int32        `db:"prog_cate_id" json:"progCateId"`
-	ProgCreatedBy    int32        `db:"prog_created_by" json:"progCreatedBy"`
-	ProgStatus       string       `db:"prog_status" json:"progStatus"`
+	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
+	ProgTitle        string         `db:"prog_title" json:"progTitle"`
+	ProgHeadline     string         `db:"prog_headline" json:"progHeadline"`
+	ProgType         string         `db:"prog_type" json:"progType"`
+	ProgLearningType string         `db:"prog_learning_type" json:"progLearningType"`
+	ProgRating       sql.NullInt32  `db:"prog_rating" json:"progRating"`
+	ProgTotalTrainee sql.NullInt32  `db:"prog_total_trainee" json:"progTotalTrainee"`
+	ProgModifiedDate sql.NullTime   `db:"prog_modified_date" json:"progModifiedDate"`
+	ProgImage        sql.NullString `db:"prog_image" json:"progImage"`
+	ProgBestSeller   sql.NullString `db:"prog_best_seller" json:"progBestSeller"`
+	ProgPrice        sql.NullInt32  `db:"prog_price" json:"progPrice"`
+	ProgLanguage     sql.NullString `db:"prog_language" json:"progLanguage"`
+	ProgDuration     sql.NullInt32  `db:"prog_duration" json:"progDuration"`
+	ProgDurationType sql.NullString `db:"prog_duration_type" json:"progDurationType"`
+	ProgTagSkill     sql.NullString `db:"prog_tag_skill" json:"progTagSkill"`
+	ProgCityID       sql.NullInt32  `db:"prog_city_id" json:"progCityId"`
+	ProgCateID       int32          `db:"prog_cate_id" json:"progCateId"`
+	ProgCreatedBy    sql.NullInt32  `db:"prog_created_by" json:"progCreatedBy"`
+	ProgStatus       sql.NullString `db:"prog_status" json:"progStatus"`
 }
 
 type CurriculumProgramEntityDescription struct {
@@ -540,7 +546,7 @@ type UsersUsersEducation struct {
 	UsduGrade        string         `db:"usdu_grade" json:"usduGrade"`
 	UsduActivities   string         `db:"usdu_activities" json:"usduActivities"`
 	UsduDescription  sql.NullString `db:"usdu_description" json:"usduDescription"`
-	UsduModifiedDate sql.NullTime   `db:"usdu_modified_date" json:"usduModifiedDate"`
+	UsduModifiedDate string         `db:"usdu_modified_date" json:"usduModifiedDate"`
 }
 
 type UsersUsersEmail struct {

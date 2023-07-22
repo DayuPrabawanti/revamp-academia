@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"codeid.revampacademy/repositories/dbContext/salesContext"
+	"codeid.revampacademy/repositories/salesRepositories/dbContext"
 	"codeid.revampacademy/services/salesServices"
 	"github.com/gin-gonic/gin"
 )
@@ -66,7 +66,7 @@ func (specialOfferController SpecialOfferController) CreateSpecialOffer(ctx *gin
 		return
 	}
 
-	var specialoffer salesContext.CreateSales_special_offerParams
+	var specialoffer dbContext.CreateSales_special_offerParams
 	err = json.Unmarshal(body, &specialoffer)
 	if err != nil {
 		log.Println("Error while unmarshaling create category request body", err)
