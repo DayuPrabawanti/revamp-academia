@@ -14,6 +14,7 @@ type ControllerManager struct {
 	UserMediaController
 	UserAddressController
 	masterController.MasterAddressController
+	UserEducationController
 }
 
 // constructor
@@ -26,7 +27,7 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserExperienceController(&serviceMgr.UserExperienceService),
 		*NewUserMediaController(&serviceMgr.UserMediaService),
 		*NewUseraddressController(&serviceMgr.UserAddressService),
-		*NewUserLicenseController(&serviceMgr.UserLicenseService),
+		*NewUserEducationController(&serviceMgr.UserEducationService),
 		*NewUserLSkillController(&serviceMgr.UserSkillService),
 		*NewUserEducationController(&serviceMgr.UserEducationService),
 		*masterController.NewMasterAddressController(&serviceMgr.MasterAddressService),
