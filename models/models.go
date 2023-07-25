@@ -421,8 +421,8 @@ type PaymentTransactionPayment struct {
 	TrpaType         sql.NullString `db:"trpa_type" json:"trpaType"`
 	TrpaNote         sql.NullString `db:"trpa_note" json:"trpaNote"`
 	TrpaModifiedDate sql.NullTime   `db:"trpa_modified_date" json:"trpaModifiedDate"`
-	TrpaSourceID     string         `db:"trpa_source_id" json:"trpaSourceId"`
-	TrpaTargetID     string         `db:"trpa_target_id" json:"trpaTargetId"`
+	TrpaFromID     string         `db:"trpa_source_id" json:"trpaSourceId"`
+	TrpaToID     string         `db:"trpa_target_id" json:"trpaTargetId"`
 	TrpaUserEntityID sql.NullInt32  `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
 }
 

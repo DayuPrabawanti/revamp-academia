@@ -33,9 +33,11 @@ func (paymentTransactionController PaymentTransactionController) GetListPaymentT
 }
 
 func (PaymentTransactionController PaymentTransactionController) GetPaymentTransactionById(ctx *gin.Context) {
-	accountID := ctx.Query("accountID")
+	accountID := ctx.Query("accountid")
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageno", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pagesize", "10"))
 
-	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, accountID)
+	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, accountID, pageSize, pageNo*pageSize)
 	if responseErr != nil {
 
 		ctx.JSON(responseErr.Status, responseErr)
