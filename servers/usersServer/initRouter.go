@@ -37,7 +37,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userPhoneRoute.DELETE("/:id", controllerMgr.UserPhoneController.DeletePhones)
 	}
 
-	userSignup := routers.Group("/userssignup")
+	userSignup := routers.Group("/users/signup")
 	{
 		// Router endpoint (url) http category
 		// userSignup.GET("/", controllerMgr.SignUpController.GetListCategory)
@@ -63,12 +63,11 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userMedia.GET("/", controllerMgr.UserMediaController.GetListUserMedia)
 		userMedia.GET("/:id", controllerMgr.UserMediaController.GetUserMedia)
 		userMedia.POST("/", controllerMgr.UserMediaController.CreateUserMedia)
-
 		userMedia.PUT("/:id", controllerMgr.UserMediaController.UpdateMedia)
 		userMedia.DELETE("/:id", controllerMgr.UserMediaController.DeleteMedia)
 	}
 
-	userLicense := routers.Group("/uselicense")
+	userLicense := routers.Group("/userlicense")
 	{
 		// Router endpoint userMedia
 		userLicense.GET("/", controllerMgr.UserLicenseController.GetListUserLicense)
@@ -77,6 +76,36 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 		userLicense.PUT("/:id", controllerMgr.UserLicenseController.UpdateUserLicense)
 		userLicense.DELETE("/:id", controllerMgr.UserLicenseController.DeleteLicense)
+	}
+
+	userAddressRoute := routers.Group("/usersaddress")
+	{
+		// Router endpoint (url) http category
+		userAddressRoute.GET("/", controllerMgr.UserAddressController.GetListUserAddress)
+		userAddressRoute.GET("/:id", controllerMgr.UserAddressController.GetAddress)
+		userAddressRoute.POST("/", controllerMgr.UserAddressController.CreateAddrees)
+		// userAddressRoute.PUT("/:id", controllerMgr.UserAddressController.UpdateExperience)
+		// userAddressRoute.DELETE("/:id", controllerMgr.UserAddressController.DeleteExperience)
+	}
+
+	userSkillRoute := routers.Group("/usersskill")
+	{
+		// Router endpoint (url) http category
+		userSkillRoute.GET("/", controllerMgr.UserSkillController.GetListUserSkill)
+		userSkillRoute.GET("/:id", controllerMgr.UserSkillController.GetUsersSkill)
+		userSkillRoute.POST("/", controllerMgr.UserSkillController.CreateUserSkill)
+		userSkillRoute.PUT("/:id", controllerMgr.UserSkillController.UpdateUserSkill)
+		userSkillRoute.DELETE("/:id", controllerMgr.UserSkillController.DeleteSkill)
+	}
+
+	userEducationRoute := routers.Group("/usereducation")
+	{
+		// Router endpoint (url) http category
+		userEducationRoute.GET("/", controllerMgr.UserEducationController.GetListUsersEducation)
+		userEducationRoute.GET("/:id", controllerMgr.UserEducationController.GetUserEducation)
+		userEducationRoute.POST("/", controllerMgr.UserEducationController.CreateUserEducation)
+		userEducationRoute.PUT("/:id", controllerMgr.UserEducationController.UpdateEducation)
+		userEducationRoute.DELETE("/:id", controllerMgr.UserEducationController.DeleteEducation)
 	}
 
 	return routers

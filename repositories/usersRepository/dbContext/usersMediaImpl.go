@@ -160,6 +160,7 @@ func (q *Queries) UpdateMedia(ctx context.Context, arg CreateMediaParams) error 
 	return err
 }
 
+// Delete Users Media
 const deleteMedia = `-- name: DeleteMedia :exec
 DELETE FROM users.users_media
 WHERE usme_id = $1

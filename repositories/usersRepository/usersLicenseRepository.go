@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
-	model "codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/usersRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
@@ -88,30 +87,30 @@ func (cr UserLicenseRepository) UpdateLicense(ctx *gin.Context, userLicenseParam
 	err := store.UpdateLicense(ctx, *userLicenseParams)
 
 	if err != nil {
-		return &model.ResponseError{
+		return &models.ResponseError{
 			Message: "error when update",
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &model.ResponseError{
+	return &models.ResponseError{
 		Message: "data has been update",
 		Status:  http.StatusOK,
 	}
 }
 
 // Delete Table
-func (cr UserLicenseRepository) DeleteLicense(ctx *gin.Context, id int32) *model.ResponseError {
+func (cr UserLicenseRepository) DeleteLicense(ctx *gin.Context, id int32) *models.ResponseError {
 
 	store := dbContext.New(cr.dbHandler)
 	err := store.DeleteLicense(ctx, int32(id))
 
 	if err != nil {
-		return &model.ResponseError{
+		return &models.ResponseError{
 			Message: "error when delete",
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &model.ResponseError{
+	return &models.ResponseError{
 		Message: "data has been deleted",
 		Status:  http.StatusOK,
 	}

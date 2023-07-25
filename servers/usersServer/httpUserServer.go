@@ -12,13 +12,13 @@ import (
 )
 
 type HttpUserServer struct {
-	config             *viper.Viper
-	router             *gin.Engine
+	config            *viper.Viper
+	router            *gin.Engine
 	ControllerManager usersController.ControllerManager
 }
 
-func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpUserServer{
-	
+func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpUserServer {
+
 	repositoryManager := usersRepository.NewRepositoryManager(dbHandler)
 	serviceManager := usersService.NewServiceManager(repositoryManager)
 	controllerManager := usersController.NewControllerManager(serviceManager)
@@ -28,16 +28,16 @@ func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpUserServer{
 	InitRouter(router, controllerManager)
 
 	return HttpUserServer{
-		config: config,
-		router: router,
+		config:            config,
+		router:            router,
 		ControllerManager: *controllerManager,
 	}
 }
 
 // Running gin httpserver
-func (hs HttpUserServer)Start(){
+func (hs HttpUserServer) Start() {
 	err := hs.router.Run(hs.config.GetString("http.server_address"))
-	if err!= nil {
+	if err != nil {
 		log.Fatalf("Error While Starting HTTP Server : %v", err)
 	}
 }
