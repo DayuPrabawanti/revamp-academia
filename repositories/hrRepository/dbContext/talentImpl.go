@@ -2,34 +2,25 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"codeid.revampacademy/models"
 )
 
 const listTalents = `-- name: ListTalents :many
-SELECT bc.batch_name, bc.batch_type, bc.batch_status,
-
+SELECT
 us.user_first_name, us.user_last_name, us.user_photo,
-
-usk.uski_skty_name,
-ms.skty_name,
-ct.cate_name,
+bc.batch_name, bc.batch_type, bc.batch_status,
+bte.btev_skor,
 pe.prog_title
-
-FROM curriculum.program_entity pe
-JOIN master.category ct
-ON pe.prog_cate_id = ct.cate_id
-JOIN bootcamp.batch bc 
-ON bc.batch_id = pe.prog_entity_id
-JOIN hr.employee hr
-ON bc.batch_entity_id = hr.emp_entity_id
-JOIN users.users us
-ON hr.emp_entity_id = us.user_entity_id
-
-JOIN users.users_skill usk
-ON us.user_entity_id = usk.uski_entity_id
-JOIN master.skill_type ms
-ON usk.uski_skty_name = ms.skty_name
+FROM users.users us
+JOIN bootcamp.batch bc
+ON bc.batch_entity_id = us.user_entity_id
+JOIN bootcamp.batch_trainee_evaluation bte
+ON bc.batch_id = bte.btev_batch_id
+JOIN curriculum.program_entity pe
+ON us.user_entity_id = pe.prog_entity_id
 ORDER BY us.user_entity_id
 `
 
@@ -42,14 +33,12 @@ func (q *Queries) ListTalents(ctx context.Context) ([]models.TalentsMockup, erro
 	var items []models.TalentsMockup
 	for rows.Next() {
 		var i models.TalentsMockup
-		if err := rows.Scan(&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
-
+		if err := rows.Scan(
 			&i.UsersUser.UserFirstName, &i.UsersUser.UserLastName, &i.UsersUser.UserPhoto,
-
-			&i.UsersUsersSkill.UskiSktyName,
-			&i.MasterSkillType.SktyName,
-			&i.MasterCategory.CateName,
-			&i.CurriculumProgramEntity.ProgTitle); err != nil {
+			&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
+			&i.BootcampBatchTraineeEvaluation.BtevSkor,
+			&i.CurriculumProgramEntity.ProgTitle,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -64,34 +53,24 @@ func (q *Queries) ListTalents(ctx context.Context) ([]models.TalentsMockup, erro
 }
 
 const searchTalent = `-- name: SearchTalent :many
-SELECT bc.batch_name, bc.batch_type, bc.batch_status,
-
+SELECT
 us.user_first_name, us.user_last_name, us.user_photo,
-
-usk.uski_skty_name,
-ms.skty_name,
-ct.cate_name,
+bc.batch_name, bc.batch_type, bc.batch_status,
+bte.btev_skor,
 pe.prog_title
+FROM users.users us
+JOIN bootcamp.batch bc
+ON bc.batch_entity_id = us.user_entity_id
+JOIN bootcamp.batch_trainee_evaluation bte
+ON bc.batch_id = bte.btev_batch_id
+JOIN curriculum.program_entity pe
+ON us.user_entity_id = pe.prog_entity_id
+WHERE us.user_name like '%' || $1 || '%' OR pe.prog_title like '%' || $2 || '%' OR bc.batch_status like '%' || $3 || '%'
 
-FROM curriculum.program_entity pe
-JOIN master.category ct
-ON pe.prog_cate_id = ct.cate_id
-JOIN bootcamp.batch bc 
-ON bc.batch_id = pe.prog_entity_id
-JOIN hr.employee hr
-ON bc.batch_entity_id = hr.emp_entity_id
-JOIN users.users us
-ON hr.emp_entity_id = us.user_entity_id
-
-JOIN users.users_skill usk
-ON us.user_entity_id = usk.uski_entity_id
-JOIN master.skill_type ms
-ON usk.uski_skty_name = ms.skty_name
-WHERE us.user_name like '%' || $1 || '%' AND usk.usk_skty_name like '%' || $2 || '%' AND bc.batch_name like '%' || $3 || '%' AND batch_status = $4
 `
 
-func (q *Queries) SearchTalent(ctx context.Context, userName string, userSkill string, batchName string, status string) ([]models.TalentsMockup, error) {
-	rows, err := q.db.QueryContext(ctx, searchTalent, userName, userSkill, batchName, status)
+func (q *Queries) SearchTalent(ctx context.Context, userName, skillName, batchStatus string) ([]models.TalentsMockup, error) {
+	rows, err := q.db.QueryContext(ctx, searchTalent, userName, skillName, batchStatus)
 	if err != nil {
 		return nil, err
 	}
@@ -100,12 +79,9 @@ func (q *Queries) SearchTalent(ctx context.Context, userName string, userSkill s
 	for rows.Next() {
 		var i models.TalentsMockup
 		if err := rows.Scan(
-			&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
-			&i.HrEmployee.EmpMaritalStatus, &i.HrEmployee.EmpGender,
 			&i.UsersUser.UserFirstName, &i.UsersUser.UserLastName, &i.UsersUser.UserPhoto,
-			&i.UsersUsersSkill.UskiSktyName,
-			&i.MasterSkillType.SktyName,
-			&i.MasterCategory.CateName,
+			&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
+			&i.BootcampBatchTraineeEvaluation.BtevSkor,
 			&i.CurriculumProgramEntity.ProgTitle,
 		); err != nil {
 			return nil, err
@@ -122,34 +98,19 @@ func (q *Queries) SearchTalent(ctx context.Context, userName string, userSkill s
 }
 
 const pagingTalent = `-- name: PagingTalent :many
-SELECT bc.batch_name, bc.batch_type, bc.batch_status,
-hr.emp_marital_status, hr.emp_gender,
-us.user_first_name, us.user_last_name, us.user_photo,
-ue.pmail_address,
-up.uspo_number,
-usk.uski_skty_name,
-ms.skty_name,
-ct.cate_name,
-pe.prog_title
 
-FROM curriculum.program_entity pe
-JOIN master.category ct
-ON pe.prog_cate_id = ct.cate_id
-JOIN bootcamp.batch bc 
-ON bc.batch_id = pe.prog_entity_id
-JOIN hr.employee hr
-ON bc.batch_entity_id = hr.emp_entity_id
-JOIN users.users us
-ON hr.emp_entity_id = us.user_entity_id
-JOIN users.users_email ue
-ON ue.pmail_entity_id = us.user_entity_id
-JOIN users.users_phones up
-ON up.uspo_entity_id = us.user_entity_id
-JOIN users.users_skill usk
-ON us.user_entity_id = usk.uski_entity_id
-JOIN master.skill_type ms
-ON usk.uski_skty_name = ms.skty_name
-ORDER BY us.user_entity_id
+SELECT
+us.user_first_name, us.user_last_name, us.user_photo,
+bc.batch_name, bc.batch_type, bc.batch_status,
+bte.btev_skor,
+pe.prog_title
+FROM users.users us
+JOIN bootcamp.batch bc
+ON bc.batch_entity_id = us.user_entity_id
+JOIN bootcamp.batch_trainee_evaluation bte
+ON bc.batch_id = bte.btev_batch_id
+JOIN curriculum.program_entity pe
+ON us.user_entity_id = pe.prog_entity_id
 LIMIT $1 OFFSET $2
 `
 
@@ -163,12 +124,9 @@ func (q *Queries) PagingTalent(ctx context.Context, limit, offset int) ([]models
 	for rows.Next() {
 		var i models.TalentsMockup
 		if err := rows.Scan(
-			&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
-			&i.HrEmployee.EmpMaritalStatus, &i.HrEmployee.EmpGender,
 			&i.UsersUser.UserFirstName, &i.UsersUser.UserLastName, &i.UsersUser.UserPhoto,
-			&i.UsersUsersSkill.UskiSktyName,
-			&i.MasterSkillType.SktyName,
-			&i.MasterCategory.CateName,
+			&i.BootcampBatch.BatchName, &i.BootcampBatch.BatchType, &i.BootcampBatch.BatchStatus,
+			&i.BootcampBatchTraineeEvaluation.BtevSkor,
 			&i.CurriculumProgramEntity.ProgTitle,
 		); err != nil {
 			return nil, err
@@ -182,4 +140,50 @@ func (q *Queries) PagingTalent(ctx context.Context, limit, offset int) ([]models
 		return nil, err
 	}
 	return talents, nil
+}
+
+const getBatch = `-- name: GetBatch :one
+SELECT batch_id, batch_start_date, batch_reason, batch_modified_date, batch_status FROM bootcamp.batch
+WHERE batch_id = $1
+`
+
+func (q *Queries) GetBatch(ctx context.Context, batchID int32) (models.BootcampBatch, error) {
+	row := q.db.QueryRowContext(ctx, getBatch, batchID)
+	var i models.BootcampBatch
+	err := row.Scan(
+		&i.BatchID,
+		&i.BatchStartDate,
+		&i.BatchReason,
+		&i.BatchModifiedDate,
+		&i.BatchStatus,
+	)
+	return i, err
+}
+
+const updateBatch = `-- name: UpdateBatch :exec
+UPDATE bootcamp.batch
+SET batch_start_date = $2,
+	batch_reason = $3,
+	batch_modified_date = $4,
+    batch_status = $5
+WHERE batch_id = $1
+`
+
+type UpdateBatchParams struct {
+	BatchID           int32          `db:"batch_id" json:"batchId"`
+	BatchStartDate    sql.NullTime   `db:"batch_start_date" json:"batchStartDate"`
+	BatchReason       sql.NullString `db:"batch_reason" json:"batchReason"`
+	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
+	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
+}
+
+func (q *Queries) UpdateBatch(ctx context.Context, arg UpdateBatchParams) error {
+	_, err := q.db.ExecContext(ctx, updateBatch,
+		arg.BatchID,
+		arg.BatchStartDate,
+		arg.BatchReason,
+		sql.NullTime{Time: time.Now(), Valid: true},
+		arg.BatchStatus,
+	)
+	return err
 }

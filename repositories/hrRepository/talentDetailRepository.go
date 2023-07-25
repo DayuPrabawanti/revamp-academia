@@ -29,16 +29,16 @@ func (tdmr TalentsDetailMockupRepository) GetListTalentDetailMockup(ctx *gin.Con
 
 	for _, v := range talentDetail {
 		talents := &models.TalentsDetailMockup{
-			MasterCategory:          v.MasterCategory,
-			MasterSkillType:         v.MasterSkillType,
-			UsersUser:               v.UsersUser,
-			UsersUsersSkill:         v.UsersUsersSkill,
-			UsersUsersPhone:         v.UsersUsersPhone,
-			UsersUsersEmail:         v.UsersUsersEmail,
-			HrEmployee:              v.HrEmployee,
-			BootcampBatch:           v.BootcampBatch,
-			BootcampBatchTrainee:    v.BootcampBatchTrainee,
-			CurriculumProgramEntity: v.CurriculumProgramEntity,
+			UsersUser:                      v.UsersUser,
+			BootcampBatch:                  v.BootcampBatch,
+			BootcampBatchTrainee:           v.BootcampBatchTrainee,
+			BootcampBatchTraineeEvaluation: v.BootcampBatchTraineeEvaluation,
+			UsersUsersEmail:                v.UsersUsersEmail,
+			UsersUsersPhone:                v.UsersUsersPhone,
+			CurriculumProgramEntity:        v.CurriculumProgramEntity,
+			JobhireJobPost:                 v.JobhireJobPost,
+			JobhireClient:                  v.JobhireClient,
+			HrEmployeeClientContract:       v.HrEmployeeClientContract,
 		}
 		listTalentDetail = append(listTalentDetail, talents)
 	}

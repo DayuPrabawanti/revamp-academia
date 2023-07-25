@@ -50,26 +50,30 @@ type MasterStatusList []MasterStatus
 type UsersUsersSkillList []UsersUsersSkill 
 
 type TalentsDetailMockup struct{
-	MasterCategory		MasterCategory
-	MasterSkillType		MasterSkillType
 	UsersUser 			UsersUser
-	UsersUsersSkill		UsersUsersSkill
-	UsersUsersPhone		UsersUsersPhone
-	UsersUsersEmail		UsersUsersEmail
-	HrEmployee 			HrEmployee
 	BootcampBatch 		BootcampBatch
 	BootcampBatchTrainee BootcampBatchTrainee
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	UsersUsersEmail		UsersUsersEmail
+	UsersUsersPhone		UsersUsersPhone
 	CurriculumProgramEntity CurriculumProgramEntity
+	JobhireJobPost 		JobhireJobPost
+	JobhireClient 		JobhireClient
+	HrEmployeeClientContract HrEmployeeClientContract
+	
 }
 
 type TalentsMockup struct{
-	MasterCategory		MasterCategory
-	MasterSkillType		MasterSkillType
 	UsersUser 			UsersUser
-	UsersUsersSkill		UsersUsersSkill
-	HrEmployee 			HrEmployee
 	BootcampBatch 		BootcampBatch
-	CurriculumProgramEntity CurriculumProgramEntity
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	CurriculumProgramEntity		CurriculumProgramEntity
+}
+
+type EmployeeMockupModel struct{
+	General 	HrEmployee
+	Department 	HrEmployeePayHistory
+	Assigment 	HrEmployeeDepartmentHistory
 }
 
 

@@ -72,6 +72,9 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		talentRoute.GET("/talent", controllerMgr.TalentsMockupController.GetListTalentMockup)
 		talentRoute.GET("/talent/search", controllerMgr.TalentsMockupController.SearchTalent)
 		talentRoute.GET("/talent/paging", controllerMgr.TalentsMockupController.PagingTalent)
+		talentRoute.GET("/talent/view", controllerMgr.TalentsMockupController.GetBatch)
+		talentRoute.GET("/talent/batchid", controllerMgr.TalentsMockupController.UpdateBatch)
+
 	}
 	return routers
 }

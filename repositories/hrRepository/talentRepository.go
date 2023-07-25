@@ -29,13 +29,10 @@ func (tmr TalentsMockupRepository) GetListTalentMockup(ctx *gin.Context) ([]*mod
 
 	for _, v := range talent {
 		talents := &models.TalentsMockup{
-			MasterCategory:          v.MasterCategory,
-			MasterSkillType:         v.MasterSkillType,
-			UsersUser:               v.UsersUser,
-			UsersUsersSkill:         v.UsersUsersSkill,
-			HrEmployee:              v.HrEmployee,
-			BootcampBatch:           v.BootcampBatch,
-			CurriculumProgramEntity: v.CurriculumProgramEntity,
+			UsersUser:                      v.UsersUser,
+			BootcampBatch:                  v.BootcampBatch,
+			BootcampBatchTraineeEvaluation: v.BootcampBatchTraineeEvaluation,
+			CurriculumProgramEntity:        v.CurriculumProgramEntity,
 		}
 		listTalent = append(listTalent, talents)
 	}
@@ -50,12 +47,12 @@ func (tmr TalentsMockupRepository) GetListTalentMockup(ctx *gin.Context) ([]*mod
 	return listTalent, nil
 }
 
-func (tl TalentsMockupRepository) SearchTalent(ctx *gin.Context, userName, userSkill, batchName, status string) ([]models.TalentsMockup, *models.ResponseError) {
+func (tl TalentsMockupRepository) SearchTalent(ctx *gin.Context, userName, skillName, batchStatus string) ([]models.TalentsMockup, *models.ResponseError) {
 	// Perform validation, if needed, for batchName and status
 	// If validation fails, return appropriate response error
 
 	store := dbContext.New(tl.dbHandler)
-	talents, err := store.SearchTalent(ctx, userName, userSkill, batchName, status)
+	talents, err := store.SearchTalent(ctx, userName, skillName, batchStatus)
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: "Failed to search talents",
@@ -78,4 +75,36 @@ func (tl TalentsMockupRepository) PagingTalent(ctx *gin.Context, offset, pageSiz
 	}
 
 	return talents, nil
+}
+
+func (br TalentsMockupRepository) GetBatch(ctx *gin.Context, id int64) (*models.BootcampBatch, *models.ResponseError) {
+
+	store := dbContext.New(br.dbHandler)
+	batch, err := store.GetBatch(ctx, int32(id))
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &batch, nil
+}
+
+func (br TalentsMockupRepository) UpdateBatch(ctx *gin.Context, batchParams *dbContext.UpdateBatchParams) *models.ResponseError {
+
+	store := dbContext.New(br.dbHandler)
+	err := store.UpdateBatch(ctx, *batchParams)
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
 }
