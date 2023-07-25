@@ -17,7 +17,7 @@ type UserSkillController struct {
 }
 
 // Declare constructor
-func NewUserLSkillController(UserSkillService *userServ.UserSkillService) *UserSkillController {
+func NewUserSkillController(UserSkillService *userServ.UserSkillService) *UserSkillController {
 	return &UserSkillController{
 		UserSkillService: UserSkillService,
 	}

@@ -88,6 +88,26 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		// userAddressRoute.DELETE("/:id", controllerMgr.UserAddressController.DeleteExperience)
 	}
 
+	UserEducationRoute := routers.Group("/userseducation")
+	{
+		// Router endpoint (url) http User Address
+		UserEducationRoute.GET("/", controllerMgr.UserEducationController.GetListUsersEducation)
+		UserEducationRoute.GET("/:id", controllerMgr.UserEducationController.GetUserEducation)
+		UserEducationRoute.POST("/", controllerMgr.UserEducationController.CreateUserEducation)
+		UserEducationRoute.PUT("/:id", controllerMgr.UserEducationController.UpdateEducation)
+		UserEducationRoute.DELETE("/:id", controllerMgr.UserEducationController.DeleteEducation)
+	}
+
+	UserSkillRoute := routers.Group("/userskill")
+	{
+		// Router endpoint (url) http User Address
+		UserSkillRoute.GET("/", controllerMgr.UserSkillController.GetListUserSkill)
+		UserSkillRoute.GET("/:id", controllerMgr.UserSkillController.GetUsersSkill)
+		UserSkillRoute.POST("/", controllerMgr.UserSkillController.CreateUserSkill)
+		UserSkillRoute.PUT("/:id", controllerMgr.UserSkillController.UpdateUserSkill)
+		UserSkillRoute.DELETE("/:id", controllerMgr.UserSkillController.DeleteSkill)
+	}
+
 	masterAddressRoute := routers.Group("/master/address")
 	{
 		// Router endpoint (url) http master address

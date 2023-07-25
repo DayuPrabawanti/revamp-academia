@@ -16,6 +16,8 @@ type RepositoryManager struct {
 	UserAddressRepository
 	masterRepository.MasterAddressRepository
 	UserEducationRepository
+	UserLicenseRepository
+	UserSkillRepository
 }
 
 // constructor
@@ -30,5 +32,7 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserAddressRepository(dbHandler),
 		*masterRepository.NewMasteraddressRepository(dbHandler),
 		*NewUserEducationRepository(dbHandler),
+		*NewUserLicenseRepository(dbHandler),
+		*NewUserSkillRepository(dbHandler),
 	}
 }

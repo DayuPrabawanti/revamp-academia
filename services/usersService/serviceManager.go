@@ -2,6 +2,7 @@ package usersService
 
 import (
 	"codeid.revampacademy/repositories/usersRepository"
+	"codeid.revampacademy/services/masterService"
 )
 
 type ServiceManager struct {
@@ -12,7 +13,10 @@ type ServiceManager struct {
 	UserExperienceService
 	UserMediaService
 	UserAddressService
+	masterService.MasterAddressService
 	UserEducationService
+	UserLicenseService
+	UserSkillService
 }
 
 // constructor
@@ -25,6 +29,9 @@ func NewServiceManager(repoMgr *usersRepository.RepositoryManager) *ServiceManag
 		UserExperienceService: *NewUserExperienceService(&repoMgr.UserExperienceRepository),
 		UserMediaService:      *NewUserMediaService(&repoMgr.UserMediaRepository),
 		UserAddressService:    *NewUserAddressService(&repoMgr.UserAddressRepository),
+		MasterAddressService:  *masterService.NewMasterAddressService(&repoMgr.MasterAddressRepository),
 		UserEducationService:  *NewUserEducationService(&repoMgr.UserEducationRepository),
+		UserLicenseService:    *NewUserLicenseService(&repoMgr.UserLicenseRepository),
+		UserSkillService:      *NewUserSkillService(&repoMgr.UserSkillRepository),
 	}
 }
