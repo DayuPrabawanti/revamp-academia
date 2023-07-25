@@ -8,7 +8,7 @@ import (
 func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	router := gin.Default()
 
-	paymentRoute := router.Group("/api/fintech")
+	paymentRoute := router.Group("/api/payment")
 
 	// router (API) end-point Mockup 1
 	paymentRoute.GET("/bank", controllerMgr.PaymentBankController.GetListPaymentBank)
@@ -39,7 +39,7 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 
 	// router (API) end-point Mockup 5
 	paymentRoute.GET("/transaction", controllerMgr.PaymentTransactionController.GetListPaymentTransaction)
-	paymentRoute.GET("/transactio/view", controllerMgr.PaymentTransactionController.GetPaymentTransactionById)
+	paymentRoute.GET("/transaction/view", controllerMgr.PaymentTransactionController.GetPaymentTransactionById)
 	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.CreateNewPaymentTransaction)
 
 	paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
