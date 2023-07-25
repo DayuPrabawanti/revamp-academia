@@ -1,6 +1,10 @@
 package usersRepository
 
-import "database/sql"
+import (
+	"database/sql"
+
+	"codeid.revampacademy/repositories/masterRepository"
+)
 
 type RepositoryManager struct {
 	UserRepository
@@ -10,9 +14,7 @@ type RepositoryManager struct {
 	UserExperienceRepository
 	UserMediaRepository
 	UserAddressRepository
-	UserLicenseRepository
-	UserSkillRepository
-	UserEducationRepository
+	masterRepository.MasterAddressRepository
 }
 
 // constructor
@@ -25,8 +27,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserExperienceRepository(dbHandler),
 		*NewUserMediaRepository(dbHandler),
 		*NewUserAddressRepository(dbHandler),
-		*NewUserLicenseRepository(dbHandler),
-		*NewUserSkillRepository(dbHandler),
-		*NewUserEducationRepository(dbHandler),
+		*masterRepository.NewMasteraddressRepository(dbHandler),
 	}
 }

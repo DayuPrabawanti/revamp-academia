@@ -52,12 +52,12 @@ func (cs UserEmailService) DeleteEmail(ctx *gin.Context, id int32) *models.Respo
 func validateEmail(emailParams *dbContext.CreateEmailParams) *models.ResponseError {
 	if emailParams.PmailEntityID == 0 {
 		return &models.ResponseError{
-			Message: "Invalid Email Adddress",
+			Message: "Invalid Email Id",
 			Status:  http.StatusBadRequest,
 		}
 	}
 
-	if emailParams.PmailAddress == "" {
+	if emailParams.PmailAddress.Valid == false {
 		return &models.ResponseError{
 			Message: "Required Email Address",
 			Status:  http.StatusBadRequest,

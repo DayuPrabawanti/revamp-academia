@@ -12,7 +12,7 @@ import (
 type CreateEmailParams struct {
 	PmailEntityID     int32        `db:"pmail_entity_id" json:"pmailEntityId"`
 	PmailID           int32        `db:"pmail_id" json:"pmailId"`
-	PmailAddress      string       `db:"pmail_address" json:"pmailAddress"`
+	PmailAddress      sql.NullString       `db:"pmail_address" json:"pmailAddress"`
 	PmailModifiedDate sql.NullTime `db:"pmail_modified_date" json:"pmailModifiedDate"`
 }
 
@@ -69,23 +69,24 @@ func (q *Queries) GetEmail(ctx context.Context, pmailID int32) (models.UsersUser
 }
 
 const createEmail = `-- name: CreateEmail :one
-
+WITH inserted_entity AS (
+	SELECT * FROM users.users
+	ORDER BY user_entity_id DESC
+	LIMIT 1
+  )
 INSERT INTO users.users_email
-(pmail_entity_id, pmail_id, pmail_address, pmail_modified_date)
-VALUES($1,$2,$3,$4)
-RETURNING * `
+(pmail_entity_id, pmail_address, pmail_modified_date)
+SELECT user_entity_id,$1,$2 FROM inserted_entity
+RETURNING pmail_entity_id, pmail_address, pmail_modified_date `
 
 func (q *Queries) CreateEmail(ctx context.Context, arg CreateEmailParams) (*models.UsersUsersEmail, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createEmail,
-		arg.PmailEntityID,
-		arg.PmailID,
 		arg.PmailAddress,
 		sql.NullTime{Time:time.Now(), Valid:true},
 	)
 	i := models.UsersUsersEmail{}
 	err := row.Scan(
 		&i.PmailEntityID,
-		&i.PmailID,
 		&i.PmailAddress,
 		&i.PmailModifiedDate,
 	)
@@ -116,7 +117,7 @@ func (q *Queries) UpdateEmail(ctx context.Context, arg CreateEmailParams) error 
 		arg.PmailID,
 		arg.PmailEntityID,
 		arg.PmailAddress,
-		sql.NullTime{Time:time.Now(), Valid:true},
+		arg.PmailModifiedDate == sql.NullTime{Time:time.Now(), Valid:true},
 	)
 	return err
 }

@@ -52,7 +52,7 @@ func (cs UserPhoneService) DeletePhones(ctx *gin.Context, id int32) *models.Resp
 func validatePhone(phoneParams *dbContext.CreatePhonesParams) *models.ResponseError {
 	if phoneParams.UspoEntityID == 0 {
 		return &models.ResponseError{
-			Message: "Invalid Email Adddress",
+			Message: "Invalid Phone Id",
 			Status:  http.StatusBadRequest,
 		}
 	}

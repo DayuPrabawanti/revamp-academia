@@ -100,7 +100,7 @@ func (cr UserRepository) UpdateUser(ctx *gin.Context, userParams *dbContext.Crea
 	}
 }
 
-func (cr UserRepository) DeleteCategory(ctx *gin.Context, id int32) *models.ResponseError {
+func (cr UserRepository) DeleteUser(ctx *gin.Context, id int32) *models.ResponseError {
 
 	store := dbContext.New(cr.dbHandler)
 	err := store.DeleteUsers(ctx, int32(id))

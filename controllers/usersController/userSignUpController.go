@@ -31,15 +31,31 @@ func (signupcontroller SignUpController) CreateSignUp(ctx *gin.Context) {
 		return
 	}
 
-	var signup dbContext.SignUpUserParams
-	err = json.Unmarshal(body, &signup)
+	var user dbContext.CreateUsersParams
+	err = json.Unmarshal(body, &user)
 	if err != nil {
-		log.Println("Error while unmarshaling create sign request body", err)
+		log.Println("Error while unmarshaling User request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response, responseErr := signupcontroller.signUpService.SignUpUser(ctx, &signup)
+	var email dbContext.CreateEmailParams
+	err = json.Unmarshal(body, &email)
+	if err != nil {
+		log.Println("Error while unmarshaling Email request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var phone dbContext.CreatePhonesParams
+	err = json.Unmarshal(body, &phone)
+	if err != nil {
+		log.Println("Error while unmarshaling Phone request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := signupcontroller.signUpService.SignUpUser(ctx, &user, &email, &phone)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

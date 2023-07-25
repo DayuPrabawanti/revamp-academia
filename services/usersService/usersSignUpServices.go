@@ -19,22 +19,31 @@ func NewSignUpService(signUpRepository *usersRepository.SignUpRepository) *SignU
 	}
 }
 
-func (cs *SignUpService) SignUpUser(ctx *gin.Context, signupParams *dbContext.SignUpUserParams) (*models.SignUpUser, *models.ResponseError) {
-	responseErr := validateSignUp(signupParams)
-	if responseErr != nil {
-		return nil, responseErr
-	}
-
-	return cs.signupRepository.CreateSignUp(ctx, signupParams)
+func (cs *SignUpService) SignUpUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, emailParams *dbContext.CreateEmailParams, phoneParams *dbContext.CreatePhonesParams) (*models.SignUpUser, *models.ResponseError) {
+	return cs.signupRepository.CreateSignUp(ctx, userParams, emailParams, phoneParams)
 }
 
 func validateSignUp(signupParams *dbContext.SignUpUserParams) *models.ResponseError {
-	if signupParams.User.UserEntityID != 0 {
+	if signupParams.User.UserName.Valid == false {
 		return &models.ResponseError{
-			Message: "ID Pengguna tidak valid",
+			Message: "Username tidak Boleh Kosong",
 			Status:  http.StatusBadRequest,
 		}
 	}
+
+	if signupParams.Email.PmailAddress.Valid== false {
+		return &models.ResponseError{
+			Message: "Email tidak Boleh Kosong",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	// if signupParams.Phone.UspoNumber == "" {
+	// 	return &models.ResponseError{
+	// 		Message: "Mohon isi nomor telepon",
+	// 		Status:  http.StatusBadRequest,
+	// 	}
+	// }
 
 	// if signupParams.User.UserName == "" {
 	// 	return &models.ResponseError{

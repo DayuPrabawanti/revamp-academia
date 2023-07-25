@@ -1,6 +1,9 @@
 package usersController
 
-import "codeid.revampacademy/services/usersService"
+import (
+	"codeid.revampacademy/controllers/masterController"
+	"codeid.revampacademy/services/usersService"
+)
 
 type ControllerManager struct {
 	UserController
@@ -10,9 +13,7 @@ type ControllerManager struct {
 	UserExperienceController
 	UserMediaController
 	UserAddressController
-	UserLicenseController
-	UserSkillController
-	UserEducationController
+	masterController.MasterAddressController
 }
 
 // constructor
@@ -28,5 +29,6 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserLicenseController(&serviceMgr.UserLicenseService),
 		*NewUserLSkillController(&serviceMgr.UserSkillService),
 		*NewUserEducationController(&serviceMgr.UserEducationService),
+		*masterController.NewMasterAddressController(&serviceMgr.MasterAddressService),
 	}
 }
