@@ -495,7 +495,8 @@ type SalesSpecialOfferProgram struct {
 }
 
 type UsersBusinessEntity struct {
-	EntityID int32 `db:"entity_id" json:"entityId"`
+	EntityID 			int32 			`db:"entity_id" json:"entityId"`
+	EntityModifiedDate 	sql.NullTime 	`db:"entity_modified_date" json:"entityModifiedDate"` 
 }
 
 type UsersPhoneNumberType struct {
@@ -618,3 +619,5 @@ type SignUpUser struct {
 	Email   UsersUsersEmail
 	Phone 	UsersUsersPhone
 }
+
+// menambahkan sign up model

@@ -46,7 +46,7 @@ func (cs UserService) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateU
 }
 
 func (cs UserService) DeleteUser(ctx *gin.Context, id int32) *models.ResponseError {
-	return cs.userRepository.DeleteCategory(ctx, id)
+	return cs.userRepository.DeleteUser(ctx, id)
 }
 
 func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError {
@@ -57,9 +57,16 @@ func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError
 		}
 	}
 
-	if userParams.UserName == "" {
+	if userParams.UserName.Valid == false {
 		return &models.ResponseError{
-			Message: "Required Name User",
+			Message: "Required Username",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if userParams.UserPassword.Valid == false {
+		return &models.ResponseError{
+			Message: "Required Password",
 			Status:  http.StatusBadRequest,
 		}
 	}

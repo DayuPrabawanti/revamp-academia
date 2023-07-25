@@ -70,7 +70,7 @@ func (usercontroller UserController) CreateUser(ctx *gin.Context) {
 	var user dbContext.CreateUsersParams
 	err = json.Unmarshal(body, &user)
 	if err != nil {
-		log.Println("Error while unmarshaling create category request body", err)
+		log.Println("Error while unmarshaling create User request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

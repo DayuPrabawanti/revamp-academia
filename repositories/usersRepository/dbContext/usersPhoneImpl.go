@@ -13,7 +13,7 @@ type CreatePhonesParams struct {
 	UspoEntityID     int32          `db:"uspo_entity_id" json:"uspoEntityId"`
 	UspoNumber       string         `db:"uspo_number" json:"uspoNumber"`
 	UspoModifiedDate sql.NullTime   `db:"uspo_modified_date" json:"uspoModifiedDate"`
-	UspoPontyCode    string `db:"uspo_ponty_code" json:"uspoPontyCode"`
+	UspoPontyCode    sql.NullString `db:"uspo_ponty_code" json:"uspoPontyCode"`
 }
 
 const listPhones = `-- name: ListPhones :many
@@ -69,15 +69,20 @@ func (q *Queries) GetPhones(ctx context.Context, uspoEntityID int32) (models.Use
 }
 
 const createPhones = `-- name: CreatePhones :one
-
+WITH inserted_entity AS (
+	SELECT * FROM users.users
+	ORDER BY user_entity_id DESC
+	LIMIT 1
+)
 INSERT INTO users.users_phones
 (uspo_entity_id, uspo_number, uspo_modified_date, uspo_ponty_code)
-VALUES($1,$2,$3,$4)
-RETURNING *
+SELECT user_entity_id, $1, $2, $3 FROM inserted_entity
+RETURNING uspo_entity_id, uspo_number, uspo_modified_date, uspo_ponty_code
 `
+
+
 func (q *Queries) CreatePhones(ctx context.Context, arg CreatePhonesParams) (*models.UsersUsersPhone, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createPhones,
-		arg.UspoEntityID,
 		arg.UspoNumber,
 		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.UspoPontyCode,
