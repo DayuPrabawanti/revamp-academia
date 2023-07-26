@@ -11,17 +11,17 @@ import (
 
 type JobCategoryRepository struct {
 	dbHandler   *sql.DB
-	transaction *sql.Tx
+	Transaction *sql.Tx
 }
 
 type JobClientRepository struct {
 	dbHandler   *sql.DB
-	transaction *sql.Tx
+	Transaction *sql.Tx
 }
 
 type JobPostRepository struct {
 	dbHandler   *sql.DB
-	transaction *sql.Tx
+	Transaction *sql.Tx
 }
 
 // --------------------------- JOB CATEGORY ---------------------------

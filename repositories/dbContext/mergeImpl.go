@@ -29,28 +29,26 @@ on jt.jopo_work_code = wt.woty_code
 WHERE jt.jopo_title like $1
 `
 
-
 func (q *Queries) GetJobPostingImpl(ctx context.Context, title string) (models.JobPosting, error) {
 	row := q.db.QueryRowContext(ctx, getJobPostingImpl, title)
 	var i models.JobPosting
 	err := row.Scan(
-			&i.JobhireJobPost.JopoTitle,
-			&i.MasterIndustry.InduName,
-			&i.JobhireJobPost.JopoEntityID,
-			&i.MasterIndustry.InduCodeID,
-			&i.JobhireJobPost.JopoStartDate,
-			&i.JobhireJobPost.JopoEndDate,
-			&i.JobhireJobPost.JopoMinSalary,
-			&i.JobhireJobPost.JopoMaxSalary,
-			&i.JobhireJobPost.JopoMinExperience,
-			&i.JobhireJobPost.JopoPrimarySkill,
-			&i.JobhireJobPost.JopoStatus,
-			&i.JobhireJobPost.JopoWorkCode,
-			&i.MasterWorkingType.WotyName,
+		&i.JobhireJobPost.JopoTitle,
+		&i.MasterIndustry.InduName,
+		&i.JobhireJobPost.JopoEntityID,
+		&i.MasterIndustry.InduCodeID,
+		&i.JobhireJobPost.JopoStartDate,
+		&i.JobhireJobPost.JopoEndDate,
+		&i.JobhireJobPost.JopoMinSalary,
+		&i.JobhireJobPost.JopoMaxSalary,
+		&i.JobhireJobPost.JopoMinExperience,
+		&i.JobhireJobPost.JopoPrimarySkill,
+		&i.JobhireJobPost.JopoStatus,
+		&i.JobhireJobPost.JopoWorkCode,
+		&i.MasterWorkingType.WotyName,
 	)
 	return i, err
 }
-
 
 const listJobPostingImpl = `-- name: ListJobPostingImpl :many
 select  
@@ -111,5 +109,3 @@ func (q *Queries) ListJobPostingImpl(ctx context.Context, nama string) ([]models
 	}
 	return items, nil
 }
-
-

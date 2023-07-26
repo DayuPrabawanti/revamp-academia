@@ -19,27 +19,21 @@ func NewJobPostingController(jobPostingService *services.JobPostingService) *Job
 
 func (jobPostingController JobPostingController) GetJobPostingHttp(ctx *gin.Context) {
 
-				jopoTitle := ctx.Query("title")
+	jopoTitle := ctx.Query("title")
 
-				
+	response, responseErr := jobPostingController.jobPostingService.GetJobPostingService(ctx, string(jopoTitle))
+	if responseErr != nil {
 
-				response, responseErr := jobPostingController.jobPostingService.GetJobPostingService(ctx, string(jopoTitle))
-				if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
 
-					ctx.JSON(responseErr.Status, responseErr)
-					return
-				}
-
-				ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
-
-
-
-
 func (jobPostingController JobPostingController) ListJobPostingHttp(ctx *gin.Context) {
-	coba:=ctx.Query("nama")
-	response, responseErr := jobPostingController.jobPostingService.ListJobPostRepo(ctx,string(coba))
+	coba := ctx.Query("nama")
+	response, responseErr := jobPostingController.jobPostingService.ListJobPostRepo(ctx, string(coba))
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)

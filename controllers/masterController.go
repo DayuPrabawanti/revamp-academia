@@ -19,34 +19,33 @@ func NewMasterIndustryController(masterIndustryController *services.MasterIndust
 	}
 }
 
-
 func (masterIndustryController MasterIndustryController) GetMasterIndustryHttp(ctx *gin.Context) {
 
-				InduCodeID, err := strconv.Atoi(ctx.Param("id"))
+	InduCodeID, err := strconv.Atoi(ctx.Param("id"))
 
-				if err != nil {
-					log.Println("Error while reading paramater id", err)
-					ctx.AbortWithError(http.StatusBadRequest, err)
-					return
-				}
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
 
-				response, responseErr := masterIndustryController.MasterIndustryService.GetMasterIndustryService(ctx, int32(InduCodeID))
-				if responseErr != nil {
+	response, responseErr := masterIndustryController.MasterIndustryService.GetMasterIndustryService(ctx, int32(InduCodeID))
+	if responseErr != nil {
 
-					ctx.JSON(responseErr.Status, responseErr)
-					return
-				}
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
 
-				ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 }
 
-	func (masterIndustryController MasterIndustryController) ListMasterIndustryHttp(ctx *gin.Context) {
-						response, responseErr := masterIndustryController.MasterIndustryService.ListMasterIndustryService(ctx)
+func (masterIndustryController MasterIndustryController) ListMasterIndustryHttp(ctx *gin.Context) {
+	response, responseErr := masterIndustryController.MasterIndustryService.ListMasterIndustryService(ctx)
 
-						if responseErr != nil {
-							ctx.JSON(responseErr.Status, responseErr)
-							return
-						}
-
-						ctx.JSON(http.StatusOK, response)
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
 	}
+
+	ctx.JSON(http.StatusOK, response)
+}

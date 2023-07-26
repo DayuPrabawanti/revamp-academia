@@ -4,7 +4,6 @@ import (
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories"
 	"github.com/gin-gonic/gin"
-
 )
 
 type MasterIndustryService struct {
@@ -21,7 +20,6 @@ func (mastry MasterIndustryService) GetMasterIndustryService(ctx *gin.Context, I
 	return mastry.MasterIndustryServiceRepo.GetMasterIndustryRepo(ctx, InduCodeID)
 }
 
-	func (mastry MasterIndustryService) ListMasterIndustryService(ctx *gin.Context) ([]*models.MasterIndustry, *models.ResponseError) {
-					return mastry.MasterIndustryServiceRepo.ListMasterIndustryRepo(ctx)
-	}
-
+func (mastry MasterIndustryService) ListMasterIndustryService(ctx *gin.Context) ([]*models.MasterIndustry, *models.ResponseError) {
+	return mastry.MasterIndustryServiceRepo.ListMasterIndustryRepo(ctx)
+}

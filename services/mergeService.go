@@ -16,11 +16,10 @@ func NewJobPostingService(jobPostingRepository *repositories.JobPostingRepositor
 	}
 }
 
-
 func (jpings JobPostingService) GetJobPostingService(ctx *gin.Context, title string) (*models.JobPosting, *models.ResponseError) {
 	return jpings.jobPostingRepository.GetJobPostingRepo(ctx, title)
 }
 
-func (jpings JobPostingService) ListJobPostRepo(ctx *gin.Context,nama string) ([]*models.JobPosting, *models.ResponseError) {
-	return jpings.jobPostingRepository.ListJobPostingRepo(ctx,nama)
+func (jpings JobPostingService) ListJobPostRepo(ctx *gin.Context, nama string) ([]*models.JobPosting, *models.ResponseError) {
+	return jpings.jobPostingRepository.ListJobPostingRepo(ctx, nama)
 }
