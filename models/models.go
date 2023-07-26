@@ -7,14 +7,96 @@ package models
 import (
 	"database/sql"
 	"time"
-
+	// "github.com/tabbed/pqtype"
 )
 
-type Group struct{
-	CurriculumProgramEntity 		CurriculumProgramEntity
-	CurriculumSection 				CurriculumSection
-	CurriculumSectionDetail 		CurriculumSectionDetail
-	MasterCategory         			MasterCategory
+type Gabung struct {
+	CurriculumProgramEntity 			CurriculumProgramEntity
+	CurriculumSection 					CurriculumSection
+	CurriculumProgramEntityDescription 	CurriculumProgramEntityDescription
+	// SectionGroup []SectionGroup
+	// CurriculumSectionDetail CurriculumSectionDetail
+	MasterCategory          			MasterCategory
+}
+
+// type SectionGroup struct {
+// 	CurriculumSection CurriculumSection
+// 	CurriculumSectionDetail []CurriculumSectionDetail
+
+// }
+
+type GetGabung struct {
+	CurriculumProgramEntity CurriculumProgramEntity
+	CurriculumProgramEntityDescription []CurriculumProgramEntityDescription
+	CurriculumSectionGet    []CurriculumSectionGet
+	MasterCategory			 []MasterCategory
+}
+type CreateGabung struct {
+	CurriculumProgramEntity CreateCurriculumProgramEntity
+	CurriculumSection       CurriculumSection
+	MasterCategory 			MasterCategory
+}
+type CreateCurriculumProgramEntity struct {
+	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
+	ProgTitle        string `db:"prog_title" json:"progTitle"`
+	ProgHeadline     string `db:"prog_headline" json:"progHeadline"`
+	ProgType         string `db:"prog_type" json:"progType"`
+	ProgLearningType string `db:"prog_learning_type" json:"progLearningType"`
+	ProgRating       int32  `db:"prog_rating" json:"progRating"`
+	ProgTotalTraniee int32  `db:"prog_total_trainee" json:"progTotalTrainee"`
+	ProgModifiedDate time.Time   `db:"prog_modified_date" json:"progModifiedDate"`
+	ProgImage        string `db:"prog_image" json:"progImage"`
+	ProgBestSeller   string `db:"prog_best_seller" json:"progBestSeller"`
+	ProgPrice        int32  `db:"prog_price" json:"progPrice"`
+	ProgLanguage     string `db:"prog_language" json:"progLanguage"`
+	ProgDuration     int32  `db:"prog_duration" json:"progDuration"`
+	ProgDurationType string `db:"prog_duration_type" json:"progDurationType"`
+	ProgTagSkill     string `db:"prog_tag_skill" json:"progTagSkill"`
+	ProgCityID       int32  `db:"prog_city_id" json:"progCityId"`
+	ProgCateID       int32  `db:"prog_cate_id" json:"progCateId"`
+	ProgCreatedBy    int32  `db:"prog_created_by" json:"progCreatedBy"`
+	ProgStatus       string `db:"prog_status" json:"progStatus"`
+
+}
+
+
+type MasterJobRoleList []MasterJobRole
+type UsersUserList []UsersUser
+type HrEmployeeList []HrEmployee
+type BootcampBatchList []BootcampBatch
+type JobhireTalentApplyList []JobhireTalentApply
+type MasterStatusList []MasterStatus
+type UsersUsersSkillList []UsersUsersSkill 
+
+type TalentsDetailMockup struct{
+	MasterCategory		MasterCategory
+	MasterSkillType		MasterSkillType
+	UsersUser 			UsersUser
+	UsersUsersSkill		UsersUsersSkill
+	UsersUsersPhone		UsersUsersPhone
+	UsersUsersEmail		UsersUsersEmail
+	HrEmployee 			HrEmployee
+	BootcampBatch 		BootcampBatch
+	BootcampBatchTrainee BootcampBatchTrainee
+	CurriculumProgramEntity CurriculumProgramEntity
+}
+
+type TalentsMockup struct{
+	MasterCategory		MasterCategory
+	MasterSkillType		MasterSkillType
+	UsersUser 			UsersUser
+	UsersUsersSkill		UsersUsersSkill
+	HrEmployee 			HrEmployee
+	BootcampBatch 		BootcampBatch
+	CurriculumProgramEntity CurriculumProgramEntity
+}
+
+
+type MergeJobAndMaster struct{
+	JobHirePost JobhireJobPost
+	MasterAddress MasterAddress
+	MasterCity MasterCity
+	
 }
 
 type BootcampBatch struct {
@@ -89,76 +171,94 @@ type BootcampProgramApplyProgress struct {
 	ParogStatus       sql.NullString `db:"parog_status" json:"parogStatus"`
 }
 
+type MergeMockUser struct {
+	Users     UsersUser
+	Education UsersUsersEducation
+	Media     UsersUsersMedia
+}
+
+
+
 type CurriculumProgramEntity struct {
 	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
-	ProgTitle        sql.NullString `db:"prog_title" json:"progTitle"`
-	ProgHeadline     sql.NullString `db:"prog_headline" json:"progHeadline"`
-	ProgType         sql.NullString `db:"prog_type" json:"progType"`
-	ProgLearningType sql.NullString `db:"prog_learning_type" json:"progLearningType"`
-	ProgRating       sql.NullInt32  `db:"prog_rating" json:"progRating"`
-	ProgTotalTrainee sql.NullInt32  `db:"prog_total_trainee" json:"progTotalTrainee"`
-	ProgModifiedDate sql.NullTime   `db:"prog_modified_date" json:"progModifiedDate"`
-	ProgImage        sql.NullString `db:"prog_image" json:"progImage"`
-	ProgBestSeller   sql.NullString `db:"prog_best_seller" json:"progBestSeller"`
-	ProgPrice        sql.NullInt32  `db:"prog_price" json:"progPrice"`
-	ProgLanguage     sql.NullString `db:"prog_language" json:"progLanguage"`
-	ProgDuration     sql.NullInt32  `db:"prog_duration" json:"progDuration"`
-	ProgDurationType sql.NullString `db:"prog_duration_type" json:"progDurationType"`
-	ProgTagSkill     sql.NullString `db:"prog_tag_skill" json:"progTagSkill"`
-	ProgCityID       sql.NullInt32  `db:"prog_city_id" json:"progCityId"`
-	ProgCateID       int32  `db:"prog_cate_id" json:"progCateId"`
-	ProgCreatedBy    sql.NullInt32  `db:"prog_created_by" json:"progCreatedBy"`
-	ProgStatus       sql.NullString `db:"prog_status" json:"progStatus"`
+	ProgTitle        string         `db:"prog_title" json:"progTitle"`
+	ProgHeadline     string         `db:"prog_headline" json:"progHeadline"`
+	ProgType         string         `db:"prog_type" json:"progType"`
+	ProgLearningType string         `db:"prog_learning_type" json:"progLearningType"`
+	ProgRating       string `db:"prog_rating" json:"progRating"`
+	ProgTotalTraniee string `db:"prog_total_traniee" json:"progTotalTraniee"`
+	ProgModifiedDate time.Time      `db:"prog_modified_date" json:"progModifiedDate"`
+	ProgImage        string         `db:"prog_image" json:"progImage"`
+	ProgBestSeller   string `db:"prog_best_seller" json:"progBestSeller"`
+	ProgPrice        int32          `db:"prog_price" json:"progPrice"`
+	ProgLanguage     string         `db:"prog_language" json:"progLanguage" check:"'bahasa' OR 'english'"`
+	ProgDuration     int32          `db:"prog_duration" json:"progDuration"`
+	ProgDurationType string         `db:"prog_duration_type" json:"progDurationType"`
+	ProgTagSkill     string `db:"prog_tag_skill" json:"progTagSkill"`
+	ProgCityID       string `db:"prog_city_id" json:"progCityId"`
+	ProgCateID       int32          `db:"prog_cate_id" json:"progCateId"`
+	ProgCreatedBy    int32  `db:"prog_created_by" json:"progCreatedBy"`
+	ProgStatus       string         `db:"prog_status" json:"progStatus"`
 }
+
 
 type CurriculumProgramEntityDescription struct {
 	PredProgEntityID int32                 `db:"pred_prog_entity_id" json:"predProgEntityId"`
 	PredItemLearning sql.NullString `db:"pred_item_learning" json:"predItemLearning"`
-	PredItemInclude  sql.NullString `db:"pred_item_include" json:"predItemInclude"`
-	PredRequirement  sql.NullString `db:"pred_requirement" json:"predRequirement"`
 	PredDescription  sql.NullString `db:"pred_description" json:"predDescription"`
 	PredTargetLevel  sql.NullString `db:"pred_target_level" json:"predTargetLevel"`
 }
 
 type CurriculumProgramReview struct {
-	ProwUserEntityID int32          `db:"prow_user_entity_id" json:"prowUserEntityId"`
-	ProwProgEntityID int32          `db:"prow_prog_entity_id" json:"prowProgEntityId"`
-	ProwReview       sql.NullString `db:"prow_review" json:"prowReview"`
-	ProwRating       sql.NullInt32  `db:"prow_rating" json:"prowRating"`
-	ProwModifiedDate sql.NullTime   `db:"prow_modified_date" json:"prowModifiedDate"`
+	ProwUserEntityID int32     `db:"prow_user_entity_id" json:"prowUserEntityId"`
+	ProwProgEntityID int32     `db:"prow_prog_entity_id" json:"prowProgEntityId"`
+	ProwReview       string    `db:"prow_review" json:"prowReview"`
+	ProwRating       int32     `db:"prow_rating" json:"prowRating"`
+	ProwModifiedDate time.Time `db:"prow_modified_date" json:"prowModifiedDate"`
 }
 
 type CurriculumSection struct {
-	SectID           int32  `db:"sect_id" json:"sectId"`
-	SectProgEntityID int32  `db:"sect_prog_entity_id" json:"sectProgEntityId"`
-	SectTitle        string `db:"sect_title" json:"sectTitle"`
+	SectID           int32          `db:"sect_id" json:"sectId"`
+	SectProgEntityID int32          `db:"sect_prog_entity_id" json:"sectProgEntityId"`
+	SectTitle        string         `db:"sect_title" json:"sectTitle"`
 	SectDescription  sql.NullString `db:"sect_description" json:"sectDescription"`
-	SectTotalSection int32  `db:"sect_total_section" json:"sectTotalSection"`
-	SectTotalLecture int32  `db:"sect_total_lecture" json:"sectTotalLecture"`
-	SectTotalMinute  int32  `db:"sect_total_minute" json:"sectTotalMinute"`
-	SectModifiedDate time.Time   `db:"sect_modified_date" json:"sectModifiedDate"`
+	SectTotalSection int32          `db:"sect_total_section" json:"sectTotalSection"`
+	SectTotalLecture int32          `db:"sect_total_lecture" json:"sectTotalLecture"`
+	SectTotalMinute  int32          `db:"sect_total_minute" json:"sectTotalMinute"`
+	SectModifiedDate time.Time      `db:"sect_modified_date" json:"sectModifiedDate"`
+}
+
+type CurriculumSectionGet struct {
+	SectProgEntityID int32          `db:"sect_prog_entity_id" json:"sectProgEntityId"`
+	SectTitle        string         `db:"sect_title" json:"sectTitle"`
+	SectDescription  sql.NullString `db:"sect_description" json:"sectDescription"`
+	SectTotalMinute  int32          `db:"sect_total_minute" json:"sectTotalMinute"`
+	SectTotalSection sql.NullInt32  `db:"sect_total_section" json:"sectTotalSection"`
+	SectTotalLecture sql.NullInt32  `db:"sect_total_lecture" json:"sectTotalLecture"`
+	SectModifiedDate sql.NullTime   `db:"sect_modified_date" json:"sectModifiedDate"`
 }
 
 type CurriculumSectionDetail struct {
 	SecdID           int32          `db:"secd_id" json:"secdId"`
-	SecdTitle        sql.NullString `db:"secd_title" json:"secdTitle"`
-	SecdPreview      sql.NullString `db:"secd_preview" json:"secdPreview"`
-	SecdScore        sql.NullInt32  `db:"secd_score" json:"secdScore"`
+	SecdTitle        string         `db:"secd_title" json:"secdTitle"`
+	SecdPreview      string         `db:"secd_preview" json:"secdPreview"`
+	SecdScore        int32          `db:"secd_score" json:"secdScore"`
 	SecdNote         sql.NullString `db:"secd_note" json:"secdNote"`
-	SecdMinute       sql.NullInt32  `db:"secd_minute" json:"secdMinute"`
-	SecdModifiedDate sql.NullTime   `db:"secd_modified_date" json:"secdModifiedDate"`
-	SecdSectID       sql.NullInt32  `db:"secd_sect_id" json:"secdSectId"`
+	SecdMinute       int32          `db:"secd_minute" json:"secdMinute"`
+	SecdModifiedDate time.Time      `db:"secd_modified_date" json:"secdModifiedDate"`
+	SecdSectID       int32          `db:"secd_sect_id" json:"secdSectId"`
 }
 
 type CurriculumSectionDetailMaterial struct {
-	SedmID           int32          `db:"sedm_id" json:"sedmId"`
-	SedmFilename     sql.NullString `db:"sedm_filename" json:"sedmFilename"`
-	SedmFilesize     sql.NullInt32  `db:"sedm_filesize" json:"sedmFilesize"`
-	SedmFiletype     sql.NullString `db:"sedm_filetype" json:"sedmFiletype"`
-	SedmFilelink     sql.NullString `db:"sedm_filelink" json:"sedmFilelink"`
-	SedmModifiedDate sql.NullTime   `db:"sedm_modified_date" json:"sedmModifiedDate"`
-	SedmSecdID       sql.NullInt32  `db:"sedm_secd_id" json:"sedmSecdId"`
+	SedmID           int32     `db:"sedm_id" json:"sedmId"`
+	SedmFilename     string    `db:"sedm_filename" json:"sedmFilename"`
+	SedmFilesize     int32     `db:"sedm_filesize" json:"sedmFilesize"`
+	SedmFiletype     string    `db:"sedm_filetype" json:"sedmFiletype"`
+	SedmFilelink     string    `db:"sedm_filelink" json:"sedmFilelink"`
+	SedmModifiedDate time.Time `db:"sedm_modified_date" json:"sedmModifiedDate"`
+	SedmSecdID       int32     `db:"sedm_secd_id" json:"sedmSecdId"`
 }
+
 
 type HrDepartment struct {
 	DeptID           int32          `db:"dept_id" json:"deptId"`
@@ -235,7 +335,7 @@ type JobhireEmployeeRange struct {
 
 type JobhireJobCategory struct {
 	JocaID           int32          `db:"joca_id" json:"jocaId"`
-	JocaName         sql.NullString `db:"joca_name" json:"jocaName"`
+	JocaName         string `db:"joca_name" json:"jocaName"`
 	JocaModifiedDate sql.NullTime   `db:"joca_modified_date" json:"jocaModifiedDate"`
 }
 
@@ -267,7 +367,7 @@ type JobhireJobPost struct {
 	JopoJoroID         sql.NullInt32  `db:"jopo_joro_id" json:"jopoJoroId"`
 	JopoJotyID         sql.NullInt32  `db:"jopo_joty_id" json:"jopoJotyId"`
 	JopoJocaID         sql.NullInt32  `db:"jopo_joca_id" json:"jopoJocaId"`
-	JopoAddrID         sql.NullInt32  `db:"jopo_addr_id" json:"jopoAddrId"`
+	JopoAddrID         int32  `db:"jopo_addr_id" json:"jopoAddrId"`
 	JopoWorkCode       sql.NullString `db:"jopo_work_code" json:"jopoWorkCode"`
 	JopoEduCode        sql.NullString `db:"jopo_edu_code" json:"jopoEduCode"`
 	JopoInduCode       sql.NullString `db:"jopo_indu_code" json:"jopoInduCode"`
@@ -308,7 +408,7 @@ type MasterAddress struct {
 	AddrPostalCode      sql.NullString `db:"addr_postal_code" json:"addrPostalCode"`
 	AddrSpatialLocation sql.NullString `db:"addr_spatial_location" json:"addrSpatialLocation"`
 	AddrModifiedDate    sql.NullTime   `db:"addr_modified_date" json:"addrModifiedDate"`
-	AddrCityID          sql.NullInt32  `db:"addr_city_id" json:"addrCityId"`
+	AddrCityID          int32  `db:"addr_city_id" json:"addrCityId"`
 }
 
 type MasterAddressType struct {
@@ -318,10 +418,10 @@ type MasterAddressType struct {
 }
 
 type MasterCategory struct {
-	CateID           int32          `db:"cate_id" json:"cateId"`
-	CateName         sql.NullString `db:"cate_name" json:"cateName"`
-	CateCateID       sql.NullInt32  `db:"cate_cate_id" json:"cateCateId"`
-	CateModifiedDate sql.NullTime   `db:"cate_modified_date" json:"cateModifiedDate"`
+	CateID           int32         `db:"cate_id" json:"cateId"`
+	CateName         string        `db:"cate_name" json:"cateName"`
+	CateCateID       sql.NullInt32 `db:"cate_cate_id" json:"cateCateId"`
+	CateModifiedDate sql.NullTime     `db:"cate_modified_date" json:"cateModifiedDate"`
 }
 
 type MasterCity struct {
@@ -446,60 +546,60 @@ type PaymentUsersAccount struct {
 
 type SalesCartItem struct {
 	CaitID           int32          `db:"cait_id" json:"caitId"`
-	CaitQuantity     sql.NullInt32  `db:"cait_quantity" json:"caitQuantity"`
+	CaitQuantity     int32          `db:"cait_quantity" json:"caitQuantity"`
 	CaitUnitPrice    sql.NullString `db:"cait_unit_price" json:"caitUnitPrice"`
-	CaitModifiedDate sql.NullTime   `db:"cait_modified_date" json:"caitModifiedDate"`
-	CaitUserEntityID sql.NullInt32  `db:"cait_user_entity_id" json:"caitUserEntityId"`
-	CaitProgEntityID sql.NullInt32  `db:"cait_prog_entity_id" json:"caitProgEntityId"`
+	CaitModifiedDate sql.NullString `db:"cait_modified_date" json:"caitModifiedDate"`
+	CaitUserEntityID int32          `db:"cait_user_entity_id" json:"caitUserEntityId"`
+	CaitProgEntityID int32          `db:"cait_prog_entity_id" json:"caitProgEntityId"`
 }
 
 type SalesSalesOrderDetail struct {
-	SodeID           int32          `db:"sode_id" json:"sodeId"`
-	SodeQty          sql.NullInt32  `db:"sode_qty" json:"sodeQty"`
-	SodeUnitPrice    sql.NullString `db:"sode_unit_price" json:"sodeUnitPrice"`
-	SodeUnitDiscount sql.NullString `db:"sode_unit_discount" json:"sodeUnitDiscount"`
-	SodeLineTotal    sql.NullInt32  `db:"sode_line_total" json:"sodeLineTotal"`
-	SodeModifiedDate sql.NullTime   `db:"sode_modified_date" json:"sodeModifiedDate"`
-	SodeSoheID       sql.NullInt32  `db:"sode_sohe_id" json:"sodeSoheId"`
-	SodeProgEntityID sql.NullInt32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
+	SodeID           int32  `db:"sode_id" json:"sodeId"`
+	SodeQty          int32  `db:"sode_qty" json:"sodeQty"`
+	SodeUnitPrice    string `db:"sode_unit_price" json:"sodeUnitPrice"`
+	SodeUnitDiscount string `db:"sode_unit_discount" json:"sodeUnitDiscount"`
+	SodeLineTotal    int32  `db:"sode_line_total" json:"sodeLineTotal"`
+	SodeModifiedDate string `db:"sode_modified_date" json:"sodeModifiedDate"`
+	SodeSoheID       int32  `db:"sode_sohe_id" json:"sodeSoheId"`
+	SodeProgEntityID int32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
 }
 
 type SalesSalesOrderHeader struct {
-	SoheID             int32          `db:"sohe_id" json:"soheId"`
-	SoheOrderDate      sql.NullTime   `db:"sohe_order_date" json:"soheOrderDate"`
-	SoheDueDate        sql.NullTime   `db:"sohe_due_date" json:"soheDueDate"`
-	SoheShipDate       sql.NullTime   `db:"sohe_ship_date" json:"soheShipDate"`
-	SoheOrderNumber    sql.NullString `db:"sohe_order_number" json:"soheOrderNumber"`
-	SoheAccountNumber  sql.NullString `db:"sohe_account_number" json:"soheAccountNumber"`
-	SoheTrpaCodeNumber sql.NullString `db:"sohe_trpa_code_number" json:"soheTrpaCodeNumber"`
-	SoheSubtotal       sql.NullString `db:"sohe_subtotal" json:"soheSubtotal"`
-	SoheTax            sql.NullString `db:"sohe_tax" json:"soheTax"`
-	SoheTotalDue       sql.NullInt32  `db:"sohe_total_due" json:"soheTotalDue"`
-	SoheLicenseCode    sql.NullString `db:"sohe_license_code" json:"soheLicenseCode"`
-	SoheModifiedDate   sql.NullTime   `db:"sohe_modified_date" json:"soheModifiedDate"`
-	SoheUserEntityID   sql.NullInt32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
-	SoheStatus         sql.NullString `db:"sohe_status" json:"soheStatus"`
+	SoheID             int32  `db:"sohe_id" json:"soheId"`
+	SoheOrderDate      string `db:"sohe_order_date" json:"soheOrderDate"`
+	SoheDueDate        string `db:"sohe_due_date" json:"soheDueDate"`
+	SoheShipDate       string `db:"sohe_ship_date" json:"soheShipDate"`
+	SoheOrderNumber    string `db:"sohe_order_number" json:"soheOrderNumber"`
+	SoheAccountNumber  string `db:"sohe_account_number" json:"soheAccountNumber"`
+	SoheTrpaCodeNumber string `db:"sohe_trpa_code_number" json:"soheTrpaCodeNumber"`
+	SoheSubtotal       string `db:"sohe_subtotal" json:"soheSubtotal"`
+	SoheTax            string `db:"sohe_tax" json:"soheTax"`
+	SoheTotalDue       int32  `db:"sohe_total_due" json:"soheTotalDue"`
+	SoheLicenseCode    string `db:"sohe_license_code" json:"soheLicenseCode"`
+	SoheModifiedDate   string `db:"sohe_modified_date" json:"soheModifiedDate"`
+	SoheUserEntityID   int32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
+	SoheStatus         string `db:"sohe_status" json:"soheStatus"`
 }
 
 type SalesSpecialOffer struct {
 	SpofID           int32          `db:"spof_id" json:"spofId"`
-	SpofDescription  sql.NullString `db:"spof_description" json:"spofDescription"`
-	SpofDiscount     sql.NullInt32  `db:"spof_discount" json:"spofDiscount"`
-	SpofType         sql.NullString `db:"spof_type" json:"spofType"`
-	SpofStartDate    sql.NullTime   `db:"spof_start_date" json:"spofStartDate"`
-	SpofEndDate      sql.NullTime   `db:"spof_end_date" json:"spofEndDate"`
-	SpofMinQty       sql.NullInt32  `db:"spof_min_qty" json:"spofMinQty"`
-	SpofMaxQty       sql.NullInt32  `db:"spof_max_qty" json:"spofMaxQty"`
-	SpofModifiedDate sql.NullTime   `db:"spof_modified_date" json:"spofModifiedDate"`
-	SpofCateID       sql.NullInt32  `db:"spof_cate_id" json:"spofCateId"`
+	SpofDescription  string         `db:"spof_description" json:"spofDescription"`
+	SpofDiscount     int32          `db:"spof_discount" json:"spofDiscount"`
+	SpofType         sql.NullInt32  `db:"spof_type" json:"spofType"`
+	SpofStartDate    string         `db:"spof_start_date" json:"spofStartDate"`
+	SpofEndDate      string         `db:"spof_end_date" json:"spofEndDate"`
+	SpofMinQty       int32          `db:"spof_min_qty" json:"spofMinQty"`
+	SpofMaxQty       int32          `db:"spof_max_qty" json:"spofMaxQty"`
+	SpofModifiedDate sql.NullString `db:"spof_modified_date" json:"spofModifiedDate"`
+	SpofCateID       int32          `db:"spof_cate_id" json:"spofCateId"`
 }
 
 type SalesSpecialOfferProgram struct {
-	SocoID           int32          `db:"soco_id" json:"socoId"`
-	SocoSpofID       int32          `db:"soco_spof_id" json:"socoSpofId"`
-	SocoProgEntityID int32          `db:"soco_prog_entity_id" json:"socoProgEntityId"`
-	SocoStatus       sql.NullString `db:"soco_status" json:"socoStatus"`
-	SocoModifiedDate sql.NullTime   `db:"soco_modified_date" json:"socoModifiedDate"`
+	SocoID           int32  `db:"soco_id" json:"socoId"`
+	SocoSpofID       int32  `db:"soco_spof_id" json:"socoSpofId"`
+	SocoProgEntityID int32  `db:"soco_prog_entity_id" json:"socoProgEntityId"`
+	SocoStatus       string `db:"soco_status" json:"socoStatus"`
+	SocoModifiedDate string `db:"soco_modified_date" json:"socoModifiedDate"`
 }
 
 type UsersBusinessEntity struct {
@@ -590,8 +690,8 @@ type UsersUsersLicense struct {
 	UsliEntityID     int32          `db:"usli_entity_id" json:"usliEntityId"`
 }
 
-type UsersUsersMedium struct {
-	UsmeID           int32          `db:"usme_id" json:"usmeId"`
+type UsersUsersMedia struct {
+	UsmeID           int32          `db:"usme_id" json:"usmeId"` 
 	UsmeEntityID     int32          `db:"usme_entity_id" json:"usmeEntityId"`
 	UsmeFileLink     sql.NullString `db:"usme_file_link" json:"usmeFileLink"`
 	UsmeFilename     sql.NullString `db:"usme_filename" json:"usmeFilename"`
@@ -619,4 +719,10 @@ type UsersUsersSkill struct {
 	UskiEntityID     int32          `db:"uski_entity_id" json:"uskiEntityId"`
 	UskiModifiedDate sql.NullTime   `db:"uski_modified_date" json:"uskiModifiedDate"`
 	UskiSktyName     sql.NullString `db:"uski_skty_name" json:"uskiSktyName"`
+}
+
+type SignUpUser struct {
+	User 	UsersUser
+	Email   UsersUsersEmail
+	Phone 	UsersUsersPhone
 }

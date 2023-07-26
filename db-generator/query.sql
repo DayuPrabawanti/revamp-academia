@@ -1,3 +1,51 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/users-module
+-- name: GetMasterAddress :one
+SELECT * FROM master.address
+WHERE addr_id = $1;
+
+-- name: ListMasterAddress :many
+SELECT * FROM master.address
+ORDER BY addr_id;
+
+-- name: CreateMasterAddress :one
+INSERT INTO master.address (addr_id, addr_line1, addr_line2, addr_postal_code, addr_spatial_location, addr_modified_date, addr_city_id)
+VALUES($1, $2, $3, $4, $5, $6, $7)
+RETURNING addr_id;
+
+-- name: DeleteMasterAddress :exec
+DELETE FROM master.address
+WHERE addr_id = $1;
+
+
+-- name: GetMasterCity :one
+SELECT * FROM master.city
+WHERE city_id = $1;
+
+-- name: ListMasterCity :many
+SELECT * FROM master.city
+ORDER BY city_id;
+
+-- name: CreateMasterCity :one
+INSERT INTO master.city (city_id, city_name, city_modified_date, city_prov_id)
+VALUES($1, $2, $3, $4)
+RETURNING city_id;
+
+-- name: DeleteMasterCity :exec
+DELETE FROM master.city
+WHERE city_id = $1;
+
+
+<<<<<<< HEAD
+=======
+>>>>>>> origin/bootcamp-module
+=======
+>>>>>>> origin/sales-module
+=======
+>>>>>>> origin/users-module
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;
@@ -435,14 +483,56 @@ ORDER BY emp_emp_number;
 
 INSERT INTO hr.employee (emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 RETURNING emp_entity_id;
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+RETURNING *;
+=======
+>>>>>>> origin/bootcamp-module
+=======
+>>>>>>> origin/sales-module
+=======
+>>>>>>> origin/users-module
 
 -- name: DeleteEmployee :exec
 DELETE FROM hr.employee
 WHERE emp_entity_id = $1;
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+-- name: UpdateEmployee :exec
+UPDATE hr.employee
+  set emp_emp_number = $2,
+  emp_national_id = $3,
+  emp_birth_date = $4,
+  emp_marital_status = $5,
+  emp_gender = $6,
+  emp_hire_date = $7,
+  emp_salaried_flag = $8,
+  emp_vacation_hours = $9,
+  emp_sickleave_hours = $10,
+  emp_current_flag = $11,
+  emp_modified_date = $12,
+  emp_type = $13,
+  emp_joro_id = $14,
+  emp_emp_entity_id = 15
+=======
 UPDATE hr.employee
   set emp_marital_status = $2,
   emp_gender = $3
+>>>>>>> origin/bootcamp-module
+=======
+UPDATE hr.employee
+  set emp_marital_status = $2,
+  emp_gender = $3
+>>>>>>> origin/sales-module
+=======
+UPDATE hr.employee
+  set emp_marital_status = $2,
+  emp_gender = $3
+>>>>>>> origin/users-module
 WHERE emp_entity_id = $1;
 
 -- hr.employee_department_history

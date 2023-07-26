@@ -5,26 +5,30 @@ import (
 	"os"
 
 	"codeid.revampacademy/config"
-	"codeid.revampacademy/server"
+	server "codeid.revampacademy/server"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
 
-	log.Println("starting db_revamp")
+	log.Println("Startting MiniProjectRevamp rest API")
+	log.Println("initializing configuraiton")
 
-	log.Println("Initializing configuration")
 	config := config.InitConfig(getConfigFileName())
 
-	log.Println("Initializing database...")
+	log.Println("Inisializing database")
 	dbHandler := server.InitDatabase(config)
-	//log.Println(dbHandler)
+	// log.Println(dbHandler)
 
-	log.Println("Initializing Http Server")
+	// //test insert
+	// ctx := context.Background() //bikin goroutine
+
+	// queries := repositories.New(dbHandler)
+	log.Println("Inisializing HTTP Server")
 	httpServer := server.InitHttpServer(config, dbHandler)
 
-	httpServer.Start()
+	httpServer.GetStart()
 
 }
 

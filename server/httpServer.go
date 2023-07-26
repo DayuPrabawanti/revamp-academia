@@ -4,156 +4,101 @@ import (
 	"database/sql"
 	"log"
 
-	"codeid.revampacademy/controllers"
-	"codeid.revampacademy/repositories"
-	"codeid.revampacademy/services"
+	"codeid.revampacademy/controllers/bootcampController"
+	controllers "codeid.revampacademy/controllers/curriculumControllers"
+	"codeid.revampacademy/controllers/hrController"
+	"codeid.revampacademy/controllers/jobhireController"
+	"codeid.revampacademy/controllers/paymentControllers"
+	"codeid.revampacademy/controllers/salesControllers"
+	"codeid.revampacademy/controllers/usersController"
+	"codeid.revampacademy/repositories/bootcampRepository"
+	repo "codeid.revampacademy/repositories/curriculumRepositories"
+	"codeid.revampacademy/repositories/hrRepository"
+	"codeid.revampacademy/repositories/jobhireRepositories"
+	"codeid.revampacademy/repositories/paymentRepositories"
+	"codeid.revampacademy/repositories/salesRepositories"
+	"codeid.revampacademy/repositories/usersRepository"
+	"codeid.revampacademy/services/bootcampService"
+	services "codeid.revampacademy/services/curriculumServices"
+	"codeid.revampacademy/services/hrService"
+	"codeid.revampacademy/services/jobhireService"
+	"codeid.revampacademy/services/paymentServices"
+	"codeid.revampacademy/services/salesService"
+	"codeid.revampacademy/services/usersService"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
 type HttpServer struct {
-	config                  *viper.Viper
-	router                  *gin.Engine
-	programEntityController *controllers.ProgramEntityController
+	config *viper.Viper
+	router *gin.Engine
+	//progentityController *controllers.ProgEntityController
+	controllerManager         controllers.ControllerManager
+	hrcontrollerManager       hrController.ControllerManager
+	paymentControllersManager paymentControllers.ControllersManager
+	jobhirecontrollerManager  jobhireController.ControllerManager
+	bootcampcontrollerManager bootcampController.ControllerManager
+	salescontrollerManager    salesControllers.ControllerManager
+	usercontrollerManager     usersController.ControllerManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
+	repositoryManager := repo.NewRepositoryManager(dbHandler)
+	servicesManager := services.NewServiceManager(repositoryManager)
+	controllerManager := controllers.NewControllerManager(servicesManager)
 
-	// PROGRAM ENTITY
+	hrrepositoryManager := hrRepository.NewRepositoryManager(dbHandler)
+	hrserviceManager := hrService.NewServiceManager(hrrepositoryManager)
+	hrcontrollerManager := hrController.NewControllerManager(hrserviceManager)
 
-	programEntityRepository := repositories.NewProgramEntityRepository(dbHandler)
+	paymentrepositoriesManager := paymentRepositories.NewRepositoriesManager(dbHandler)
+	paymentservicesManager := paymentServices.NewServicesManager(paymentrepositoriesManager)
+	paymentcontrollersManager := paymentControllers.NewControllersManager(paymentservicesManager)
 
-	programEntityService := services.NewProgramEntityService(programEntityRepository)
+	jobhirerepositoryManager := jobhireRepositories.NewRepositoryManager(dbHandler)
+	jobhireserviceManager := jobhireService.NewServiceManager(jobhirerepositoryManager)
+	jobhirecontrollerManager := jobhireController.NewControllerManager(jobhireserviceManager)
 
-	programEntityController := controllers.NewProgramEntityController(programEntityService)
+	bootcamprepositoryManager := bootcampRepository.NewRepositoryManager(dbHandler)
+	bootcampserviceManager := bootcampService.NewServiceManager(bootcamprepositoryManager)
+	bootcampcontrollerManager := bootcampController.NewControllerManager(bootcampserviceManager)
+
+	salesrepositoryManager := salesRepositories.NewRepositoryManager(dbHandler)
+	salesserviceManager := salesService.NewServiceManager(salesrepositoryManager)
+	salescontrollerManager := salesControllers.NewControllerManager(salesserviceManager)
+
+	userrepositoryManager := usersRepository.NewRepositoryManager(dbHandler)
+	userserviceManager := usersService.NewServiceManager(userrepositoryManager)
+	usercontrollerManager := usersController.NewControllerManager(userserviceManager)
 
 	router := gin.Default()
+	InitRouterCurriculum(router, controllerManager)
+	InitRouterHR(router, hrcontrollerManager)
+	InitRouterPayment(router, paymentcontrollersManager)
+	InitRouterJobhire(router, jobhirecontrollerManager)
+	InitRouterBootcamp(router, bootcampcontrollerManager)
+	InitRouterSales(router, salescontrollerManager)
+	InitRouterUser(router, usercontrollerManager)
 
-	router.GET("/programEntity", programEntityController.GetListProgramEntity)
-
-	router.GET("/programEntity/:id", programEntityController.GetProgramEntity)
-
-	router.POST("/programEntity", programEntityController.CreateProgramEntity)
-
-	router.PUT("/programEntity/:id", programEntityController.UpdateProgramEntity)
-
-	router.DELETE("/programEntity/:id", programEntityController.DeleteProgramEntity)
-
-	// SECTIONS
-
-	sectionRepository := repositories.NewSectionRepository(dbHandler)
-
-	sectionService := services.NewSectionService(sectionRepository)
-
-	sectionController := controllers.NewSectionController(sectionService)
-
-	router.GET("/sections", sectionController.GetListSection)
-
-	router.GET("/sections/:id", sectionController.GetSections)
-
-	router.POST("/sections", sectionController.Createsections)
-
-	router.PUT("/sections/:id", sectionController.UpdateSections)
-
-	router.DELETE("/sections/:id", sectionController.DeleteSections)
-
-	// SECTION DETAIL
-
-	sectionDetailRepository := repositories.NewSectionDetailRepository(dbHandler)
-
-	sectionDetailService := services.NewSectionDetailService(sectionDetailRepository)
-
-	sectionDetailController := controllers.NewSectionDetailController(sectionDetailService)
-
-	router.GET("/sectionDetail", sectionDetailController.GetListSectionDetail)
-
-	router.GET("/sectionDetail/:id", sectionDetailController.GetSectionDetail)
-
-	router.POST("/sectionDetail", sectionDetailController.CreateSectionDetail)
-
-	router.PUT("/sectionDetail/:id", sectionDetailController.UpdateSectionDetail)
-
-	router.DELETE("/sectionDetail/:id", sectionDetailController.DeleteSectionDetail)
-
-	// SECTION DETAIL MATERIAL
-
-	sectionDetailMaterialRepository := repositories.NewSectionDetailMaterialRepository(dbHandler)
-
-	sectionDetailMaterialService := services.NewSectionDetailMaterialService(sectionDetailMaterialRepository)
-
-	sectionDetailMaterialController := controllers.NewSectionDetailMaterialController(sectionDetailMaterialService)
-
-	router.GET("/sectionDetailMaterial", sectionDetailMaterialController.GetListSectionDetailMaterial)
-
-	router.GET("/sectionDetailMaterial/:id", sectionDetailMaterialController.GetSectionDetailMaterial)
-
-	router.POST("/sectionDetailMaterial", sectionDetailMaterialController.CreatesectiondetailMaterial)
-
-	router.PUT("/sectionDetailMaterial/:id", sectionDetailMaterialController.UpdateSectionDetailMaterial)
-
-	router.DELETE("/sectionDetailMaterial/:id", sectionDetailMaterialController.DeleteSectionDetailMaterial)
-
-	// PROGRAM ENTITY DESC
-
-	progEntityDescRepository := repositories.NewProgEntityDescRepository(dbHandler)
-
-	progEntityDescService := services.NewProgEntityDescService(progEntityDescRepository)
-
-	progEntityDescController := controllers.NewProgEntityDescController(progEntityDescService)
-
-	router.GET("/progEntityDesc", progEntityDescController.GetListProgEntityDesc)
-
-	router.GET("/progEntityDesc/:id", progEntityDescController.GetProgEntityDesc)
-
-	// router.POST("/sectionDetailMaterial", sectionDetailMaterialController.CreatesectiondetailMaterial)
-
-	// router.PUT("/sectionDetailMaterial/:id", sectionDetailMaterialController.UpdateSectionDetailMaterial)
-
-	// router.DELETE("/sectionDetailMaterial/:id", sectionDetailMaterialController.DeleteSectionDetailMaterial)
-
-	// PROGRAM REVIEWS
-
-	progReviewsRepository := repositories.NewProgReviewsRepository(dbHandler)
-
-	progReviewsService := services.NewProgReviewsService(progReviewsRepository)
-
-	progReviewsController := controllers.NewProgReviewsController(progReviewsService)
-
-	router.GET("/progReviews", progReviewsController.GetListProgReviews)
-
-	router.GET("/progReviews/:id", progReviewsController.GetProgramReviews)
-
-	// GROUP
-
-	groupRepository := repositories.NewProgramEntityRepository(dbHandler)
-
-	groupService := services.NewProgramEntityService(groupRepository)
-
-	groupController := controllers.NewProgramEntityController(groupService)
-
-	router.GET("/group", groupController.GroupList)
-
-	// MASTER.CATEGORY
-
-	masterRepository := repositories.NewProgramEntityRepository(dbHandler)
-
-	masterService := services.NewProgramEntityService(masterRepository)
-
-	masterController := controllers.NewProgramEntityController(masterService)
-
-	router.GET("/masterCategory", masterController.GetListMasterCategory)
+	//router.POST("/creategabungmockup", progentityController.CreateGabungbyMockup)
+	//router.PUT("/updategabung/:id", progentityController.UpdateGabung)
 
 	return HttpServer{
-		config:                  config,
-		router:                  router,
-		programEntityController: programEntityController,
+		config:                    config,
+		router:                    router,
+		controllerManager:         *controllerManager,
+		hrcontrollerManager:       *hrcontrollerManager,
+		paymentControllersManager: *paymentcontrollersManager,
+		jobhirecontrollerManager:  *jobhirecontrollerManager,
+		bootcampcontrollerManager: *bootcampcontrollerManager,
+		salescontrollerManager:    *salescontrollerManager,
+		usercontrollerManager:     *usercontrollerManager,
 	}
 }
 
-func (hs HttpServer) Start() {
+func (hs HttpServer) GetStart() {
 	err := hs.router.Run(hs.config.GetString("http.server_address"))
-
 	if err != nil {
-		log.Fatalf("Error while starting HTTP Server: %v", err)
+		log.Fatalf("Eror di: %v", err)
 	}
 }
