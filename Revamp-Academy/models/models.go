@@ -6,6 +6,27 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+type MergeMock8 struct {
+	Curriculums CurriculumProgramEntity
+	Total       SalesSalesOrderDetail
+	Photo       UsersUser
+	Fint        PaymentFintech
+	Number      PaymentUsersAccount
+	Transaction PaymentTransactionPayment
+}
+
+type MergeMock4 struct {
+	Curriculum CurriculumProgramEntity
+	Program    BootcampProgramApply
+	Progress   BootcampProgramApplyProgress
+}
+
+type MergeMockBootcamp struct {
+	Program    BootcampProgramApply
+	Batch      BootcampBatch
+	Instructor BootcampInstructorProgram
+}
+
 type MergeMockUser struct {
 	Users     UsersUser
 	Education UsersUsersEducation
@@ -415,7 +436,7 @@ type PaymentFintech struct {
 
 type PaymentTransactionPayment struct {
 	TrpaID           int32        `db:"trpa_id" json:"trpaId"`
-	TrpaCodeNumber   string       `db:"trpa_code_number" json:"trpaCodeNumber"`
+	TrpaCodeNumber   int32        `db:"trpa_code_number" json:"trpaCodeNumber"`
 	TrpaOrderNumber  string       `db:"trpa_order_number" json:"trpaOrderNumber"`
 	TrpaDebit        string       `db:"trpa_debit" json:"trpaDebit"`
 	TrpaCredit       string       `db:"trpa_credit" json:"trpaCredit"`

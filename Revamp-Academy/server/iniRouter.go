@@ -22,11 +22,22 @@ func InitRouter(controllerMgr *salesController.ControllerManager) *gin.Engine {
 		//api mockup2 localhost:8886/sales/cari/2
 		initRouter.GET("/cari/:id", controllerMgr.ControllerMock.GetMockupId)
 		initRouter.GET("/api/search", controllerMgr.ControllerMock.GetListProgramMock)
+		//api lanjutan mockup2
+		initRouter.GET("/description", controllerMgr.ControlMock2.GetListGroup)
 
 		//api mockup3 localhost:8886/sales/applyRegular/1
 		initRouter.POST("/save", controllerMgr.ControlMock3.CreateMergeUsers)
 		initRouter.GET("/applyRegular/:id", controllerMgr.ControlMock3.GetUsers)
 		initRouter.GET("/get", controllerMgr.ControlMock3.GetListGroup)
+
+		//api mockup4
+		initRouter.GET("/dashboard", controllerMgr.ControlMock4.GetListMock4)
+		initRouter.GET("/dashboard/:id", controllerMgr.ControlMock4.GetMock4Group)
+
+		//api mockup8
+		initRouter.GET("/payment", controllerMgr.ControlMock8.GetListMock8)
+		//localhost:8886/sales/summaryOrder/20220725
+		initRouter.GET("/summaryOrder/:id", controllerMgr.ControlMock8.GetMock8Group)
 
 		// initRouter.GET("/:id", controllerMgr.FintechController.GetPaymentFintech)
 

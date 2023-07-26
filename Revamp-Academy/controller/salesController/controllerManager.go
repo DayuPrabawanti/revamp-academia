@@ -11,6 +11,9 @@ type ControllerManager struct {
 	SpecialOfferController
 	EducationController
 	ControlMock3
+	ControlMock2
+	ControlMock4
+	ControlMock8
 }
 
 // constructor
@@ -22,5 +25,8 @@ func NewControllerManager(serviceMgr *salesServices.ServiceManager) *ControllerM
 		*NewSpecialController(&serviceMgr.SpecialOfferService),
 		*NewEducationController(&serviceMgr.EducationService),
 		*NewMockupApplyController(&serviceMgr.ServiceMock3),
+		*NewMockupApplyController2(&serviceMgr.ServiceMock2),
+		*NewMockupApplyController4(&serviceMgr.ServiceMock4),
+		*NewMockupApplyController8(&serviceMgr.ServiceMock8),
 	}
 }
