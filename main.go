@@ -21,14 +21,14 @@ func main() {
 	log.Println(dbHandler)
 
 	log.Println("Initializing HTTP Server!")
-    httpServer := server.InitHttpServer(config, dbHandler)
+	httpServer := server.InitHttpServer(config, dbHandler)
 
-    httpServer.Start()
+	httpServer.Start()
 
 }
 
 func getConfigFileName() string {
-	env := os.Getenv("ENV")	
+	env := os.Getenv("ENV")
 
 	if env != "" {
 		return "db_revamp" + env

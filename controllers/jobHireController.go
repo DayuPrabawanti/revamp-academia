@@ -25,6 +25,8 @@ type JobPostController struct {
     JobPostService  *services.JobPostService
 }
 
+
+
 // --------------------------- JOB CATEGORY --------------------------- 
 
 // DECLARE CONSTRUCTOR
@@ -330,3 +332,61 @@ func NewJobPostController(jobhirePostController *services.JobPostService) *JobPo
 
 					ctx.JSON(http.StatusOK, response)
 			}
+
+				func (jobPostController JobPostController) UpdateJobPostHttp(ctx *gin.Context) {
+
+						categoryId, err := strconv.Atoi(ctx.Param("id"))
+
+						if err != nil {
+							log.Println("Error while reading paramater id", err)
+							ctx.AbortWithError(http.StatusBadRequest, err)
+							return 
+						}
+
+						body, err := io.ReadAll(ctx.Request.Body)
+						if err != nil {
+							log.Println("Error while reading update category request body", err)
+							ctx.AbortWithError(http.StatusInternalServerError, err)
+							return
+						}
+
+						var category dbContext.CreateJobPostParams
+						err = json.Unmarshal(body, &category)
+						if err != nil {
+							log.Println("Error while unmarshaling update category request body", err)
+							ctx.AbortWithError(http.StatusInternalServerError, err)
+							return
+						}
+
+						response := jobPostController.JobPostService.UpdateJobPostService(ctx, &category, int64(categoryId))
+						if response != nil {
+							ctx.AbortWithStatusJSON(response.Status, response)
+							return
+						}
+
+						ctx.JSON(http.StatusOK, response)
+				}
+
+					func (jobPostController JobPostController) DeleteJobPostHttp(ctx *gin.Context) {
+
+							categoryId, err := strconv.Atoi(ctx.Param("id"))
+
+							if err != nil {
+								log.Println("Error while reading paramater id", err)
+								ctx.AbortWithError(http.StatusBadRequest, err)
+								return
+							}
+
+							responseErr := jobPostController.JobPostService.DeleteJobPostServoce(ctx, int64(categoryId))
+							if responseErr != nil {
+								ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+								return
+							}
+
+							ctx.Status(http.StatusNoContent)
+					}
+
+// --------------------------- MASTER INDUSTRY  --------------------------- 
+
+
+

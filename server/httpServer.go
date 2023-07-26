@@ -9,67 +9,40 @@ import (
 	"codeid.revampacademy/services"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+
 )
 
 type HttpServer struct {
 	config             *viper.Viper
 	router             *gin.Engine
-	jobcategoryController *controllers.JobCategoryController
-    jobPostController *controllers.JobPostController
+	ControllersManager controllers.ControllersManager
 }
 
 func InitHttpServer(config *viper.Viper, dbHandler *sql.DB) HttpServer {
  
-	jobCategoryRepository := repositories.NewJobCategoryRepository(dbHandler)
-	jobCategoryService := services.NewJobCategoryService(jobCategoryRepository)
-	jobCategoryController := controllers.NewJobCategoryController(jobCategoryService)
+    repositoriesManager := repositories.NewRepositoriesManager(dbHandler)
 
-    jobClientRepository := repositories.NewJobClientRepository(dbHandler)
-	jobClientService := services.NewJobClientService(jobClientRepository)
-	jobClientController := controllers.NewJobClientController(jobClientService)
+    servicesManager := services.NewServiceManager(repositoriesManager)
 
-    jobPostRepository := repositories.NewJobPostRepository(dbHandler)
-	jobPostService := services.NewJobPostService(jobPostRepository)
-	jobPostController := controllers.NewJobPostController(jobPostService)
+    controllerManager := controllers.NewControllersManager(servicesManager)
+
 
 
     router := gin.Default()
 
-    // jobCategory
-
-	router.GET("/jobCategory/:id", jobCategoryController.GetJobCategoryHttp)
-        router.GET("/jobCategory", jobCategoryController.ListJobCategoryHttp)
-            router.POST("/createJobCategory", jobCategoryController.CreateJobCategoryHttp)
-                router.PUT("/jobCategory/:id", jobCategoryController.UpdateJobCategoryHttp)
-                    router.DELETE("/category/:id", jobCategoryController.DeleteJobCategoryHttp)
-
-    // jobClient
-
-    router.GET("/jobClient/:id", jobClientController.GetJobClientHttp)
-        router.GET("/jobClientList/", jobClientController.ListJobClientHttp)
-            router.POST("/jobClientCreate", jobClientController.CreateJobClientHttp)
-                router.PUT("/jobClientUpdate/:id", jobClientController.UpdateJobClientHttp)
-                    router.DELETE("/jobClientDelete/:id", jobClientController.DeleteJobClientHttp)
-
-
-    // jobPost
-
-    router.GET("/jobPost/:id", jobPostController.GetJobPostHttp)
-        router.GET("/jobPostList/", jobPostController.ListJobPostHttp)
-            router.POST("/jobPostCreate", jobPostController.CreateJobPostHttp)
+    InitRouter(router, controllerManager)
 
 
 
 
-    return HttpServer{
-        config:             config,
-        router:             router,
-        jobcategoryController: jobCategoryController,
-        // clientController: jobClientController,
-    }
+     
+   return HttpServer{
+		config:            config,
+		router:            router,
+		ControllersManager: *controllerManager,
+	}
 }
 
-// Running gin HttpServer
 func (hs HttpServer) Start() {
     err := hs.router.Run(hs.config.GetString("http.server_address"))
 
@@ -77,3 +50,34 @@ func (hs HttpServer) Start() {
         log.Fatalf("Error while starting HTTP Server: %v", err)
     }
 }
+
+
+
+    // Jobhire
+
+	
+
+
+    // Master
+
+
+
+    // groupRepository := repositories.NewJobPostRepository(dbHandler)
+
+	// groupService := services.NewJobPostService(groupRepository)
+
+	// groupController := controllers.NewJobPostController(groupService)
+
+	
+
+
+    // jobCategory
+
+	
+
+    // JOB POSTING
+
+       
+
+
+// Running gin HttpServer

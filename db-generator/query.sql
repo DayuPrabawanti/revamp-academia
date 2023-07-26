@@ -1,3 +1,9 @@
+-- name: MasterIndustry :one
+SELECT * FROM master.industry
+WHERE  indu_code_id = $1;
+
+
+
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;
