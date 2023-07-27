@@ -34,12 +34,5 @@ func validateMockup(mockupParams *models.CurriculumProgramEntity) *models.Respon
 			Status:  http.StatusBadRequest,
 		}
 	}
-
-	if mockupParams.ProgTitle == "" {
-		return &models.ResponseError{
-			Message: "Invalid category name",
-			Status:  http.StatusBadRequest,
-		}
-	}
 	return nil
 }

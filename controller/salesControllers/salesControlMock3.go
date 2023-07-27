@@ -148,3 +148,11 @@ func (controlMock3 ControlMock3) GetListGroup(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+func (controlMock3 ControlMock3) GetListApplyProgress(ctx *gin.Context) {
+	response, responerr := controlMock3.serviceMock3.ListBootcampApplyProgressService(ctx)
+	if responerr != nil {
+		ctx.JSON(responerr.Status, responerr)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}

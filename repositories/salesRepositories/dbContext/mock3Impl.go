@@ -2,31 +2,31 @@ package dbcontext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
 )
-
-const createUsers = `-- name: CreateUsers :one
-
-INSERT INTO users.users 
-(user_entity_id,user_first_name, user_last_name, user_birth_date, user_photo)
-VALUES($1,$2,$3,$4)
-RETURNING *
-`
 
 type CreateMergeMock struct {
 	CreateUsersParams
 	CreateEducationParams
 	CreateMediaParams
 }
+
+const createUsers = `-- name: CreateUsers :one
+
+INSERT INTO users.users 
+(user_entity_id,user_first_name, user_last_name, user_birth_date, user_photo)
+VALUES($1,$2,$3,$4,$5)
+RETURNING *
+`
+
 type CreateUsersParams struct {
-	UserEntityID  int32          `db:"user_entity_id" json:"userEntityId"`
-	UserFirstName string         `db:"user_first_name" json:"userFirstName"`
-	UserLastName  string         `db:"user_last_name" json:"userLastName"`
-	UserBirthDate sql.NullString `db:"user_birth_date" json:"userBirthDate"`
-	UserPhoto     string         `db:"user_photo" json:"userPhoto"`
+	UserEntityID  int32  `db:"user_entity_id" json:"userEntityId"`
+	UserFirstName string `db:"user_first_name" json:"userFirstName"`
+	UserLastName  string `db:"user_last_name" json:"userLastName"`
+	UserBirthDate string `db:"user_birth_date" json:"userBirthDate"`
+	UserPhoto     string `db:"user_photo" json:"userPhoto"`
 }
 
 func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
@@ -136,9 +136,9 @@ func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) 
 		}
 	}
 	return &models.UsersUsersMedium{
-		UsmeFilename: arg.UsmeFilename,
-		UsmeFilesize: arg.UsmeFilesize,
-		UsmeFiletype: arg.UsmeFiletype,
+		UsmeFilename: i.UsmeFilename,
+		UsmeFilesize: i.UsmeFilesize,
+		UsmeFiletype: i.UsmeFiletype,
 	}, nil
 }
 
@@ -198,6 +198,52 @@ func (q *Queries) ListUserGroup(ctx context.Context) ([]CreateMergeMock, error) 
 			&i.UsmeFilename,
 			&i.UsmeFilesize,
 			&i.UsmeFiletype,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listBootcampApplyProgress = ` --name: ListApplyProgress : Many
+select * from bootcamp.program_apply pa join bootcamp.program_apply_progress pap 
+on pa.prap_user_entity_id = pap.parog_user_entity_id
+`
+
+func (q *Queries) ListApplyProgressMock6(ctx context.Context) ([]models.MergeBatchApplyProgress, error) {
+	rows, err := q.db.QueryContext(ctx, listBootcampApplyProgress)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []models.MergeBatchApplyProgress
+	for rows.Next() {
+		var i models.MergeBatchApplyProgress
+		if err := rows.Scan(
+			&i.ProgramApply.PrapUserEntityID,
+			&i.ProgramApply.PrapProgEntityID,
+			&i.ProgramApply.PrapTestScore,
+			&i.ProgramApply.PrapGpa,
+			&i.ProgramApply.PrapIqTest,
+			&i.ProgramApply.PrapReview,
+			&i.ProgramApply.PrapModifiedDate,
+			&i.ProgramApply.PrapStatus,
+			&i.ProgramApplyProgress.ParogID,
+			&i.ProgramApplyProgress.ParogUserEntityID,
+			&i.ProgramApplyProgress.ParogProgEntityID,
+			&i.ProgramApplyProgress.ParogActionDate,
+			&i.ProgramApplyProgress.ParogModifiedDate,
+			&i.ProgramApplyProgress.ParogComment,
+			&i.ProgramApplyProgress.ParogProgressName,
+			&i.ProgramApplyProgress.ParogEmpEntityID,
+			&i.ProgramApplyProgress.ParogStatus,
 		); err != nil {
 			return nil, err
 		}

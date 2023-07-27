@@ -29,7 +29,7 @@ func (sm ServiceMock3) CreateMedian(ctx *gin.Context, mediaParam *dbcontext.Crea
 	return sm.repoMockup3.CreateMedia(ctx, mediaParam)
 }
 
-func (sm ServiceMock3) CreateMergeMocks(ctx *gin.Context, mergeParam *dbcontext.CreateMergeMock) (*models.MergeMockUser, *models.ResponseError) {
+func (sm ServiceMock3) CreateMergeMocks(ctx *gin.Context, mergeParam *dbcontext.CreateMergeMock) (*models.MergeApplyProgress, *models.ResponseError) {
 	return sm.repoMockup3.CreateMergeMock(ctx, mergeParam)
 }
 
@@ -39,4 +39,8 @@ func (sm ServiceMock3) GetUsers(ctx *gin.Context, id int64) (*models.UsersUser, 
 
 func (sm ServiceMock3) ListUserGroup(ctx *gin.Context) ([]*dbcontext.CreateMergeMock, *models.ResponseError) {
 	return sm.repoMockup3.ListUserGroup(ctx)
+}
+
+func (sm ServiceMock3) ListBootcampApplyProgressService(ctx *gin.Context) ([]*models.MergeBatchApplyProgress, *models.ResponseError) {
+	return sm.repoMockup3.ListBootcampApplyProgressRepo(ctx)
 }

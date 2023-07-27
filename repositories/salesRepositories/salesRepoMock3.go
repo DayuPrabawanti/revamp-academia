@@ -58,7 +58,7 @@ func (rm RepoMockup3) CreateMedia(ctx *gin.Context, mediaParams *dbcontext.Creat
 	return media, nil
 }
 
-func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.CreateMergeMock) (*models.MergeMockUser, *models.ResponseError) {
+func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.CreateMergeMock) (*models.MergeApplyProgress, *models.ResponseError) {
 	user, err := rm.CreateUser(ctx, &mergeParams.CreateUsersParams)
 	if err != nil {
 		return nil, err
@@ -72,7 +72,7 @@ func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.C
 		return nil, err
 	}
 
-	merge := &models.MergeMockUser{
+	merge := &models.MergeApplyProgress{
 		Users:     *user,
 		Education: *education,
 		Media:     *media,
@@ -107,6 +107,31 @@ func (rm RepoMockup3) ListUserGroup(ctx *gin.Context) ([]*dbcontext.CreateMergeM
 			CreateUsersParams:     v.CreateUsersParams,
 			CreateEducationParams: v.CreateEducationParams,
 			CreateMediaParams:     v.CreateMediaParams,
+		}
+		listUserGrup = append(listUserGrup, sales)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listUserGrup, nil
+}
+
+func (rm RepoMockup3) ListBootcampApplyProgressRepo(ctx *gin.Context) ([]*models.MergeBatchApplyProgress, *models.ResponseError) {
+
+	store := dbcontext.New(rm.dbHandler)
+	userGroup, err := store.ListApplyProgressMock6(ctx)
+
+	listUserGrup := make([]*models.MergeBatchApplyProgress, 0)
+
+	for _, v := range userGroup {
+		sales := &models.MergeBatchApplyProgress{
+			ProgramApply:         v.ProgramApply,
+			ProgramApplyProgress: v.ProgramApplyProgress,
 		}
 		listUserGrup = append(listUserGrup, sales)
 	}
