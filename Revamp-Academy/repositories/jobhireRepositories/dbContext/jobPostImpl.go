@@ -58,10 +58,16 @@ func (q *Queries) GetListJobPost(ctx context.Context) ([]models.JobhireJobPost, 
 	return items, nil
 }
 
-//list and add location name by addr_id in master
-
+// list and add location name by addr_id in master
 const listJobPost = `-- name: ListJobPost :many
-SELECT jopo_entity_id, jopo_number, jopo_title, jopo_start_date, jopo_end_date, jopo_min_salary, jopo_max_salary, jopo_min_experience, jopo_max_experience, jopo_primary_skill, jopo_secondary_skill, jopo_publish_date, jopo_modified_date, jopo_emp_entity_id, jopo_clit_id, jopo_joro_id, jopo_joty_id, jopo_joca_id, jopo_addr_id, addr_city_id, city_name, jopo_work_code, jopo_edu_code, jopo_indu_code, jopo_status FROM jobHire.job_post join master.address on jobHire.job_post.jopo_addr_id = master.address.addr_id join master.city on master.address.addr_city_id = master.city.city_id
+SELECT jopo_entity_id, jopo_number, jopo_title, jopo_start_date, jopo_end_date, jopo_min_salary, jopo_max_salary, 
+jopo_min_experience, jopo_max_experience, jopo_primary_skill, jopo_secondary_skill, jopo_publish_date, jopo_modified_date, 
+jopo_emp_entity_id, jopo_clit_id, clit_name, jopo_joro_id, jopo_joty_id, jopo_joca_id, jopo_addr_id, addr_city_id, city_name, jopo_work_code, jopo_edu_code, jopo_indu_code, jopo_status, emra_range_min, emra_range_max 
+FROM jobHire.job_post 
+join master.address on jobHire.job_post.jopo_addr_id = master.address.addr_id 
+join master.city on master.address.addr_city_id = master.city.city_id
+join jobHire.client on jobHire.job_post.jopo_clit_id = jobHire.client.clit_id
+join jobHire.employee_range on jobHire.client.clit_emra_id = jobHire.employee_range.emra_id
 ORDER BY jopo_title
 `
 
@@ -90,6 +96,7 @@ func (q *Queries) ListJobPost(ctx context.Context) ([]models.MergeJobAndMaster, 
 			&i.JobHirePost.JopoModifiedDate,
 			&i.JobHirePost.JopoEmpEntityID,
 			&i.JobHirePost.JopoClitID,
+			&i.JobHireClient.ClitName,
 			&i.JobHirePost.JopoJoroID,
 			&i.JobHirePost.JopoJotyID,
 			&i.JobHirePost.JopoJocaID,
@@ -100,6 +107,8 @@ func (q *Queries) ListJobPost(ctx context.Context) ([]models.MergeJobAndMaster, 
 			&i.JobHirePost.JopoEduCode,
 			&i.JobHirePost.JopoInduCode,
 			&i.JobHirePost.JopoStatus,
+			&i.JobHireEmployeeRange.EmraRangeMin,
+			&i.JobHireEmployeeRange.EmraRangeMax,
 		); err != nil {
 			return nil, err
 		}

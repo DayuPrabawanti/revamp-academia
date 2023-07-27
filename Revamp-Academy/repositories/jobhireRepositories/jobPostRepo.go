@@ -12,13 +12,54 @@ import (
 type JobHirePostRepo struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
-	MasterRepo
 }
 
 func NewJobPostRepo(dbHandler *sql.DB) *JobHirePostRepo {
 	return &JobHirePostRepo{
 		dbHandler: dbHandler,
 	}
+}
+
+func (jp JobHirePostRepo) GetJobRepoDetail(ctx *gin.Context, id int32) (*models.MergeJobDetail, *models.ResponseError) {
+	market := dbContext.New(jp.dbHandler)
+	jobDetail, err := market.GetJobPostDetail(ctx, id)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &jobDetail, nil
+}
+
+func (jp JobHirePostRepo) GetListJobPostSearch(ctx *gin.Context, cityName string, joroName string, wotyName string) ([]*models.MergeJobSearch, *models.ResponseError) {
+	market := dbContext.New(jp.dbHandler)
+	jobPost, err := market.ListJobPostSearch(ctx, cityName, joroName, wotyName)
+
+	listjobPost := make([]*models.MergeJobSearch, 0)
+
+	for _, v := range jobPost {
+		listJob := models.MergeJobSearch{
+			MasterAddress:      v.MasterAddress,
+			JobHirePost:        v.JobHirePost,
+			MasterCity:         v.MasterCity,
+			JobHireClient:      v.JobHireClient,
+			JobHireJobPostDesc: v.JobHireJobPostDesc,
+			MasterJobRole:      v.MasterJobRole,
+			MasterWorkingType:  v.MasterWorkingType,
+		}
+		listjobPost = append(listjobPost, &listJob)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listjobPost, nil
 }
 
 func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context) ([]*models.JobhireJobPost, *models.ResponseError) {
@@ -74,9 +115,11 @@ func (jp JobHirePostRepo) GetListJobPostMerge(ctx *gin.Context) ([]*models.Merge
 
 	for _, v := range jobPost {
 		listJob := models.MergeJobAndMaster{
-			MasterAddress: v.MasterAddress,
-			JobHirePost:   v.JobHirePost,
-			MasterCity:    v.MasterCity,
+			MasterAddress:        v.MasterAddress,
+			JobHirePost:          v.JobHirePost,
+			MasterCity:           v.MasterCity,
+			JobHireClient:        v.JobHireClient,
+			JobHireEmployeeRange: v.JobHireEmployeeRange,
 		}
 		listjobPost = append(listjobPost, &listJob)
 	}

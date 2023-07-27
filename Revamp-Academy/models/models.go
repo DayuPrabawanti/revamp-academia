@@ -11,12 +11,44 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+//struct for cutomize date
+type Interval struct{
+	StartDate time.Time
+	EndDate time.Time
+}
+
+type CreateJobPost struct{
+	JobHirePost JobhireJobPost
+	JobHirePostDesc JobhireJobPostDesc
+}
+
 type MergeJobAndMaster struct{
 	JobHirePost JobhireJobPost
 	MasterAddress MasterAddress
 	MasterCity MasterCity
-	
+	JobHireClient JobhireClient
+	JobHireEmployeeRange JobhireEmployeeRange
 }
+
+type MergeJobSearch struct{
+	JobHirePost JobhireJobPost
+	MasterAddress MasterAddress
+	MasterCity MasterCity
+	JobHireClient JobhireClient
+	JobHireJobPostDesc JobhireJobPostDesc
+	MasterJobRole MasterJobRole
+	MasterWorkingType MasterWorkingType
+
+}
+
+type MergeJobDetail struct{
+	JobHirePost JobhireJobPost
+	MasterAddress MasterAddress
+	MasterCity MasterCity
+	JobHireClient JobhireClient
+	JobHireJobPostDesc JobhireJobPostDesc
+}
+
 
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
@@ -29,7 +61,7 @@ type BootcampBatch struct {
 	BatchType         sql.NullString `db:"batch_type" json:"batchType"`
 	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
 	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
-	BatchPicID        sql.NullInt32  `db:"batch_pic_id" json:"batchPicId"`
+	BatchPicID        int32  `db:"batch_pic_id" json:"batchPicId"`
 }
 
 type BootcampBatchTrainee struct {
@@ -40,9 +72,9 @@ type BootcampBatchTrainee struct {
 	BatrAccessToken      sql.NullString `db:"batr_access_token" json:"batrAccessToken"`
 	BatrAccessGrant      sql.NullString `db:"batr_access_grant" json:"batrAccessGrant"`
 	BatrReview           sql.NullString `db:"batr_review" json:"batrReview"`
-	BatrTotalScore       sql.NullInt32  `db:"batr_total_score" json:"batrTotalScore"`
+	BatrTotalScore       int32  `db:"batr_total_score" json:"batrTotalScore"`
 	BatrModifiedDate     sql.NullTime   `db:"batr_modified_date" json:"batrModifiedDate"`
-	BatrTraineeEntityID  sql.NullInt32  `db:"batr_trainee_entity_id" json:"batrTraineeEntityId"`
+	BatrTraineeEntityID  int32  `db:"batr_trainee_entity_id" json:"batrTraineeEntityId"`
 	BatrBatchID          int32          `db:"batr_batch_id" json:"batrBatchId"`
 }
 
@@ -52,12 +84,12 @@ type BootcampBatchTraineeEvaluation struct {
 	BtevHeader          sql.NullString `db:"btev_header" json:"btevHeader"`
 	BtevSection         sql.NullString `db:"btev_section" json:"btevSection"`
 	BtevSkill           sql.NullString `db:"btev_skill" json:"btevSkill"`
-	BtevWeek            sql.NullInt32  `db:"btev_week" json:"btevWeek"`
-	BtevSkor            sql.NullInt32  `db:"btev_skor" json:"btevSkor"`
+	BtevWeek            int32  `db:"btev_week" json:"btevWeek"`
+	BtevSkor            int32  `db:"btev_skor" json:"btevSkor"`
 	BtevNote            sql.NullString `db:"btev_note" json:"btevNote"`
 	BtevModifiedDate    sql.NullTime   `db:"btev_modified_date" json:"btevModifiedDate"`
-	BtevBatchID         sql.NullInt32  `db:"btev_batch_id" json:"btevBatchId"`
-	BtevTraineeEntityID sql.NullInt32  `db:"btev_trainee_entity_id" json:"btevTraineeEntityId"`
+	BtevBatchID         int32  `db:"btev_batch_id" json:"btevBatchId"`
+	BtevTraineeEntityID int32  `db:"btev_trainee_entity_id" json:"btevTraineeEntityId"`
 }
 
 type BootcampInstructorProgram struct {
@@ -70,9 +102,9 @@ type BootcampInstructorProgram struct {
 type BootcampProgramApply struct {
 	PrapUserEntityID int32          `db:"prap_user_entity_id" json:"prapUserEntityId"`
 	PrapProgEntityID int32          `db:"prap_prog_entity_id" json:"prapProgEntityId"`
-	PrapTestScore    sql.NullInt32  `db:"prap_test_score" json:"prapTestScore"`
-	PrapGpa          sql.NullInt32  `db:"prap_gpa" json:"prapGpa"`
-	PrapIqTest       sql.NullInt32  `db:"prap_iq_test" json:"prapIqTest"`
+	PrapTestScore    int32  `db:"prap_test_score" json:"prapTestScore"`
+	PrapGpa          int32  `db:"prap_gpa" json:"prapGpa"`
+	PrapIqTest       int32  `db:"prap_iq_test" json:"prapIqTest"`
 	PrapReview       sql.NullString `db:"prap_review" json:"prapReview"`
 	PrapModifiedDate sql.NullTime   `db:"prap_modified_date" json:"prapModifiedDate"`
 	PrapStatus       sql.NullString `db:"prap_status" json:"prapStatus"`
@@ -86,7 +118,7 @@ type BootcampProgramApplyProgress struct {
 	ParogModifiedDate sql.NullTime   `db:"parog_modified_date" json:"parogModifiedDate"`
 	ParogComment      sql.NullString `db:"parog_comment" json:"parogComment"`
 	ParogProgressName sql.NullString `db:"parog_progress_name" json:"parogProgressName"`
-	ParogEmpEntityID  sql.NullInt32  `db:"parog_emp_entity_id" json:"parogEmpEntityId"`
+	ParogEmpEntityID  int32  `db:"parog_emp_entity_id" json:"parogEmpEntityId"`
 	ParogStatus       sql.NullString `db:"parog_status" json:"parogStatus"`
 }
 
@@ -96,19 +128,19 @@ type CurriculumProgramEntity struct {
 	ProgHeadline     sql.NullString `db:"prog_headline" json:"progHeadline"`
 	ProgType         sql.NullString `db:"prog_type" json:"progType"`
 	ProgLearningType sql.NullString `db:"prog_learning_type" json:"progLearningType"`
-	ProgRating       sql.NullInt32  `db:"prog_rating" json:"progRating"`
-	ProgTotalTrainee sql.NullInt32  `db:"prog_total_trainee" json:"progTotalTrainee"`
+	ProgRating       int32  `db:"prog_rating" json:"progRating"`
+	ProgTotalTrainee int32  `db:"prog_total_trainee" json:"progTotalTrainee"`
 	ProgModifiedDate sql.NullTime   `db:"prog_modified_date" json:"progModifiedDate"`
 	ProgImage        sql.NullString `db:"prog_image" json:"progImage"`
 	ProgBestSeller   sql.NullString `db:"prog_best_seller" json:"progBestSeller"`
-	ProgPrice        sql.NullInt32  `db:"prog_price" json:"progPrice"`
+	ProgPrice        int32  `db:"prog_price" json:"progPrice"`
 	ProgLanguage     sql.NullString `db:"prog_language" json:"progLanguage"`
-	ProgDuration     sql.NullInt32  `db:"prog_duration" json:"progDuration"`
+	ProgDuration     int32  `db:"prog_duration" json:"progDuration"`
 	ProgDurationType sql.NullString `db:"prog_duration_type" json:"progDurationType"`
 	ProgTagSkill     sql.NullString `db:"prog_tag_skill" json:"progTagSkill"`
-	ProgCityID       sql.NullInt32  `db:"prog_city_id" json:"progCityId"`
-	ProgCateID       sql.NullInt32  `db:"prog_cate_id" json:"progCateId"`
-	ProgCreatedBy    sql.NullInt32  `db:"prog_created_by" json:"progCreatedBy"`
+	ProgCityID       int32  `db:"prog_city_id" json:"progCityId"`
+	ProgCateID       int32  `db:"prog_cate_id" json:"progCateId"`
+	ProgCreatedBy    int32  `db:"prog_created_by" json:"progCreatedBy"`
 	ProgStatus       sql.NullString `db:"prog_status" json:"progStatus"`
 }
 
@@ -125,7 +157,7 @@ type CurriculumProgramReview struct {
 	ProwUserEntityID int32          `db:"prow_user_entity_id" json:"prowUserEntityId"`
 	ProwProgEntityID int32          `db:"prow_prog_entity_id" json:"prowProgEntityId"`
 	ProwReview       sql.NullString `db:"prow_review" json:"prowReview"`
-	ProwRating       sql.NullInt32  `db:"prow_rating" json:"prowRating"`
+	ProwRating       int32  `db:"prow_rating" json:"prowRating"`
 	ProwModifiedDate sql.NullTime   `db:"prow_modified_date" json:"prowModifiedDate"`
 }
 
@@ -134,9 +166,9 @@ type CurriculumSection struct {
 	SectProgEntityID int32          `db:"sect_prog_entity_id" json:"sectProgEntityId"`
 	SectTitle        sql.NullString `db:"sect_title" json:"sectTitle"`
 	SectDescription  sql.NullString `db:"sect_description" json:"sectDescription"`
-	SectTotalSection sql.NullInt32  `db:"sect_total_section" json:"sectTotalSection"`
-	SectTotalLecture sql.NullInt32  `db:"sect_total_lecture" json:"sectTotalLecture"`
-	SectTotalMinute  sql.NullInt32  `db:"sect_total_minute" json:"sectTotalMinute"`
+	SectTotalSection int32  `db:"sect_total_section" json:"sectTotalSection"`
+	SectTotalLecture int32  `db:"sect_total_lecture" json:"sectTotalLecture"`
+	SectTotalMinute  int32  `db:"sect_total_minute" json:"sectTotalMinute"`
 	SectModifiedDate sql.NullTime   `db:"sect_modified_date" json:"sectModifiedDate"`
 }
 
@@ -144,21 +176,21 @@ type CurriculumSectionDetail struct {
 	SecdID           int32          `db:"secd_id" json:"secdId"`
 	SecdTitle        sql.NullString `db:"secd_title" json:"secdTitle"`
 	SecdPreview      sql.NullString `db:"secd_preview" json:"secdPreview"`
-	SecdScore        sql.NullInt32  `db:"secd_score" json:"secdScore"`
+	SecdScore        int32  `db:"secd_score" json:"secdScore"`
 	SecdNote         sql.NullString `db:"secd_note" json:"secdNote"`
-	SecdMinute       sql.NullInt32  `db:"secd_minute" json:"secdMinute"`
+	SecdMinute       int32  `db:"secd_minute" json:"secdMinute"`
 	SecdModifiedDate sql.NullTime   `db:"secd_modified_date" json:"secdModifiedDate"`
-	SecdSectID       sql.NullInt32  `db:"secd_sect_id" json:"secdSectId"`
+	SecdSectID       int32  `db:"secd_sect_id" json:"secdSectId"`
 }
 
 type CurriculumSectionDetailMaterial struct {
 	SedmID           int32          `db:"sedm_id" json:"sedmId"`
 	SedmFilename     sql.NullString `db:"sedm_filename" json:"sedmFilename"`
-	SedmFilesize     sql.NullInt32  `db:"sedm_filesize" json:"sedmFilesize"`
+	SedmFilesize     int32  `db:"sedm_filesize" json:"sedmFilesize"`
 	SedmFiletype     sql.NullString `db:"sedm_filetype" json:"sedmFiletype"`
 	SedmFilelink     sql.NullString `db:"sedm_filelink" json:"sedmFilelink"`
 	SedmModifiedDate sql.NullTime   `db:"sedm_modified_date" json:"sedmModifiedDate"`
-	SedmSecdID       sql.NullInt32  `db:"sedm_secd_id" json:"sedmSecdId"`
+	SedmSecdID       int32  `db:"sedm_secd_id" json:"sedmSecdId"`
 }
 
 type HrDepartment struct {
@@ -181,8 +213,8 @@ type HrEmployee struct {
 	EmpCurrentFlag    sql.NullInt16  `db:"emp_current_flag" json:"empCurrentFlag"`
 	EmpModifiedDate   sql.NullTime   `db:"emp_modified_date" json:"empModifiedDate"`
 	EmpType           sql.NullString `db:"emp_type" json:"empType"`
-	EmpJoroID         sql.NullInt32  `db:"emp_joro_id" json:"empJoroId"`
-	EmpEmpEntityID    sql.NullInt32  `db:"emp_emp_entity_id" json:"empEmpEntityId"`
+	EmpJoroID         int32  `db:"emp_joro_id" json:"empJoroId"`
+	EmpEmpEntityID    int32  `db:"emp_emp_entity_id" json:"empEmpEntityId"`
 }
 
 type HrEmployeeClientContract struct {
@@ -195,9 +227,9 @@ type HrEmployeeClientContract struct {
 	EccoNotes          sql.NullString `db:"ecco_notes" json:"eccoNotes"`
 	EccoModifiedDate   sql.NullTime   `db:"ecco_modified_date" json:"eccoModifiedDate"`
 	EccoMediaLink      sql.NullString `db:"ecco_media_link" json:"eccoMediaLink"`
-	EccoJotyID         sql.NullInt32  `db:"ecco_joty_id" json:"eccoJotyId"`
-	EccoAccountManager sql.NullInt32  `db:"ecco_account_manager" json:"eccoAccountManager"`
-	EccoClitID         sql.NullInt32  `db:"ecco_clit_id" json:"eccoClitId"`
+	EccoJotyID         int32  `db:"ecco_joty_id" json:"eccoJotyId"`
+	EccoAccountManager int32  `db:"ecco_account_manager" json:"eccoAccountManager"`
+	EccoClitID         int32  `db:"ecco_clit_id" json:"eccoClitId"`
 	EccoStatus         sql.NullString `db:"ecco_status" json:"eccoStatus"`
 }
 
@@ -207,30 +239,30 @@ type HrEmployeeDepartmentHistory struct {
 	EdhiStartDate    sql.NullTime  `db:"edhi_start_date" json:"edhiStartDate"`
 	EdhiEndDate      sql.NullTime  `db:"edhi_end_date" json:"edhiEndDate"`
 	EdhiModifiedDate sql.NullTime  `db:"edhi_modified_date" json:"edhiModifiedDate"`
-	EdhiDeptID       sql.NullInt32 `db:"edhi_dept_id" json:"edhiDeptId"`
+	EdhiDeptID       int32 `db:"edhi_dept_id" json:"edhiDeptId"`
 }
 
 type HrEmployeePayHistory struct {
 	EphiEntityID       int32         `db:"ephi_entity_id" json:"ephiEntityId"`
 	EphiRateChangeDate time.Time     `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
-	EphiRateSalary     sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiRateSalary     int32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
 	EphiPayFrequence   sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
 	EphiModifiedDate   sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
 }
 
 type JobhireClient struct {
 	ClitID           int32          `db:"clit_id" json:"clitId"`
-	ClitName         sql.NullString `db:"clit_name" json:"clitName"`
-	ClitAbout        sql.NullString `db:"clit_about" json:"clitAbout"`
+	ClitName         string `db:"clit_name" json:"clitName"`
+	ClitAbout        string `db:"clit_about" json:"clitAbout"`
 	ClitModifiedDate sql.NullTime   `db:"clit_modified_date" json:"clitModifiedDate"`
-	ClitAddrID       sql.NullInt32  `db:"clit_addr_id" json:"clitAddrId"`
-	ClitEmraID       sql.NullInt32  `db:"clit_emra_id" json:"clitEmraId"`
+	ClitAddrID       int32  `db:"clit_addr_id" json:"clitAddrId"`
+	ClitEmraID       int32  `db:"clit_emra_id" json:"clitEmraId"`
 }
 
 type JobhireEmployeeRange struct {
 	EmraID           int32         `db:"emra_id" json:"emraId"`
-	EmraRangeMin     sql.NullInt32 `db:"emra_range_min" json:"emraRangeMin"`
-	EmraRangeMax     sql.NullInt32 `db:"emra_range_max" json:"emraRangeMax"`
+	EmraRangeMin     int32 `db:"emra_range_min" json:"emraRangeMin"`
+	EmraRangeMax     int32 `db:"emra_range_max" json:"emraRangeMax"`
 	EmraModifiedDate sql.NullTime  `db:"emra_modified_date" json:"emraModifiedDate"`
 }
 
@@ -243,36 +275,36 @@ type JobhireJobCategory struct {
 type JobhireJobPhoto struct {
 	JophoID           int32          `db:"jopho_id" json:"jophoId"`
 	JophoFilename     sql.NullString `db:"jopho_filename" json:"jophoFilename"`
-	JophoFilesize     sql.NullInt32  `db:"jopho_filesize" json:"jophoFilesize"`
+	JophoFilesize     int32  `db:"jopho_filesize" json:"jophoFilesize"`
 	JophoFiletype     sql.NullString `db:"jopho_filetype" json:"jophoFiletype"`
 	JophoModifiedDate sql.NullTime   `db:"jopho_modified_date" json:"jophoModifiedDate"`
-	JophoEntityID     sql.NullInt32  `db:"jopho_entity_id" json:"jophoEntityId"`
+	JophoEntityID     int32  `db:"jopho_entity_id" json:"jophoEntityId"`
 }
 
 type JobhireJobPost struct {
 	JopoEntityID       int32          `db:"jopo_entity_id" json:"jopoEntityId"`
-	JopoNumber         sql.NullString `db:"jopo_number" json:"jopoNumber"`
-	JopoTitle          sql.NullString `db:"jopo_title" json:"jopoTitle"`
-	JopoStartDate      sql.NullTime   `db:"jopo_start_date" json:"jopoStartDate"`
-	JopoEndDate        sql.NullTime   `db:"jopo_end_date" json:"jopoEndDate"`
-	JopoMinSalary      sql.NullInt32  `db:"jopo_min_salary" json:"jopoMinSalary"`
-	JopoMaxSalary      sql.NullInt32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
-	JopoMinExperience  sql.NullInt32  `db:"jopo_min_experience" json:"jopoMinExperience"`
-	JopoMaxExperience  sql.NullInt32  `db:"jopo_max_experience" json:"jopoMaxExperience"`
-	JopoPrimarySkill   sql.NullString `db:"jopo_primary_skill" json:"jopoPrimarySkill"`
-	JopoSecondarySkill sql.NullString `db:"jopo_secondary_skill" json:"jopoSecondarySkill"`
-	JopoPublishDate    sql.NullTime   `db:"jopo_publish_date" json:"jopoPublishDate"`
-	JopoModifiedDate   sql.NullTime   `db:"jopo_modified_date" json:"jopoModifiedDate"`
-	JopoEmpEntityID    sql.NullInt32  `db:"jopo_emp_entity_id" json:"jopoEmpEntityId"`
-	JopoClitID         sql.NullInt32  `db:"jopo_clit_id" json:"jopoClitId"`
-	JopoJoroID         sql.NullInt32  `db:"jopo_joro_id" json:"jopoJoroId"`
-	JopoJotyID         sql.NullInt32  `db:"jopo_joty_id" json:"jopoJotyId"`
-	JopoJocaID         sql.NullInt32  `db:"jopo_joca_id" json:"jopoJocaId"`
+	JopoNumber         string `db:"jopo_number" json:"jopoNumber"`
+	JopoTitle          string `db:"jopo_title" json:"jopoTitle"`
+	JopoStartDate      time.Time   `db:"jopo_start_date" json:"jopoStartDate"`
+	JopoEndDate        time.Time   `db:"jopo_end_date" json:"jopoEndDate"`
+	JopoMinSalary      int32  `db:"jopo_min_salary" json:"jopoMinSalary"`
+	JopoMaxSalary      int32  `db:"jopo_max_salary" json:"jopoMaxSalary"`
+	JopoMinExperience  int32  `db:"jopo_min_experience" json:"jopoMinExperience"`
+	JopoMaxExperience  int32  `db:"jopo_max_experience" json:"jopoMaxExperience"`
+	JopoPrimarySkill   string `db:"jopo_primary_skill" json:"jopoPrimarySkill"`
+	JopoSecondarySkill string `db:"jopo_secondary_skill" json:"jopoSecondarySkill"`
+	JopoPublishDate    time.Time   `db:"jopo_publish_date" json:"jopoPublishDate"`
+	JopoModifiedDate   time.Time   `db:"jopo_modified_date" json:"jopoModifiedDate"`
+	JopoEmpEntityID    int32  `db:"jopo_emp_entity_id" json:"jopoEmpEntityId"`
+	JopoClitID         int32  `db:"jopo_clit_id" json:"jopoClitId"`
+	JopoJoroID         int32  `db:"jopo_joro_id" json:"jopoJoroId"`
+	JopoJotyID         int32  `db:"jopo_joty_id" json:"jopoJotyId"`
+	JopoJocaID         int32  `db:"jopo_joca_id" json:"jopoJocaId"`
 	JopoAddrID         int32  `db:"jopo_addr_id" json:"jopoAddrId"`
-	JopoWorkCode       sql.NullString `db:"jopo_work_code" json:"jopoWorkCode"`
-	JopoEduCode        sql.NullString `db:"jopo_edu_code" json:"jopoEduCode"`
-	JopoInduCode       sql.NullString `db:"jopo_indu_code" json:"jopoInduCode"`
-	JopoStatus         sql.NullString `db:"jopo_status" json:"jopoStatus"`
+	JopoWorkCode       string `db:"jopo_work_code" json:"jopoWorkCode"`
+	JopoEduCode        string `db:"jopo_edu_code" json:"jopoEduCode"`
+	JopoInduCode       string `db:"jopo_indu_code" json:"jopoInduCode"`
+	JopoStatus         string `db:"jopo_status" json:"jopoStatus"`
 }
 
 type JobhireJobPostDesc struct {
@@ -287,7 +319,7 @@ type JobhireTalentApply struct {
 	TaapUserEntityID int32          `db:"taap_user_entity_id" json:"taapUserEntityId"`
 	TaapEntityID     int32          `db:"taap_entity_id" json:"taapEntityId"`
 	TaapIntro        sql.NullString `db:"taap_intro" json:"taapIntro"`
-	TaapScoring      sql.NullInt32  `db:"taap_scoring" json:"taapScoring"`
+	TaapScoring      int32  `db:"taap_scoring" json:"taapScoring"`
 	TaapModifiedDate sql.NullTime   `db:"taap_modified_date" json:"taapModifiedDate"`
 	TaapStatus       sql.NullString `db:"taap_status" json:"taapStatus"`
 }
@@ -304,9 +336,9 @@ type JobhireTalentApplyProgress struct {
 
 type MasterAddress struct {
 	AddrID              int32          `db:"addr_id" json:"addrId"`
-	AddrLine1           sql.NullString `db:"addr_line1" json:"addrLine1"`
-	AddrLine2           sql.NullString `db:"addr_line2" json:"addrLine2"`
-	AddrPostalCode      sql.NullString `db:"addr_postal_code" json:"addrPostalCode"`
+	AddrLine1           string `db:"addr_line1" json:"addrLine1"`
+	AddrLine2           string `db:"addr_line2" json:"addrLine2"`
+	AddrPostalCode      string `db:"addr_postal_code" json:"addrPostalCode"`
 	AddrSpatialLocation sql.NullString `db:"addr_spatial_location" json:"addrSpatialLocation"`
 	AddrModifiedDate    sql.NullTime   `db:"addr_modified_date" json:"addrModifiedDate"`
 	AddrCityID          int32  `db:"addr_city_id" json:"addrCityId"`
@@ -321,15 +353,15 @@ type MasterAddressType struct {
 type MasterCategory struct {
 	CateID           int32          `db:"cate_id" json:"cateId"`
 	CateName         sql.NullString `db:"cate_name" json:"cateName"`
-	CateCateID       sql.NullInt32  `db:"cate_cate_id" json:"cateCateId"`
+	CateCateID       int32  `db:"cate_cate_id" json:"cateCateId"`
 	CateModifiedDate sql.NullTime   `db:"cate_modified_date" json:"cateModifiedDate"`
 }
 
 type MasterCity struct {
 	CityID           int32          `db:"city_id" json:"cityId"`
-	CityName         sql.NullString `db:"city_name" json:"cityName"`
+	CityName         string `db:"city_name" json:"cityName"`
 	CityModifiedDate sql.NullTime   `db:"city_modified_date" json:"cityModifiedDate"`
-	CityProvID       sql.NullInt32  `db:"city_prov_id" json:"cityProvId"`
+	CityProvID       int32  `db:"city_prov_id" json:"cityProvId"`
 }
 
 type MasterCountry struct {
@@ -350,7 +382,7 @@ type MasterIndustry struct {
 
 type MasterJobRole struct {
 	JoroID           int32          `db:"joro_id" json:"joroId"`
-	JoroName         sql.NullString `db:"joro_name" json:"joroName"`
+	JoroName         string `db:"joro_name" json:"joroName"`
 	JoroModifiedDate sql.NullTime   `db:"joro_modified_date" json:"joroModifiedDate"`
 }
 
@@ -374,8 +406,8 @@ type MasterProvince struct {
 type MasterRouteAction struct {
 	RoacID         int32          `db:"roac_id" json:"roacId"`
 	RoacName       sql.NullString `db:"roac_name" json:"roacName"`
-	RoacOrderby    sql.NullInt32  `db:"roac_orderby" json:"roacOrderby"`
-	RoacDisplay    sql.NullInt32  `db:"roac_display" json:"roacDisplay"`
+	RoacOrderby    int32  `db:"roac_orderby" json:"roacOrderby"`
+	RoacDisplay    int32  `db:"roac_display" json:"roacDisplay"`
 	RoacModuleName sql.NullString `db:"roac_module_name" json:"roacModuleName"`
 }
 
@@ -383,11 +415,11 @@ type MasterSkillTemplate struct {
 	SkteID           int32          `db:"skte_id" json:"skteId"`
 	SkteSkill        sql.NullString `db:"skte_skill" json:"skteSkill"`
 	SkteDescription  sql.NullString `db:"skte_description" json:"skteDescription"`
-	SkteWeek         sql.NullInt32  `db:"skte_week" json:"skteWeek"`
-	SkteOrderby      sql.NullInt32  `db:"skte_orderby" json:"skteOrderby"`
+	SkteWeek         int32  `db:"skte_week" json:"skteWeek"`
+	SkteOrderby      int32  `db:"skte_orderby" json:"skteOrderby"`
 	SkteModifiedDate sql.NullTime   `db:"skte_modified_date" json:"skteModifiedDate"`
 	SktyName         sql.NullString `db:"skty_name" json:"sktyName"`
-	SkteSkteID       sql.NullInt32  `db:"skte_skte_id" json:"skteSkteId"`
+	SkteSkteID       int32  `db:"skte_skte_id" json:"skteSkteId"`
 }
 
 type MasterSkillType struct {
@@ -402,7 +434,7 @@ type MasterStatus struct {
 
 type MasterWorkingType struct {
 	WotyCode string         `db:"woty_code" json:"wotyCode"`
-	WotyName sql.NullString `db:"woty_name" json:"wotyName"`
+	WotyName string `db:"woty_name" json:"wotyName"`
 }
 
 type PaymentBank struct {
@@ -430,7 +462,7 @@ type PaymentTransactionPayment struct {
 	TrpaModifiedDate sql.NullTime   `db:"trpa_modified_date" json:"trpaModifiedDate"`
 	TrpaSourceID     string         `db:"trpa_source_id" json:"trpaSourceId"`
 	TrpaTargetID     string         `db:"trpa_target_id" json:"trpaTargetId"`
-	TrpaUserEntityID sql.NullInt32  `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
+	TrpaUserEntityID int32  `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
 }
 
 type PaymentUsersAccount struct {
@@ -447,22 +479,22 @@ type PaymentUsersAccount struct {
 
 type SalesCartItem struct {
 	CaitID           int32          `db:"cait_id" json:"caitId"`
-	CaitQuantity     sql.NullInt32  `db:"cait_quantity" json:"caitQuantity"`
+	CaitQuantity     int32  `db:"cait_quantity" json:"caitQuantity"`
 	CaitUnitPrice    sql.NullString `db:"cait_unit_price" json:"caitUnitPrice"`
 	CaitModifiedDate sql.NullTime   `db:"cait_modified_date" json:"caitModifiedDate"`
-	CaitUserEntityID sql.NullInt32  `db:"cait_user_entity_id" json:"caitUserEntityId"`
-	CaitProgEntityID sql.NullInt32  `db:"cait_prog_entity_id" json:"caitProgEntityId"`
+	CaitUserEntityID int32  `db:"cait_user_entity_id" json:"caitUserEntityId"`
+	CaitProgEntityID int32  `db:"cait_prog_entity_id" json:"caitProgEntityId"`
 }
 
 type SalesSalesOrderDetail struct {
 	SodeID           int32          `db:"sode_id" json:"sodeId"`
-	SodeQty          sql.NullInt32  `db:"sode_qty" json:"sodeQty"`
+	SodeQty          int32  `db:"sode_qty" json:"sodeQty"`
 	SodeUnitPrice    sql.NullString `db:"sode_unit_price" json:"sodeUnitPrice"`
 	SodeUnitDiscount sql.NullString `db:"sode_unit_discount" json:"sodeUnitDiscount"`
-	SodeLineTotal    sql.NullInt32  `db:"sode_line_total" json:"sodeLineTotal"`
+	SodeLineTotal    int32  `db:"sode_line_total" json:"sodeLineTotal"`
 	SodeModifiedDate sql.NullTime   `db:"sode_modified_date" json:"sodeModifiedDate"`
-	SodeSoheID       sql.NullInt32  `db:"sode_sohe_id" json:"sodeSoheId"`
-	SodeProgEntityID sql.NullInt32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
+	SodeSoheID       int32  `db:"sode_sohe_id" json:"sodeSoheId"`
+	SodeProgEntityID int32  `db:"sode_prog_entity_id" json:"sodeProgEntityId"`
 }
 
 type SalesSalesOrderHeader struct {
@@ -475,24 +507,24 @@ type SalesSalesOrderHeader struct {
 	SoheTrpaCodeNumber sql.NullString `db:"sohe_trpa_code_number" json:"soheTrpaCodeNumber"`
 	SoheSubtotal       sql.NullString `db:"sohe_subtotal" json:"soheSubtotal"`
 	SoheTax            sql.NullString `db:"sohe_tax" json:"soheTax"`
-	SoheTotalDue       sql.NullInt32  `db:"sohe_total_due" json:"soheTotalDue"`
+	SoheTotalDue       int32  `db:"sohe_total_due" json:"soheTotalDue"`
 	SoheLicenseCode    sql.NullString `db:"sohe_license_code" json:"soheLicenseCode"`
 	SoheModifiedDate   sql.NullTime   `db:"sohe_modified_date" json:"soheModifiedDate"`
-	SoheUserEntityID   sql.NullInt32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
+	SoheUserEntityID   int32  `db:"sohe_user_entity_id" json:"soheUserEntityId"`
 	SoheStatus         sql.NullString `db:"sohe_status" json:"soheStatus"`
 }
 
 type SalesSpecialOffer struct {
 	SpofID           int32          `db:"spof_id" json:"spofId"`
 	SpofDescription  sql.NullString `db:"spof_description" json:"spofDescription"`
-	SpofDiscount     sql.NullInt32  `db:"spof_discount" json:"spofDiscount"`
+	SpofDiscount     int32  `db:"spof_discount" json:"spofDiscount"`
 	SpofType         sql.NullString `db:"spof_type" json:"spofType"`
 	SpofStartDate    sql.NullTime   `db:"spof_start_date" json:"spofStartDate"`
 	SpofEndDate      sql.NullTime   `db:"spof_end_date" json:"spofEndDate"`
-	SpofMinQty       sql.NullInt32  `db:"spof_min_qty" json:"spofMinQty"`
-	SpofMaxQty       sql.NullInt32  `db:"spof_max_qty" json:"spofMaxQty"`
+	SpofMinQty       int32  `db:"spof_min_qty" json:"spofMinQty"`
+	SpofMaxQty       int32  `db:"spof_max_qty" json:"spofMaxQty"`
 	SpofModifiedDate sql.NullTime   `db:"spof_modified_date" json:"spofModifiedDate"`
-	SpofCateID       sql.NullInt32  `db:"spof_cate_id" json:"spofCateId"`
+	SpofCateID       int32  `db:"spof_cate_id" json:"spofCateId"`
 }
 
 type SalesSpecialOfferProgram struct {
@@ -526,18 +558,18 @@ type UsersUser struct {
 	UserFirstName      sql.NullString `db:"user_first_name" json:"userFirstName"`
 	UserLastName       sql.NullString `db:"user_last_name" json:"userLastName"`
 	UserBirthDate      sql.NullTime   `db:"user_birth_date" json:"userBirthDate"`
-	UserEmailPromotion sql.NullInt32  `db:"user_email_promotion" json:"userEmailPromotion"`
+	UserEmailPromotion int32  `db:"user_email_promotion" json:"userEmailPromotion"`
 	UserDemographic    sql.NullString `db:"user_demographic" json:"userDemographic"`
 	UserModifiedDate   sql.NullTime   `db:"user_modified_date" json:"userModifiedDate"`
 	UserPhoto          sql.NullString `db:"user_photo" json:"userPhoto"`
-	UserCurrentRole    sql.NullInt32  `db:"user_current_role" json:"userCurrentRole"`
+	UserCurrentRole    int32  `db:"user_current_role" json:"userCurrentRole"`
 }
 
 type UsersUsersAddress struct {
 	EtadAddrID       int32         `db:"etad_addr_id" json:"etadAddrId"`
 	EtadModifiedDate sql.NullTime  `db:"etad_modified_date" json:"etadModifiedDate"`
-	EtadEntityID     sql.NullInt32 `db:"etad_entity_id" json:"etadEntityId"`
-	EtadAdtyID       sql.NullInt32 `db:"etad_adty_id" json:"etadAdtyId"`
+	EtadEntityID     int32 `db:"etad_entity_id" json:"etadEntityId"`
+	EtadAdtyID       int32 `db:"etad_adty_id" json:"etadAdtyId"`
 }
 
 type UsersUsersEducation struct {
@@ -575,7 +607,7 @@ type UsersUsersExperience struct {
 	UsexIndustry        sql.NullString `db:"usex_industry" json:"usexIndustry"`
 	UsexDescription     sql.NullString `db:"usex_description" json:"usexDescription"`
 	UsexExperienceType  sql.NullString `db:"usex_experience_type" json:"usexExperienceType"`
-	UsexCityID          sql.NullInt32  `db:"usex_city_id" json:"usexCityId"`
+	UsexCityID          int32  `db:"usex_city_id" json:"usexCityId"`
 }
 
 type UsersUsersExperiencesSkill struct {
@@ -596,7 +628,7 @@ type UsersUsersMedium struct {
 	UsmeEntityID     int32          `db:"usme_entity_id" json:"usmeEntityId"`
 	UsmeFileLink     sql.NullString `db:"usme_file_link" json:"usmeFileLink"`
 	UsmeFilename     sql.NullString `db:"usme_filename" json:"usmeFilename"`
-	UsmeFilesize     sql.NullInt32  `db:"usme_filesize" json:"usmeFilesize"`
+	UsmeFilesize     int32  `db:"usme_filesize" json:"usmeFilesize"`
 	UsmeFiletype     sql.NullString `db:"usme_filetype" json:"usmeFiletype"`
 	UsmeNote         sql.NullString `db:"usme_note" json:"usmeNote"`
 	UsmeModifiedDate sql.NullTime   `db:"usme_modified_date" json:"usmeModifiedDate"`

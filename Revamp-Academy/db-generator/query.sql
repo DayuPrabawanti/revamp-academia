@@ -34,6 +34,41 @@ DELETE FROM master.city
 WHERE city_id = $1;
 
 
+-- name: GetMasterJobRole :one
+SELECT * FROM master.job_role
+WHERE joro_id = $1;
+
+-- name: ListMasterJobRole :many
+SELECT * FROM master.job_role
+ORDER BY joro_id;
+
+-- name: CreateMasterJobRole :one
+INSERT INTO master.job_role(joro_id, joro_name, joro_modified_date)
+VALUES($1, $2, $3)
+RETURNING joro_id;
+
+-- name: DeleteMasterJobRole :exec
+DELETE FROM master.job_role
+WHERE joro_id = $1;
+
+-- name: GetMasterWorkingType :one
+SELECT * FROM master.working_type
+WHERE woty_code = $1;
+
+-- name: ListMasterWorkingType :many
+SELECT * FROM master.working_type
+ORDER BY woty_code;
+
+-- name: CreateMasterWorkingType :one
+INSERT INTO master.working_type (woty_code, woty_name)
+VALUES($1, $2)
+RETURNING woty_code;
+
+-- name: DeleteMasterWorkingType :exec
+DELETE FROM master.working_type
+WHERE woty_code = $1;
+
+
 -- name: GetBusinessEntity :one
 SELECT * FROM users.business_entity
 WHERE entity_id = $1;

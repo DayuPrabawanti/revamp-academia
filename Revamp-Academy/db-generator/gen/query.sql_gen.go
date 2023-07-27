@@ -748,6 +748,43 @@ func (q *Queries) CreateMasterCity(ctx context.Context, arg CreateMasterCityPara
 	return city_id, err
 }
 
+const createMasterJobRole = `-- name: CreateMasterJobRole :one
+INSERT INTO master.job_role(joro_id, joro_name, joro_modified_date)
+VALUES($1, $2, $3)
+RETURNING joro_id
+`
+
+type CreateMasterJobRoleParams struct {
+	JoroID           int32          `db:"joro_id" json:"joroId"`
+	JoroName         sql.NullString `db:"joro_name" json:"joroName"`
+	JoroModifiedDate sql.NullTime   `db:"joro_modified_date" json:"joroModifiedDate"`
+}
+
+func (q *Queries) CreateMasterJobRole(ctx context.Context, arg CreateMasterJobRoleParams) (int32, error) {
+	row := q.db.QueryRowContext(ctx, createMasterJobRole, arg.JoroID, arg.JoroName, arg.JoroModifiedDate)
+	var joro_id int32
+	err := row.Scan(&joro_id)
+	return joro_id, err
+}
+
+const createMasterWorkingType = `-- name: CreateMasterWorkingType :one
+INSERT INTO master.working_type (woty_code, woty_name)
+VALUES($1, $2)
+RETURNING woty_code
+`
+
+type CreateMasterWorkingTypeParams struct {
+	WotyCode string         `db:"woty_code" json:"wotyCode"`
+	WotyName sql.NullString `db:"woty_name" json:"wotyName"`
+}
+
+func (q *Queries) CreateMasterWorkingType(ctx context.Context, arg CreateMasterWorkingTypeParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, createMasterWorkingType, arg.WotyCode, arg.WotyName)
+	var woty_code string
+	err := row.Scan(&woty_code)
+	return woty_code, err
+}
+
 const createMedia = `-- name: CreateMedia :one
 
 INSERT INTO users.users_media
@@ -1904,6 +1941,26 @@ func (q *Queries) DeleteMasterCity(ctx context.Context, cityID int32) error {
 	return err
 }
 
+const deleteMasterJobRole = `-- name: DeleteMasterJobRole :exec
+DELETE FROM master.job_role
+WHERE joro_id = $1
+`
+
+func (q *Queries) DeleteMasterJobRole(ctx context.Context, joroID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteMasterJobRole, joroID)
+	return err
+}
+
+const deleteMasterWorkingType = `-- name: DeleteMasterWorkingType :exec
+DELETE FROM master.working_type
+WHERE woty_code = $1
+`
+
+func (q *Queries) DeleteMasterWorkingType(ctx context.Context, wotyCode string) error {
+	_, err := q.db.ExecContext(ctx, deleteMasterWorkingType, wotyCode)
+	return err
+}
+
 const deleteMedia = `-- name: DeleteMedia :exec
 DELETE FROM users.users_media
 WHERE usme_id = $1
@@ -2621,6 +2678,30 @@ func (q *Queries) GetMasterCity(ctx context.Context, cityID int32) (MasterCity, 
 		&i.CityModifiedDate,
 		&i.CityProvID,
 	)
+	return i, err
+}
+
+const getMasterJobRole = `-- name: GetMasterJobRole :one
+SELECT joro_id, joro_name, joro_modified_date FROM master.job_role
+WHERE joro_id = $1
+`
+
+func (q *Queries) GetMasterJobRole(ctx context.Context, joroID int32) (MasterJobRole, error) {
+	row := q.db.QueryRowContext(ctx, getMasterJobRole, joroID)
+	var i MasterJobRole
+	err := row.Scan(&i.JoroID, &i.JoroName, &i.JoroModifiedDate)
+	return i, err
+}
+
+const getMasterWorkingType = `-- name: GetMasterWorkingType :one
+SELECT woty_code, woty_name FROM master.working_type
+WHERE woty_code = $1
+`
+
+func (q *Queries) GetMasterWorkingType(ctx context.Context, wotyCode string) (MasterWorkingType, error) {
+	row := q.db.QueryRowContext(ctx, getMasterWorkingType, wotyCode)
+	var i MasterWorkingType
+	err := row.Scan(&i.WotyCode, &i.WotyName)
 	return i, err
 }
 
@@ -4011,6 +4092,62 @@ func (q *Queries) ListMasterCity(ctx context.Context) ([]MasterCity, error) {
 			&i.CityModifiedDate,
 			&i.CityProvID,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMasterJobRole = `-- name: ListMasterJobRole :many
+SELECT joro_id, joro_name, joro_modified_date FROM master.job_role
+ORDER BY joro_id
+`
+
+func (q *Queries) ListMasterJobRole(ctx context.Context) ([]MasterJobRole, error) {
+	rows, err := q.db.QueryContext(ctx, listMasterJobRole)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MasterJobRole
+	for rows.Next() {
+		var i MasterJobRole
+		if err := rows.Scan(&i.JoroID, &i.JoroName, &i.JoroModifiedDate); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listMasterWorkingType = `-- name: ListMasterWorkingType :many
+SELECT woty_code, woty_name FROM master.working_type
+ORDER BY woty_code
+`
+
+func (q *Queries) ListMasterWorkingType(ctx context.Context) ([]MasterWorkingType, error) {
+	rows, err := q.db.QueryContext(ctx, listMasterWorkingType)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []MasterWorkingType
+	for rows.Next() {
+		var i MasterWorkingType
+		if err := rows.Scan(&i.WotyCode, &i.WotyName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
