@@ -1,6 +1,6 @@
 package models
 
 type ResponseError struct {
-	Message string
-	Status  int
+	Message string `json:"message"`
+	Status  int    `json:"-"`
 }

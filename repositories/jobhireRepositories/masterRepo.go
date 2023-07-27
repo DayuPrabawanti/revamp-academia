@@ -74,3 +74,17 @@ func (mr MasterRepo) GetListMasterCity(ctx *gin.Context) ([]*models.MasterCity, 
 
 	return listCity, nil
 }
+
+// Repo for create master.address
+func (mr MasterRepo) CreateMasterAddressRepo(ctx *gin.Context, addressParams *dbContext.CreateMasterAddressParams) (*models.MasterAddress, *models.ResponseError) {
+	market := dbContext.New(mr.dbHandler)
+	address, err := market.CreateMasterAddress(ctx, *addressParams)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return address, nil
+}
