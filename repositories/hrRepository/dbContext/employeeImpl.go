@@ -10,8 +10,16 @@ import (
 
 const createEmployee = `-- name: CreateEmployee :one
 
-INSERT INTO hr.employee (emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-RETURNING *
+WITH inserted_entity AS (
+	INSERT INTO hr.employee 
+	(emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id)
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+	RETURNING *
+)
+
+INSERT INTO hr.employee_client_contract (ecco_entity_id)
+SELECT emp_entity_id
+	FROM inserted_entity
 `
 
 type CreateEmployeeParams struct {

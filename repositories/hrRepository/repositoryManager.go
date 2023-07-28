@@ -11,6 +11,7 @@ type RepositoryManager struct {
 	TalentsDetailMockupRepository
 	TalentsMockupRepository
 	EmployeeMockupRepository
+	TalentClientContractRepository
 }
 
 // constructor
@@ -24,5 +25,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewTalentDetailMockupRepository(dbHandler),
 		*NewTalentMockupRepository(dbHandler),
 		*NewEmployeeMockupRepository(dbHandler),
+		*NewTalentClientContractRepository(dbHandler),
 	}
 }

@@ -86,6 +86,10 @@ type TalentDetailSearchUpdate struct {
 	HrEmployeeClientContract HrEmployeeClientContract
 }
 
+type TalentClientContractGetUpdate struct{
+	HrEmployeeClientContract HrEmployeeClientContract
+}
+
 
 type MergeJobAndMaster struct{
 	JobHirePost JobhireJobPost

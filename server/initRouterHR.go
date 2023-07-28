@@ -85,5 +85,12 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		employeesRoute.GET("/employees/search", controllerMgr.EmployeeMockupController.SearchEmployee)
 
 	}
+
+	empClientContractRoute := routers.Group("/api/hr")
+	{
+		// routers endpoint/url http category
+		empClientContractRoute.GET("/empclientcontract/:id")
+		empClientContractRoute.PUT("/empclientcontract/update")
+	}
 	return routers
 }
