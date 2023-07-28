@@ -52,3 +52,15 @@ func (talentDetailController TalentsDetailMockupController) GetTalentDetail(ctx 
 
 	ctx.JSON(http.StatusOK, response)
 }
+
+func (talentDetailController TalentsDetailMockupController) SearchTalentDetail(ctx *gin.Context) {
+	clitName := ctx.DefaultQuery("name", "")
+
+	talents, responseErr := talentDetailController.talentDetailService.SearchTalentDetail(ctx, clitName)
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, talents)
+}

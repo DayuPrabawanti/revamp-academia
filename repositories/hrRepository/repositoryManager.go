@@ -10,6 +10,7 @@ type RepositoryManager struct {
 	PayHistoryRepository
 	TalentsDetailMockupRepository
 	TalentsMockupRepository
+	EmployeeMockupRepository
 }
 
 // constructor
@@ -22,5 +23,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewPayHistoryRepository(dbHandler),
 		*NewTalentDetailMockupRepository(dbHandler),
 		*NewTalentMockupRepository(dbHandler),
+		*NewEmployeeMockupRepository(dbHandler),
 	}
 }

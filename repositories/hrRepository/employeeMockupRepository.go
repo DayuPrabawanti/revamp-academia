@@ -20,6 +20,31 @@ func NewEmployeeMockupRepository(dbHandler *sql.DB) *EmployeeMockupRepository {
 	}
 }
 
+func (er EmployeeMockupRepository) ListEmployeeMockup(ctx *gin.Context) ([]*models.EmployeeMockupList, *models.ResponseError) {
+
+	store := dbContext.New(er.dbHandler)
+	employees, err := store.ListEmployeeMockup(ctx)
+
+	listEmployees := make([]*models.EmployeeMockupList, 0)
+
+	for _, v := range employees {
+		employee := &models.EmployeeMockupList{
+			HrEmployee: v.HrEmployee,
+			UsersUser:  v.UsersUser,
+		}
+		listEmployees = append(listEmployees, employee)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listEmployees, nil
+}
+
 func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employeemockupParams *dbContext.EmployeeMockupParams) (*models.EmployeeMockupModel, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
@@ -54,4 +79,17 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employ
 	}
 
 	return employeeMockup, nil
+}
+
+func (tdmr EmployeeMockupRepository) SearchEmployee(ctx *gin.Context, userName string, status string) ([]models.EmployeeMockupList, *models.ResponseError) {
+	store := dbContext.New(tdmr.dbHandler)
+	employee, err := store.SearchEmployee(ctx, userName, status)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to search employee",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return employee, nil
 }

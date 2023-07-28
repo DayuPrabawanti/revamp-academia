@@ -24,3 +24,7 @@ func (tdms TalentsDetailMockupService) GetListTalentDetailMockup(ctx *gin.Contex
 func (tdms TalentsDetailMockupService) GetTalentDetail(ctx *gin.Context, id int64) (*models.TalentsDetailMockup, *models.ResponseError) {
 	return tdms.talentDetailRepository.GetTalentDetail(ctx, id)
 }
+
+func (tdms TalentsDetailMockupService) SearchTalentDetail(ctx *gin.Context, clitName string) ([]models.TalentDetailSearchUpdate, *models.ResponseError) {
+	return tdms.talentDetailRepository.SearchTalentDetail(ctx, clitName)
+}

@@ -76,6 +76,16 @@ type EmployeeMockupModel struct{
 	Assigment 	HrEmployeeDepartmentHistory
 }
 
+type EmployeeMockupList struct{
+	HrEmployee HrEmployee
+	UsersUser UsersUser
+}
+
+type TalentDetailSearchUpdate struct {
+	JobhireClient JobhireClient
+	HrEmployeeClientContract HrEmployeeClientContract
+}
+
 
 type MergeJobAndMaster struct{
 	JobHirePost JobhireJobPost

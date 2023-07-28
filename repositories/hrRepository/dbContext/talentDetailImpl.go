@@ -133,3 +133,45 @@ func (q *Queries) GetTalentDetail(ctx context.Context, batchId int32) (models.Ta
 	)
 	return i, err
 }
+
+const searchTalentDetail = `-- name: SearchTalentDetail :many
+SELECT empcc.ecco_id,
+jc.clit_name,
+empcc.ecco_contract_no, empcc.ecco_start_date, 
+empcc.ecco_end_date, empcc.ecco_status, empcc.ecco_notes
+FROM hr.employee_client_contract empcc
+JOIN jobhire.client jc
+ON empcc.ecco_clit_id = jc.clit_id
+WHERE jc.clit_name ilike $1 || '%'
+`
+
+func (q *Queries) SearchTalentDetail(ctx context.Context, clitName string) ([]models.TalentDetailSearchUpdate, error) {
+	rows, err := q.db.QueryContext(ctx, searchTalentDetail, clitName)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var talents []models.TalentDetailSearchUpdate
+	for rows.Next() {
+		var i models.TalentDetailSearchUpdate
+		if err := rows.Scan(
+			&i.HrEmployeeClientContract.EccoID,
+			&i.JobhireClient.ClitName,
+			&i.HrEmployeeClientContract.EccoContractNo,
+			&i.HrEmployeeClientContract.EccoStartDate,
+			&i.HrEmployeeClientContract.EccoEndDate,
+			&i.HrEmployeeClientContract.EccoStatus,
+			&i.HrEmployeeClientContract.EccoNotes,
+		); err != nil {
+			return nil, err
+		}
+		talents = append(talents, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return talents, nil
+}

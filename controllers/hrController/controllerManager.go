@@ -10,6 +10,7 @@ type ControllerManager struct {
 	PayHistoryController
 	TalentsDetailMockupController
 	TalentsMockupController
+	EmployeeMockupController
 }
 
 // constructor
@@ -22,5 +23,6 @@ func NewControllerManager(serviceMgr *hrService.ServiceManager) *ControllerManag
 		*NewPayHistoryController(&serviceMgr.PayHistoryService),
 		*NewTalentDetailMockupController(&serviceMgr.TalentsDetailMockupService),
 		*NewTalentMockupController(&serviceMgr.TalentsMockupService),
+		*NewEmployeeMockupController(&serviceMgr.EmployeeMockupService),
 	}
 }

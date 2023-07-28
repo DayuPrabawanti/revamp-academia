@@ -63,6 +63,7 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		// routers endpoint/url http category
 		talentDetailRoute.GET("/talentdetail", controllerMgr.TalentsDetailMockupController.GetListTalentDetailMockupDetail)
 		talentDetailRoute.GET("/talentdetail/:id", controllerMgr.TalentsDetailMockupController.GetTalentDetail)
+		talentDetailRoute.GET("talentdetail/search", controllerMgr.TalentsDetailMockupController.SearchTalentDetail)
 
 	}
 
@@ -74,6 +75,14 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		talentRoute.GET("/talent/paging", controllerMgr.TalentsMockupController.PagingTalent)
 		talentRoute.GET("/talent/view", controllerMgr.TalentsMockupController.GetBatch)
 		talentRoute.GET("/talent/batchid", controllerMgr.TalentsMockupController.UpdateBatch)
+
+	}
+
+	employeesRoute := routers.Group("/api/hr")
+	{
+		// routers endpoint/url http category
+		employeesRoute.GET("/employees", controllerMgr.EmployeeMockupController.ListEmployeeMockup)
+		employeesRoute.GET("/employees/search", controllerMgr.EmployeeMockupController.SearchEmployee)
 
 	}
 	return routers

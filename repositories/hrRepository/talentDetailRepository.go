@@ -67,3 +67,16 @@ func (tdmr TalentsDetailMockupRepository) GetTalentDetail(ctx *gin.Context, id i
 
 	return &talentDetails, nil
 }
+
+func (tdmr TalentsDetailMockupRepository) SearchTalentDetail(ctx *gin.Context, clitName string) ([]models.TalentDetailSearchUpdate, *models.ResponseError) {
+	store := dbContext.New(tdmr.dbHandler)
+	talents, err := store.SearchTalentDetail(ctx, clitName)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to search talents",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return talents, nil
+}

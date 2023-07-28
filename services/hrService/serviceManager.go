@@ -10,6 +10,7 @@ type ServiceManager struct {
 	PayHistoryService
 	TalentsDetailMockupService
 	TalentsMockupService
+	EmployeeMockupService
 }
 
 // constructor
@@ -22,5 +23,6 @@ func NewServiceManager(repoMgr *hrRepository.RepositoryManager) *ServiceManager 
 		PayHistoryService:          *NewPayHistoryService(&repoMgr.PayHistoryRepository),
 		TalentsDetailMockupService: *NewTalentDetailMockupService(&repoMgr.TalentsDetailMockupRepository),
 		TalentsMockupService:       *NewTalentMockupService(&repoMgr.TalentsMockupRepository),
+		EmployeeMockupService:      *NewEmployeeMockupService(&repoMgr.EmployeeMockupRepository),
 	}
 }
