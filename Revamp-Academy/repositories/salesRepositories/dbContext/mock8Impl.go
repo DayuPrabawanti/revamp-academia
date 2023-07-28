@@ -337,11 +337,11 @@ join sales.special_offer_programs sop
 on sop.soco_prog_entity_id = pe.prog_entity_id
 join sales.sales_order_detail sod
 on sod.sode_id = sop.soco_id
-WHERE tp.trpa_code_number = $1
+where tp.trpa_code_number = $1
 `
 
-func (q *Queries) GetMock8Group(ctx context.Context, TrpaCodeNumber int32) (models.MergeMock8, error) {
-	row := q.db.QueryRowContext(ctx, getMock8Grup, TrpaCodeNumber)
+func (q *Queries) GetMock8Group(ctx context.Context, poNo string) (models.MergeMock8, error) {
+	row := q.db.QueryRowContext(ctx, getMock8Grup, poNo)
 	var i models.MergeMock8
 	err := row.Scan(
 		&i.Transaction.TrpaCodeNumber,

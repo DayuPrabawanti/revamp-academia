@@ -6,6 +6,23 @@ import (
 	// "github.com/tabbed/pqtype"
 )
 
+type MergeBatchApplyProgress struct {
+	ProgramApply         BootcampProgramApply
+	ProgramApplyProgress BootcampProgramApplyProgress
+}
+
+type MergePayment struct {
+	PaymentFintech
+	PaymentUsersAccount
+}
+
+type MergeShopMock7 struct {
+	UsersUser
+	CurriculumProgramEntity
+	SalesSalesOrderDetail
+	PaymentFintech
+}
+
 type MergeMock8 struct {
 	Curriculums CurriculumProgramEntity
 	Total       SalesSalesOrderDetail
@@ -27,7 +44,7 @@ type MergeMockBootcamp struct {
 	Instructor BootcampInstructorProgram
 }
 
-type MergeMockUser struct {
+type MergeApplyProgress struct {
 	Users     UsersUser
 	Education UsersUsersEducation
 	Media     UsersUsersMedium
@@ -83,26 +100,26 @@ type BootcampInstructorProgram struct {
 }
 
 type BootcampProgramApply struct {
-	PrapUserEntityID int32        `db:"prap_user_entity_id" json:"prapUserEntityId"`
-	PrapProgEntityID int32        `db:"prap_prog_entity_id" json:"prapProgEntityId"`
-	PrapTestScore    int32        `db:"prap_test_score" json:"prapTestScore"`
-	PrapGpa          int32        `db:"prap_gpa" json:"prapGpa"`
-	PrapIqTest       int32        `db:"prap_iq_test" json:"prapIqTest"`
-	PrapReview       string       `db:"prap_review" json:"prapReview"`
-	PrapModifiedDate sql.NullTime `db:"prap_modified_date" json:"prapModifiedDate"`
-	PrapStatus       string       `db:"prap_status" json:"prapStatus"`
+	PrapUserEntityID int32         `db:"prap_user_entity_id" json:"prapUserEntityId"`
+	PrapProgEntityID int32         `db:"prap_prog_entity_id" json:"prapProgEntityId"`
+	PrapTestScore    int32         `db:"prap_test_score" json:"prapTestScore"`
+	PrapGpa          sql.NullInt32 `db:"prap_gpa" json:"prapGpa"`
+	PrapIqTest       int32         `db:"prap_iq_test" json:"prapIqTest"`
+	PrapReview       string        `db:"prap_review" json:"prapReview"`
+	PrapModifiedDate time.Time     `db:"prap_modified_date" json:"prapModifiedDate"`
+	PrapStatus       string        `db:"prap_status" json:"prapStatus"`
 }
 
 type BootcampProgramApplyProgress struct {
-	ParogID           int32        `db:"parog_id" json:"parogId"`
-	ParogUserEntityID int32        `db:"parog_user_entity_id" json:"parogUserEntityId"`
-	ParogProgEntityID int32        `db:"parog_prog_entity_id" json:"parogProgEntityId"`
-	ParogActionDate   sql.NullTime `db:"parog_action_date" json:"parogActionDate"`
-	ParogModifiedDate sql.NullTime `db:"parog_modified_date" json:"parogModifiedDate"`
-	ParogComment      string       `db:"parog_comment" json:"parogComment"`
-	ParogProgressName string       `db:"parog_progress_name" json:"parogProgressName"`
-	ParogEmpEntityID  int32        `db:"parog_emp_entity_id" json:"parogEmpEntityId"`
-	ParogStatus       string       `db:"parog_status" json:"parogStatus"`
+	ParogID           int32          `db:"parog_id" json:"parogId"`
+	ParogUserEntityID int32          `db:"parog_user_entity_id" json:"parogUserEntityId"`
+	ParogProgEntityID int32          `db:"parog_prog_entity_id" json:"parogProgEntityId"`
+	ParogActionDate   time.Time      `db:"parog_action_date" json:"parogActionDate"`
+	ParogModifiedDate time.Time      `db:"parog_modified_date" json:"parogModifiedDate"`
+	ParogComment      sql.NullString `db:"parog_comment" json:"parogComment"`
+	ParogProgressName string         `db:"parog_progress_name" json:"parogProgressName"`
+	ParogEmpEntityID  sql.NullInt32  `db:"parog_emp_entity_id" json:"parogEmpEntityId"`
+	ParogStatus       sql.NullString `db:"parog_status" json:"parogStatus"`
 }
 
 type CurriculumProgramEntity struct {

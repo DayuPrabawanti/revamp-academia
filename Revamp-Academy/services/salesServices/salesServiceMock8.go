@@ -21,6 +21,6 @@ func (sm ServiceMock8) ListMock8Group(ctx *gin.Context) ([]*dbcontext.CreateMerg
 	return sm.repoMockup8.ListMock8Group(ctx)
 }
 
-func (sm ServiceMock8) GetMock8Group(ctx *gin.Context, id int32) (*models.MergeMock8, *models.ResponseError) {
-	return sm.repoMockup8.GetMock8Group(ctx, id)
+func (sm ServiceMock8) GetMock8Group(ctx *gin.Context, poNo string) (*models.MergeMock8, *models.ResponseError) {
+	return sm.repoMockup8.GetMock8Group(ctx, poNo)
 }

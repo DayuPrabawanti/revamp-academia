@@ -26,9 +26,13 @@ func InitRouter(controllerMgr *salesController.ControllerManager) *gin.Engine {
 		initRouter.GET("/description", controllerMgr.ControlMock2.GetListGroup)
 
 		//api mockup3 localhost:8886/sales/applyRegular/1
-		initRouter.POST("/save", controllerMgr.ControlMock3.CreateMergeUsers)
 		initRouter.GET("/applyRegular/:id", controllerMgr.ControlMock3.GetUsers)
 		initRouter.GET("/get", controllerMgr.ControlMock3.GetListGroup)
+		initRouter.GET("/getBatch", controllerMgr.ControlMock3.GetListApplyProgress)
+		initRouter.POST("/media", controllerMgr.ControlMock3.CreateMedian)
+		initRouter.POST("/users", controllerMgr.ControlMock3.CreateUsers)
+		initRouter.POST("/education", controllerMgr.ControlMock3.CreateEducation)
+		initRouter.POST("/save", controllerMgr.ControlMock3.CreateMergeUsers)
 
 		//api mockup4
 		initRouter.GET("/dashboard", controllerMgr.ControlMock4.GetListMock4)
@@ -36,8 +40,8 @@ func InitRouter(controllerMgr *salesController.ControllerManager) *gin.Engine {
 
 		//api mockup8
 		initRouter.GET("/payment", controllerMgr.ControlMock8.GetListMock8)
-		//localhost:8886/sales/summaryOrder/20220725
-		initRouter.GET("/summaryOrder/:id", controllerMgr.ControlMock8.GetMock8Group)
+		//localhost:8886/sales/summaryOrder?poNo=20220725
+		initRouter.GET("/summaryOrder", controllerMgr.ControlMock8.GetMock8Group)
 
 		// initRouter.GET("/:id", controllerMgr.FintechController.GetPaymentFintech)
 

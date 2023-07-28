@@ -20,7 +20,7 @@ func NewMockupApplyRepo(dbHandler *sql.DB) *RepoMockup3 {
 	}
 }
 
-func (rm RepoMockup3) CreateUser(ctx *gin.Context, userParams *dbcontext.CreateUsersParams) (*dbcontext.CreateUsersParams, *models.ResponseError) {
+func (rm RepoMockup3) CreateUser(ctx *gin.Context, userParams *dbcontext.CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
 	store := dbcontext.New(rm.dbHandler)
 	user, err := store.CreateUsersParams(ctx, *userParams)
 
@@ -32,7 +32,7 @@ func (rm RepoMockup3) CreateUser(ctx *gin.Context, userParams *dbcontext.CreateU
 	}
 	return user, nil
 }
-func (rm RepoMockup3) CreateEducation(ctx *gin.Context, eductionParams *dbcontext.CreateEducationParam) (*dbcontext.CreateEducationParam, *models.ResponseError) {
+func (rm RepoMockup3) CreateEducation(ctx *gin.Context, eductionParams *dbcontext.CreateEducationParam) (*models.UsersUsersEducation, *models.ResponseError) {
 	store := dbcontext.New(rm.dbHandler)
 	education, err := store.CreateEducationParams(ctx, *eductionParams)
 
@@ -45,7 +45,7 @@ func (rm RepoMockup3) CreateEducation(ctx *gin.Context, eductionParams *dbcontex
 	return education, nil
 }
 
-func (rm RepoMockup3) CreateMedia(ctx *gin.Context, mediaParams *dbcontext.CreateMediaParams) (*dbcontext.CreateMediaParams, *models.ResponseError) {
+func (rm RepoMockup3) CreateMedia(ctx *gin.Context, mediaParams *dbcontext.CreateMediaParams) (*models.UsersUsersMedium, *models.ResponseError) {
 	store := dbcontext.New(rm.dbHandler)
 	media, err := store.CreateMediaParams(ctx, *mediaParams)
 
@@ -58,7 +58,7 @@ func (rm RepoMockup3) CreateMedia(ctx *gin.Context, mediaParams *dbcontext.Creat
 	return media, nil
 }
 
-func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.CreateMergeMock) (*dbcontext.CreateMergeMock, *models.ResponseError) {
+func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.CreateMergeMock) (*models.MergeApplyProgress, *models.ResponseError) {
 	user, err := rm.CreateUser(ctx, &mergeParams.CreateUsersParams)
 	if err != nil {
 		return nil, err
@@ -72,14 +72,13 @@ func (rm RepoMockup3) CreateMergeMock(ctx *gin.Context, mergeParams *dbcontext.C
 		return nil, err
 	}
 
-	merge := &dbcontext.CreateMergeMock{
-		CreateUsersParams:    *user,
-		CreateEducationParam: *education,
-		CreateMediaParams:    *media,
+	merge := &models.MergeApplyProgress{
+		Users:     *user,
+		Education: *education,
+		Media:     *media,
 	}
 	return merge, nil
 }
-
 func (rm RepoMockup3) GetUsers(ctx *gin.Context, id int64) (*models.UsersUser, *models.ResponseError) {
 
 	store := dbcontext.New(rm.dbHandler)
@@ -107,6 +106,31 @@ func (rm RepoMockup3) ListUserGroup(ctx *gin.Context) ([]*dbcontext.CreateMergeM
 			CreateUsersParams:    v.CreateUsersParams,
 			CreateEducationParam: v.CreateEducationParam,
 			CreateMediaParams:    v.CreateMediaParams,
+		}
+		listUserGrup = append(listUserGrup, sales)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listUserGrup, nil
+}
+
+func (rm RepoMockup3) ListBootcampApplyProgressRepo(ctx *gin.Context) ([]*models.MergeBatchApplyProgress, *models.ResponseError) {
+
+	store := dbcontext.New(rm.dbHandler)
+	userGroup, err := store.ListApplyProgressMock6(ctx)
+
+	listUserGrup := make([]*models.MergeBatchApplyProgress, 0)
+
+	for _, v := range userGroup {
+		sales := &models.MergeBatchApplyProgress{
+			ProgramApply:         v.ProgramApply,
+			ProgramApplyProgress: v.ProgramApplyProgress,
 		}
 		listUserGrup = append(listUserGrup, sales)
 	}

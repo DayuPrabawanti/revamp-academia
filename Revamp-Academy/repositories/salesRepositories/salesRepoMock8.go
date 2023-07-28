@@ -48,10 +48,10 @@ func (rm RepoMockup8) ListMock8Group(ctx *gin.Context) ([]*dbcontext.CreateMerge
 
 	return listMock8Grup, nil
 }
-func (rm RepoMockup8) GetMock8Group(ctx *gin.Context, id int32) (*models.MergeMock8, *models.ResponseError) {
+func (rm RepoMockup8) GetMock8Group(ctx *gin.Context, poNo string) (*models.MergeMock8, *models.ResponseError) {
 
 	store := dbcontext.New(rm.dbHandler)
-	mockup, err := store.GetMock8Group(ctx, int32(id))
+	mockup, err := store.GetMock8Group(ctx, poNo)
 
 	if err != nil {
 		return nil, &models.ResponseError{

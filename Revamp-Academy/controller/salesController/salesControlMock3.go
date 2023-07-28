@@ -47,6 +47,81 @@ func (controlMock3 ControlMock3) CreateMergeUsers(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
+func (controlMock3 ControlMock3) CreateUsers(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create Users request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var userParam dbcontext.CreateUsersParams
+	err = json.Unmarshal(body, &userParam)
+	if err != nil {
+		log.Println("Error while unmarshaling create Users request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := controlMock3.serviceMock3.CreateUsers(ctx, &userParam)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (controlMock3 ControlMock3) CreateEducation(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create Education request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var educationParam dbcontext.CreateEducationParam
+	err = json.Unmarshal(body, &educationParam)
+	if err != nil {
+		log.Println("Error while unmarshaling create Education request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := controlMock3.serviceMock3.CreateEducations(ctx, &educationParam)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (controlMock3 ControlMock3) CreateMedian(ctx *gin.Context) {
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create media request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var mediaParam dbcontext.CreateMediaParams
+	err = json.Unmarshal(body, &mediaParam)
+	if err != nil {
+		log.Println("Error while unmarshaling create media request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := controlMock3.serviceMock3.CreateMedian(ctx, &mediaParam)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
 func (controlMock3 ControlMock3) GetUsers(ctx *gin.Context) {
 	userId, err := strconv.Atoi(ctx.Param("id"))
 
@@ -67,6 +142,15 @@ func (controlMock3 ControlMock3) GetUsers(ctx *gin.Context) {
 
 func (controlMock3 ControlMock3) GetListGroup(ctx *gin.Context) {
 	response, responerr := controlMock3.serviceMock3.ListUserGroup(ctx)
+	if responerr != nil {
+		ctx.JSON(responerr.Status, responerr)
+		return
+	}
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (controlMock3 ControlMock3) GetListApplyProgress(ctx *gin.Context) {
+	response, responerr := controlMock3.serviceMock3.ListBootcampApplyProgressService(ctx)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 		return

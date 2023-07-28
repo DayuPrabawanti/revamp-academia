@@ -1,9 +1,7 @@
 package salesController
 
 import (
-	"log"
 	"net/http"
-	"strconv"
 
 	saler "codeid.revampacademy/services/salesServices"
 	"github.com/gin-gonic/gin"
@@ -29,14 +27,9 @@ func (controlMock8 ControlMock8) GetListMock8(ctx *gin.Context) {
 }
 
 func (controlMock8 ControlMock8) GetMock8Group(ctx *gin.Context) {
-	TrpaCodeNumber, err := strconv.Atoi(ctx.Param("id"))
+	poNo := ctx.Query("poNo")
 
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-	response, responseErr := controlMock8.serviceMock8.GetMock8Group(ctx, int32(TrpaCodeNumber))
+	response, responseErr := controlMock8.serviceMock8.GetMock8Group(ctx, string(poNo))
 	if responseErr != nil {
 
 		ctx.JSON(responseErr.Status, responseErr)

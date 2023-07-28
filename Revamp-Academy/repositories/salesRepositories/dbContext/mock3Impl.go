@@ -29,14 +29,14 @@ type CreateUsersParams struct {
 	UserPhoto     string       `db:"user_photo" json:"userPhoto"`
 }
 
-func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) (*CreateUsersParams, *models.ResponseError) {
+func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createUsers,
 		arg.UserFirstName,
 		arg.UserLastName,
 		arg.UserBirthDate,
 		arg.UserPhoto,
 	)
-	i := CreateUsersParams{}
+	i := models.UsersUser{}
 	err := row.Scan(
 		&i.UserFirstName,
 		&i.UserLastName,
@@ -49,7 +49,7 @@ func (q *Queries) CreateUsersParams(ctx context.Context, arg CreateUsersParams) 
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateUsersParams{
+	return &models.UsersUser{
 		UserFirstName: i.UserFirstName,
 		UserLastName:  i.UserLastName,
 		UserBirthDate: i.UserBirthDate,
@@ -71,14 +71,14 @@ type CreateEducationParam struct {
 	UsduDescription sql.NullString `db:"usdu_description" json:"usduDescription"`
 }
 
-func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducationParam) (*CreateEducationParam, *models.ResponseError) {
+func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducationParam) (*models.UsersUsersEducation, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createEducation,
 		arg.UsduSchool,
 		arg.UsduDegree,
 		arg.UsduFieldStudy,
 		arg.UsduDescription,
 	)
-	i := CreateEducationParams{}
+	i := models.UsersUsersEducation{}
 	err := row.Scan(
 		&i.UsduSchool,
 		&i.UsduDegree,
@@ -91,10 +91,10 @@ func (q *Queries) CreateEducationParams(ctx context.Context, arg CreateEducation
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateEducationParam{
-		UsduSchool:      i.UsduDegree.String,
-		UsduDegree:      i.UsduDegree.String,
-		UsduFieldStudy:  i.UsduFieldStudy.String,
+	return &models.UsersUsersEducation{
+		UsduSchool:      i.UsduDegree,
+		UsduDegree:      i.UsduDegree,
+		UsduFieldStudy:  i.UsduFieldStudy,
 		UsduDescription: i.UsduDescription,
 	}, nil
 }
@@ -114,13 +114,13 @@ type CreateMediaParams struct {
 	UsmeFiletype string `db:"usme_filetype" json:"usmeFiletype"`
 }
 
-func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) (*CreateMediaParams, *models.ResponseError) {
+func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) (*models.UsersUsersMedium, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createMedia,
 		arg.UsmeFilename,
 		arg.UsmeFilesize,
 		arg.UsmeFiletype,
 	)
-	i := CreateMediaParams{}
+	i := models.UsersUsersMedium{}
 	err := row.Scan(
 		&i.UsmeFilename,
 		&i.UsmeFilesize,
@@ -132,7 +132,7 @@ func (q *Queries) CreateMediaParams(ctx context.Context, arg CreateMediaParams) 
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &CreateMediaParams{
+	return &models.UsersUsersMedium{
 		UsmeFilename: arg.UsmeFilename,
 		UsmeFilesize: arg.UsmeFilesize,
 		UsmeFiletype: arg.UsmeFiletype,
@@ -194,6 +194,52 @@ func (q *Queries) ListUserGroup(ctx context.Context) ([]CreateMergeMock, error) 
 			&i.UsmeFilename,
 			&i.UsmeFilesize,
 			&i.UsmeFiletype,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listBootcampApplyProgress = ` --name: ListApplyProgress : Many
+select * from bootcamp.program_apply pa join bootcamp.program_apply_progress pap 
+on pa.prap_user_entity_id = pap.parog_user_entity_id
+`
+
+func (q *Queries) ListApplyProgressMock6(ctx context.Context) ([]models.MergeBatchApplyProgress, error) {
+	rows, err := q.db.QueryContext(ctx, listBootcampApplyProgress)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []models.MergeBatchApplyProgress
+	for rows.Next() {
+		var i models.MergeBatchApplyProgress
+		if err := rows.Scan(
+			&i.ProgramApply.PrapUserEntityID,
+			&i.ProgramApply.PrapProgEntityID,
+			&i.ProgramApply.PrapTestScore,
+			&i.ProgramApply.PrapGpa,
+			&i.ProgramApply.PrapIqTest,
+			&i.ProgramApply.PrapReview,
+			&i.ProgramApply.PrapModifiedDate,
+			&i.ProgramApply.PrapStatus,
+			&i.ProgramApplyProgress.ParogID,
+			&i.ProgramApplyProgress.ParogUserEntityID,
+			&i.ProgramApplyProgress.ParogProgEntityID,
+			&i.ProgramApplyProgress.ParogActionDate,
+			&i.ProgramApplyProgress.ParogModifiedDate,
+			&i.ProgramApplyProgress.ParogComment,
+			&i.ProgramApplyProgress.ParogProgressName,
+			&i.ProgramApplyProgress.ParogEmpEntityID,
+			&i.ProgramApplyProgress.ParogStatus,
 		); err != nil {
 			return nil, err
 		}
