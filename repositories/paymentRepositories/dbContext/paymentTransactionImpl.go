@@ -7,34 +7,128 @@ import (
 	"time"
 
 	"codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 )
 
+type TransactionUser struct {
+	TrpaCodeNumber   string          `db:"trpa_code_number"`
+	TrpaModifiedDate *time.Time      `db:"trpa_modified_date"`
+	TrpaDebit        sql.NullFloat64 `db:"trpa_debit"`
+	TrpaCredit       sql.NullFloat64 `db:"trpa_credit"`
+	TrpaNote         string          `db:"trpa_note"`
+	TrpaOrderNumber  string          `db:"trpa_order_number"`
+	TrpaFromID       string          `db:"trpa_from_id"`
+	TrpaToID         string          `db:"trpa_to_id"`
+	TrpaType         string          `db:"trpa_type"`
+	UserName         string          `db:"user_name"`
+}
+
 const listPaymentTransaction_payment = `-- name: ListPaymentTransaction_payment :many
-SELECT trpa_id, trpa_code_number, trpa_order_number, trpa_debit, trpa_credit, trpa_type, trpa_note, 
-trpa_modified_date, trpa_source_id, trpa_target_id, trpa_user_entity_id FROM payment.transaction_payment ORDER BY trpa_code_number
+SELECT 
+    trpa.trpa_code_number, 
+    trpa.trpa_modified_date,
+    trpa.trpa_debit,
+    trpa.trpa_credit, 
+    trpa.trpa_note,
+    trpa.trpa_order_number,
+    trpa.trpa_from_id, 
+    trpa.trpa_to_id, 
+    trpa.trpa_type,
+    usr.user_name
+FROM 
+    payment.transaction_payment trpa
+JOIN
+    users.users usr
+ON 
+    trpa.trpa_user_entity_id = usr.user_entity_id
+ORDER BY 
+    trpa.trpa_code_number;
 `
 
-func (q *Queries) ListPaymentTransaction_payment(ctx context.Context) ([]models.PaymentTransactionPayment, error) {
+func (q *Queries) ListPaymentTransaction_payment(ctx context.Context) ([]TransactionUser, error) {
 	rows, err := q.db.QueryContext(ctx, listPaymentTransaction_payment)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []models.PaymentTransactionPayment
+	var items []TransactionUser
 	for rows.Next() {
-		var i models.PaymentTransactionPayment
+		var i TransactionUser
 		if err := rows.Scan(
-			&i.TrpaID,
 			&i.TrpaCodeNumber,
-			&i.TrpaOrderNumber,
+			&i.TrpaModifiedDate,
 			&i.TrpaDebit,
 			&i.TrpaCredit,
-			&i.TrpaType,
 			&i.TrpaNote,
+			&i.TrpaOrderNumber,
+			&i.TrpaFromID,
+			&i.TrpaToID,
+			&i.TrpaType,
+			&i.UserName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return items, nil
+}
+
+const getPaymentTransaction_payment = `-- name: GetPaymentTransaction_payment :one
+SELECT 
+    trpa.trpa_code_number, 
+    trpa.trpa_modified_date,
+    trpa.trpa_debit,
+    trpa.trpa_credit, 
+    trpa.trpa_note,
+    trpa.trpa_order_number,
+    trpa.trpa_from_id, 
+    trpa.trpa_to_id, 
+    trpa.trpa_type,
+    usr.user_name
+FROM 
+    payment.transaction_payment trpa
+JOIN
+    users.users usr
+ON 
+    trpa.trpa_user_entity_id = usr.user_entity_id
+WHERE 
+	trpa.trpa_user_entity_id = $1
+ORDER BY 
+    trpa.trpa_code_number
+	LIMIT $2 OFFSET $3;
+	`
+
+// LIMIT 5 OFFSET ($2 - 1) * $3;
+
+// payment.transaction_payment
+func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, metadata *features.Metadata) ([]TransactionUser, error) {
+	rows, err := q.db.QueryContext(ctx, getPaymentTransaction_payment, metadata.SearchBy, metadata.PageSize, metadata.PageNo)
+	// *metadata.PageSize
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TransactionUser
+	for rows.Next() {
+		var i TransactionUser
+		if err := rows.Scan(
+			&i.TrpaCodeNumber,
 			&i.TrpaModifiedDate,
-			&i.TrpaSourceID,
-			&i.TrpaTargetID,
-			&i.TrpaUserEntityID,
+			&i.TrpaDebit,
+			&i.TrpaCredit,
+			&i.TrpaNote,
+			&i.TrpaOrderNumber,
+			&i.TrpaFromID,
+			&i.TrpaToID,
+			&i.TrpaType,
+			&i.UserName,
 		); err != nil {
 			return nil, err
 		}
@@ -47,31 +141,6 @@ func (q *Queries) ListPaymentTransaction_payment(ctx context.Context) ([]models.
 		return nil, err
 	}
 	return items, nil
-}
-
-const getPaymentTransaction_payment = `-- name: GetPaymentTransaction_payment :one
-SELECT trpa_id, trpa_code_number, trpa_order_number, trpa_debit, trpa_credit, trpa_type, trpa_note, 
-trpa_modified_date, trpa_source_id, trpa_target_id, trpa_user_entity_id FROM payment.transaction_payment WHERE trpa_user_entity_id = $1
-`
-
-// payment.transaction_payment
-func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, accountID string) (models.PaymentTransactionPayment, error) {
-	row := q.db.QueryRowContext(ctx, getPaymentTransaction_payment, accountID)
-	var i models.PaymentTransactionPayment
-	err := row.Scan(
-		&i.TrpaID,
-		&i.TrpaCodeNumber,
-		&i.TrpaOrderNumber,
-		&i.TrpaDebit,
-		&i.TrpaCredit,
-		&i.TrpaType,
-		&i.TrpaNote,
-		&i.TrpaModifiedDate,
-		&i.TrpaSourceID,
-		&i.TrpaTargetID,
-		&i.TrpaUserEntityID,
-	)
-	return i, err
 }
 
 const createPaymentTransaction_payment = `-- name: CreatePaymentTransaction_payment :one
@@ -161,7 +230,7 @@ func (q *Queries) CreatePaymentTransaction_payment(ctx context.Context, arg Crea
 		TrpaCredit:       i.TrpaCredit,
 		TrpaType:         i.TrpaType,
 		TrpaNote:         i.TrpaNote,
-		TrpaModifiedDate: sql.NullTime{Time: time.Now(), Valid: true},
+		TrpaModifiedDate: i.TrpaModifiedDate,
 		TrpaSourceID:     i.TrpaSourceID,
 		TrpaTargetID:     i.TrpaTargetID,
 		TrpaUserEntityID: i.TrpaUserEntityID,

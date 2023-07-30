@@ -21,17 +21,15 @@ func NewPaymentBankRepository(dbHandler *sql.DB) *PaymentBankRepository {
 }
 
 // 1a. fungsi utk ambil get list
-func (pbr PaymentBankRepository) GetListPaymentBank(ctx *gin.Context) ([]*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankRepository) GetListPaymentBank(ctx *gin.Context) ([]*dbContext.Bank, *models.ResponseError) {
 	store := dbContext.New(pbr.dbHandler)
 	paymentBanks, err := store.ListPaymentBank(ctx)
-	listPaymentBanks := make([]*models.PaymentBank, 0)
+	listPaymentBanks := make([]*dbContext.Bank, 0)
 
 	for _, v := range paymentBanks {
-		paymentBank := &models.PaymentBank{
-			BankEntityID:     v.BankEntityID,
-			BankCode:         v.BankCode,
-			BankName:         v.BankName,
-			BankModifiedDate: v.BankModifiedDate,
+		paymentBank := &dbContext.Bank{
+			BankEntityID: v.BankEntityID,
+			BankCode:     v.BankCode,
 		}
 		listPaymentBanks = append(listPaymentBanks, paymentBank)
 	}
@@ -46,7 +44,7 @@ func (pbr PaymentBankRepository) GetListPaymentBank(ctx *gin.Context) ([]*models
 }
 
 // 1a. fungsi utk ambil get by name
-func (pbr PaymentBankRepository) GetPaymentBankByName(ctx *gin.Context, name string) (*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankRepository) GetPaymentBankByName(ctx *gin.Context, name string) (*dbContext.Bank, *models.ResponseError) {
 	store := dbContext.New(pbr.dbHandler)
 	paymentBank, err := store.GetPaymentBank(ctx, name)
 
@@ -60,7 +58,7 @@ func (pbr PaymentBankRepository) GetPaymentBankByName(ctx *gin.Context, name str
 }
 
 // 1b. fungsi utk create data payment
-func (pbr PaymentBankRepository) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankRepository) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*dbContext.Bank, *models.ResponseError) {
 	store := dbContext.New(pbr.dbHandler)
 	paymentBank, err := store.CreatePaymentBank(ctx, *paymentBankParams)
 

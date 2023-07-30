@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"strconv"
 
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	services "codeid.revampacademy/services/paymentServices"
@@ -76,14 +75,8 @@ func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount
 
 }
 
-func (paymentAccountController PaymentAccountController) UpdatePaymentAccountById(ctx *gin.Context) {
-	fintEntityId, err := strconv.Atoi(ctx.Param("id"))
-
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByAccNum(ctx *gin.Context) {
+	paymentAccountNumber := ctx.Query("accnum")
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -100,7 +93,7 @@ func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByI
 		return
 	}
 
-	response := paymentAccountController.paymentAccountService.UpdatePaymentAccountById(ctx, &paymentAccount, int64(fintEntityId))
+	response := paymentAccountController.paymentAccountService.UpdatePaymentAccountByAccNum(ctx, &paymentAccount, paymentAccountNumber)
 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return
@@ -109,17 +102,11 @@ func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByI
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentAccountController PaymentAccountController) DeletePaymentAccountById(ctx *gin.Context) {
+func (paymentAccountController PaymentAccountController) DeletePaymentAccountByAccNum(ctx *gin.Context) {
 
-	paymwntAccountId, err := strconv.Atoi(ctx.Param("id"))
+	paymentAccountNumber := ctx.Query("accnum")
 
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountById(ctx, int64(paymwntAccountId))
+	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountByAccNum(ctx, paymentAccountNumber)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

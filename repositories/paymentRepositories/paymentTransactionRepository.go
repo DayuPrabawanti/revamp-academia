@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
@@ -20,24 +21,23 @@ func NewPaymentTransactionRepository(dbHandler *sql.DB) *PaymentTransactionRepos
 	}
 }
 
-func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Context) ([]*models.PaymentTransactionPayment, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Context) ([]*dbContext.TransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
 	paymentTransaction, err := store.ListPaymentTransaction_payment(ctx)
-	listPaymentTransactions := make([]*models.PaymentTransactionPayment, 0)
+	listPaymentTransactions := make([]*dbContext.TransactionUser, 0)
 
 	for _, v := range paymentTransaction {
-		paymentTransaction := &models.PaymentTransactionPayment{
-			TrpaID:           v.TrpaID,
+		paymentTransaction := &dbContext.TransactionUser{
 			TrpaCodeNumber:   v.TrpaCodeNumber,
-			TrpaOrderNumber:  v.TrpaOrderNumber,
+			TrpaModifiedDate: v.TrpaModifiedDate,
 			TrpaDebit:        v.TrpaDebit,
 			TrpaCredit:       v.TrpaCredit,
-			TrpaType:         v.TrpaType,
 			TrpaNote:         v.TrpaNote,
-			TrpaModifiedDate: v.TrpaModifiedDate,
-			TrpaSourceID:     v.TrpaSourceID,
-			TrpaTargetID:     v.TrpaTargetID,
-			TrpaUserEntityID: v.TrpaUserEntityID,
+			TrpaOrderNumber:  v.TrpaOrderNumber,
+			TrpaFromID:       v.TrpaFromID,
+			TrpaToID:         v.TrpaToID,
+			TrpaType:         v.TrpaType,
+			UserName:         v.UserName,
 		}
 		listPaymentTransactions = append(listPaymentTransactions, paymentTransaction)
 	}
@@ -50,17 +50,33 @@ func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Conte
 	return listPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, accountID string) (*models.PaymentTransactionPayment, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.TransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
-	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, accountID)
+	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, metadata)
+	getPaymentTransactions := make([]*dbContext.TransactionUser, 0)
 
+	for _, v := range paymentTransaction {
+		paymentTransaction := &dbContext.TransactionUser{
+			TrpaCodeNumber:   v.TrpaCodeNumber,
+			TrpaModifiedDate: v.TrpaModifiedDate,
+			TrpaDebit:        v.TrpaDebit,
+			TrpaCredit:       v.TrpaCredit,
+			TrpaNote:         v.TrpaNote,
+			TrpaOrderNumber:  v.TrpaOrderNumber,
+			TrpaFromID:       v.TrpaFromID,
+			TrpaToID:         v.TrpaToID,
+			TrpaType:         v.TrpaType,
+			UserName:         v.UserName,
+		}
+		getPaymentTransactions = append(getPaymentTransactions, paymentTransaction)
+	}
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: err.Error(),
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &paymentTransaction, nil
+	return getPaymentTransactions, nil
 }
 
 func (ptr PaymentTransactionRepository) CreatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) (*models.PaymentTransactionPayment, *models.ResponseError) {

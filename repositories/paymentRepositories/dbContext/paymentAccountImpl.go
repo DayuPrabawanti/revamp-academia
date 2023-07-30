@@ -2,39 +2,47 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
-	"time"
 
 	"codeid.revampacademy/models"
 )
 
+type UserAccount struct {
+	AccountNumber string  `json:"account_number"`
+	Description   string  `json:"description"`
+	Saldo         float64 `json:"saldo"`
+	Type          string  `json:"type"`
+}
+
 const listPaymentUsers_account = `-- name: ListPaymentUsers_account :many
 
-SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status 
-	FROM payment.users_account 
-	ORDER BY usac_account_number
+SELECT 
+	ua.usac_account_number,
+	COALESCE(b.bank_code,f.fint_code) AS description,
+	ua.usac_saldo,
+	ua.usac_type
+FROM 
+	payment.users_account ua
+LEFT JOIN 
+	payment.bank b ON ua.usac_bank_entity_id = b.bank_entity_id
+LEFT JOIN 
+	payment.fintech f ON ua.usac_bank_entity_id = f.fint_entity_id;
 `
 
-func (q *Queries) ListPaymentUsers_account(ctx context.Context) ([]models.PaymentUsersAccount, error) {
+func (q *Queries) ListPaymentUsers_account(ctx context.Context) ([]UserAccount, error) {
 	rows, err := q.db.QueryContext(ctx, listPaymentUsers_account)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []models.PaymentUsersAccount
+	var items []UserAccount
 	for rows.Next() {
-		var i models.PaymentUsersAccount
+		var i UserAccount
 		if err := rows.Scan(
-			&i.UsacBankEntityID,
-			&i.UsacUserEntityID,
-			&i.UsacAccountNumber,
-			&i.UsacSaldo,
-			&i.UsacType,
-			&i.UsacStartDate,
-			&i.UsacEndDate,
-			&i.UsacModifiedDate,
-			&i.UsacStatus,
+			&i.AccountNumber,
+			&i.Description,
+			&i.Saldo,
+			&i.Type,
 		); err != nil {
 			return nil, err
 		}
@@ -51,56 +59,56 @@ func (q *Queries) ListPaymentUsers_account(ctx context.Context) ([]models.Paymen
 
 const getPaymentUsers_account = `-- name: GetPaymentUsers_account :one
 
-SELECT usac_bank_entity_id, usac_user_entity_id, usac_account_number, usac_saldo, usac_type, usac_start_date, usac_end_date, usac_modified_date, usac_status 
-	FROM payment.users_account 
-	WHERE usac_account_number = $1
+SELECT 
+    ua.usac_account_number, 
+    COALESCE(b.bank_code, f.fint_code) AS description,
+    ua.usac_saldo,
+    ua.usac_type
+FROM 
+    payment.users_account ua
+LEFT JOIN 
+    payment.bank b ON ua.usac_bank_entity_id = b.bank_entity_id
+LEFT JOIN 
+    payment.fintech f ON ua.usac_bank_entity_id = f.fint_entity_id
+WHERE 
+	usac_account_number = $1;
 `
 
 // payment.users_account
-func (q *Queries) GetPaymentUsers_account(ctx context.Context, usacAccountNumber string) (models.PaymentUsersAccount, error) {
+func (q *Queries) GetPaymentUsers_account(ctx context.Context, usacAccountNumber string) (UserAccount, error) {
 	row := q.db.QueryRowContext(ctx, getPaymentUsers_account, usacAccountNumber)
-	var i models.PaymentUsersAccount
+	var i UserAccount
 	err := row.Scan(
-		&i.UsacBankEntityID,
-		&i.UsacUserEntityID,
-		&i.UsacAccountNumber,
-		&i.UsacSaldo,
-		&i.UsacType,
-		&i.UsacStartDate,
-		&i.UsacEndDate,
-		&i.UsacModifiedDate,
-		&i.UsacStatus,
+		&i.AccountNumber,
+		&i.Description,
+		&i.Saldo,
+		&i.Type,
 	)
 	return i, err
 }
 
 const createPaymentUsers_account = `-- name: CreatePaymentUsers_account :one
-
-INSERT INTO
-    payment.users_account (
-        usac_bank_entity_id,
-        usac_user_entity_id,
-        usac_account_number,
-        usac_saldo,
-        usac_type,
-        usac_start_date,
-        usac_end_date,
-        usac_modified_date,
-        usac_status
-    )
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+INSERT INTO 
+	payment.users_account (
+		usac_bank_entity_id, 
+		usac_user_entity_id, 
+		usac_account_number, 
+		usac_saldo, 
+		usac_type, 
+		usac_status
+	)
+VALUES 
+	($1, $2, $3, $4, $5, 'active')
+RETURNING *
 `
 
 type CreatePaymentUsers_accountParams struct {
-	UsacBankEntityID  int32          `db:"usac_bank_entity_id" json:"usacBankEntityId"`
-	UsacUserEntityID  int32          `db:"usac_user_entity_id" json:"usacUserEntityId"`
-	UsacAccountNumber sql.NullString `db:"usac_account_number" json:"usacAccountNumber"`
-	UsacSaldo         sql.NullString `db:"usac_saldo" json:"usacSaldo"`
-	UsacType          sql.NullString `db:"usac_type" json:"usacType"`
-	UsacStartDate     sql.NullTime   `db:"usac_start_date" json:"usacStartDate"`
-	UsacEndDate       sql.NullTime   `db:"usac_end_date" json:"usacEndDate"`
-	UsacModifiedDate  sql.NullTime   `db:"usac_modified_date" json:"usacModifiedDate"`
-	UsacStatus        sql.NullString `db:"usac_status" json:"usacStatus"`
+	UsacBankEntityID  int32   `db:"usac_bank_entity_id" json:"usacBankEntityID"`
+	UsacUserEntityID  int32   `db:"usac_user_entity_id" json:"usacUserEntityID"`
+	UsacAccountNumber string  `db:"usac_account_number" json:"usacAccountNumber"`
+	UsacSaldo         float64 `db:"usac_saldo" json:"usacSaldo"`
+	UsacType          string  `db:"usac_type" json:"usacType"`
+	UsacStatus        string  `db:"usac_status" json:"usacStatus"`
 }
 
 func (q *Queries) CreatePaymentUsers_account(ctx context.Context, arg CreatePaymentUsers_accountParams) (*models.PaymentUsersAccount, *models.ResponseError) {
@@ -110,10 +118,6 @@ func (q *Queries) CreatePaymentUsers_account(ctx context.Context, arg CreatePaym
 		arg.UsacAccountNumber,
 		arg.UsacSaldo,
 		arg.UsacType,
-		arg.UsacStartDate,
-		arg.UsacEndDate,
-		arg.UsacModifiedDate,
-		arg.UsacStatus,
 	)
 
 	i := models.PaymentUsersAccount{}
@@ -142,49 +146,39 @@ func (q *Queries) CreatePaymentUsers_account(ctx context.Context, arg CreatePaym
 		UsacAccountNumber: i.UsacAccountNumber,
 		UsacSaldo:         i.UsacSaldo,
 		UsacType:          i.UsacType,
-		UsacStartDate:     sql.NullTime{Time: time.Now(), Valid: true},
-		UsacEndDate:       sql.NullTime{Time: time.Now(), Valid: true},
-		UsacModifiedDate:  sql.NullTime{Time: time.Now(), Valid: true},
+		UsacStartDate:     i.UsacStartDate,
+		UsacEndDate:       i.UsacEndDate,
+		UsacModifiedDate:  i.UsacModifiedDate,
 		UsacStatus:        i.UsacStatus,
 	}, nil
 }
 
 const updatePaymentUsers_account = `-- name: UpdatePaymentUsers_account :exec
 
-UPDATE payment.users_account
-set
-    usac_user_entity_id = $2,
-    usac_account_number = $3,
-    usac_saldo = $4,
-    usac_type = $5,
-    usac_start_date = $6,
-    usac_end_date = $7,
-    usac_modified_date = $8,
-    usac_status = $9
-WHERE usac_bank_entity_id = $1, 
+UPDATE 
+	payment.users_account
+SET
+    usac_saldo = $2,
+    usac_type = $3
+WHERE 
+	usac_account_number = $1 RETURNING *;
 `
 
 func (q *Queries) UpdatePaymentUsers_account(ctx context.Context, arg CreatePaymentUsers_accountParams) error {
 	_, err := q.db.ExecContext(ctx, updatePaymentUsers_account,
-		arg.UsacBankEntityID,
-		arg.UsacUserEntityID,
 		arg.UsacAccountNumber,
 		arg.UsacSaldo,
 		arg.UsacType,
-		arg.UsacStartDate,
-		arg.UsacEndDate,
-		arg.UsacModifiedDate,
-		arg.UsacStatus,
 	)
 	return err
 }
 
 const deletePaymentUsers_account = `-- name: DeletePaymentUsers_account :exec
 
-DELETE FROM payment.users_account WHERE usac_bank_entity_id = $1
+DELETE FROM payment.users_account WHERE usac_account_number = $1
 `
 
-func (q *Queries) DeletePaymentUsers_account(ctx context.Context, usacBankEntityID int32) error {
-	_, err := q.db.ExecContext(ctx, deletePaymentUsers_account, usacBankEntityID)
+func (q *Queries) DeletePaymentUsers_account(ctx context.Context, accountNumber string) error {
+	_, err := q.db.ExecContext(ctx, deletePaymentUsers_account, accountNumber)
 	return err
 }

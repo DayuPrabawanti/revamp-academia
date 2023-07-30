@@ -13,10 +13,11 @@ type ServiceManager struct {
 // Constructor
 func NewServicesManager(repoMgr *repositories.RepositoriesManager) *ServiceManager {
 	return &ServiceManager{
-		PaymentAccountService:     *NewPaymentAccountService(&repoMgr.PaymentAccountRepository),
-		PaymentBankService:        *NewPaymentBankService(&repoMgr.PaymentBankRepository),
-		PaymentFintechService:     *NewPaymentFintechService(&repoMgr.PaymentFintechRepository),
-		PaymentTopupService:       *NewPaymentTopupService(&repoMgr.PaymentTopupRepository),
-		PaymentTransactionService: *NewPaymentTransactionService(&repoMgr.PaymentTransactionRepository),
+		PaymentAccountService: *NewPaymentAccountService(&repoMgr.PaymentAccountRepository),
+		PaymentBankService:    *NewPaymentBankService(&repoMgr.PaymentBankRepository),
+		PaymentFintechService: *NewPaymentFintechService(&repoMgr.PaymentFintechRepository),
+		PaymentTopupService:   *NewPaymentTopupService(&repoMgr.PaymentTopupRepository),
+		// PaymentTransactionService: *NewPaymentTransactionService(&repoMgr.PaymentTransactionRepository),
+		PaymentTransactionService: *NewPaymentTransactionService(repoMgr),
 	}
 }

@@ -12,11 +12,11 @@ type RepositoriesManager struct {
 
 // constructor
 func NewRepositoriesManager(dbHandler *sql.DB) *RepositoriesManager {
-	return &RepositoriesManager{ // TODO: implement repository instances here and pass db handler to them
-		*NewPaymentAccountRepository(dbHandler),
-		*NewPaymentBankRepository(dbHandler),
-		*NewPaymentFintechRepository(dbHandler),
-		*NewPaymentTopupRepository(dbHandler),
-		*NewPaymentTransactionRepository(dbHandler),
+	return &RepositoriesManager{
+		PaymentAccountRepository:     *NewPaymentAccountRepository(dbHandler),
+		PaymentBankRepository:        *NewPaymentBankRepository(dbHandler),
+		PaymentFintechRepository:     *NewPaymentFintechRepository(dbHandler),
+		PaymentTopupRepository:       *NewPaymentTopupRepository(dbHandler),
+		PaymentTransactionRepository: *NewPaymentTransactionRepository(dbHandler),
 	}
 }

@@ -19,15 +19,15 @@ func NewPaymentFintechService(paymentFintechRepository *repositories.PaymentFint
 	}
 }
 
-func (pfs PaymentFintechService) GetListPaymentFintech(ctx *gin.Context) ([]*models.PaymentFintech, *models.ResponseError) {
+func (pfs PaymentFintechService) GetListPaymentFintech(ctx *gin.Context) ([]*dbContext.Fintech, *models.ResponseError) {
 	return pfs.paymentFintechRepository.GetListPaymentFintech(ctx)
 }
 
-func (pfs PaymentFintechService) GetPaymentFintechByName(ctx *gin.Context, name string) (*models.PaymentFintech, *models.ResponseError) {
+func (pfs PaymentFintechService) GetPaymentFintechByName(ctx *gin.Context, name string) (*dbContext.Fintech, *models.ResponseError) {
 	return pfs.paymentFintechRepository.GetPaymentFintechByName(ctx, name)
 }
 
-func (pfs PaymentFintechService) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*models.PaymentFintech, *models.ResponseError) {
+func (pfs PaymentFintechService) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*dbContext.Fintech, *models.ResponseError) {
 	responseErr := validatepaymentFintech(paymentFintechParams)
 	if responseErr != nil {
 		return nil, responseErr
@@ -41,7 +41,6 @@ func (pfs PaymentFintechService) UpdatePaymentFintechById(ctx *gin.Context, paym
 	if responseErr != nil {
 		return responseErr
 	}
-
 	return pfs.paymentFintechRepository.UpdatePaymentFintechById(ctx, paymentFintechParams)
 }
 
@@ -50,14 +49,14 @@ func (pfs PaymentFintechService) DeletePaymentFintechById(ctx *gin.Context, id i
 }
 
 func validatepaymentFintech(paymentFintechParams *dbContext.CreatePaymentFintechParams) *models.ResponseError {
-	if paymentFintechParams.FintEntityID == 0 {
-		return &models.ResponseError{
-			Message: "Invalid paymentFintech id",
-			Status:  http.StatusBadRequest,
-		}
-	}
+	// if paymentFintechParams.FintEntityID == 0 {
+	// 	return &models.ResponseError{
+	// 		Message: "Invalid paymentFintech id",
+	// 		Status:  http.StatusBadRequest,
+	// 	}
+	// }
 
-	if paymentFintechParams.FintName.String == "" {
+	if paymentFintechParams.FintCode == "" {
 		return &models.ResponseError{
 			Message: "Invalid paymentFintech name",
 			Status:  http.StatusBadRequest,

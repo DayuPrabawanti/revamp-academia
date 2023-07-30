@@ -20,24 +20,19 @@ func NewPaymentAccountRepository(dbHandler *sql.DB) *PaymentAccountRepository {
 	}
 }
 
-func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
 	paymentAccounts, err := store.ListPaymentUsers_account(ctx)
 
-	listPaymentAccounts := make([]*models.PaymentUsersAccount, 0)
+	listPaymentAccounts := make([]*dbContext.UserAccount, 0)
 
 	for _, v := range paymentAccounts {
-		paymentAccount := &models.PaymentUsersAccount{
-			UsacBankEntityID:  v.UsacBankEntityID,
-			UsacUserEntityID:  v.UsacUserEntityID,
-			UsacAccountNumber: v.UsacAccountNumber,
-			UsacSaldo:         v.UsacSaldo,
-			UsacType:          v.UsacType,
-			UsacStartDate:     v.UsacStartDate,
-			UsacEndDate:       v.UsacEndDate,
-			UsacModifiedDate:  v.UsacModifiedDate,
-			UsacStatus:        v.UsacStatus,
+		paymentAccount := &dbContext.UserAccount{
+			AccountNumber: v.AccountNumber,
+			Description:   v.Description,
+			Saldo:         v.Saldo,
+			Type:          v.Type,
 		}
 		listPaymentAccounts = append(listPaymentAccounts, paymentAccount)
 	}
@@ -52,7 +47,7 @@ func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*
 	return listPaymentAccounts, nil
 }
 
-func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, name string) (*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, name string) (*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
 	paymentAccount, err := store.GetPaymentUsers_account(ctx, string(name))
@@ -81,7 +76,7 @@ func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, pa
 	return paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) UpdatePaymentAccountById(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) *models.ResponseError {
+func (par PaymentAccountRepository) UpdatePaymentAccountByAccNum(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) *models.ResponseError {
 
 	store := dbContext.New(par.dbHandler)
 	err := store.UpdatePaymentUsers_account(ctx, *paymentAccountParams)
@@ -98,10 +93,10 @@ func (par PaymentAccountRepository) UpdatePaymentAccountById(ctx *gin.Context, p
 	}
 }
 
-func (par PaymentAccountRepository) DeletePaymentAccountById(ctx *gin.Context, id int64) *models.ResponseError {
+func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Context, accNum string) *models.ResponseError {
 
 	store := dbContext.New(par.dbHandler)
-	err := store.DeletePaymentUsers_account(ctx, int32(id))
+	err := store.DeletePaymentUsers_account(ctx, accNum)
 
 	if err != nil {
 		return &models.ResponseError{
