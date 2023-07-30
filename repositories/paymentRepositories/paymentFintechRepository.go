@@ -20,19 +20,17 @@ func NewPaymentFintechRepository(dbHandler *sql.DB) *PaymentFintechRepository {
 	}
 }
 
-func (pfr PaymentFintechRepository) GetListPaymentFintech(ctx *gin.Context) ([]*models.PaymentFintech, *models.ResponseError) {
+func (pfr PaymentFintechRepository) GetListPaymentFintech(ctx *gin.Context) ([]*dbContext.Fintech, *models.ResponseError) {
 
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintechs, err := store.ListPaymentFintech(ctx)
 
-	listPaymentFintechs := make([]*models.PaymentFintech, 0)
+	listPaymentFintechs := make([]*dbContext.Fintech, 0)
 
 	for _, v := range paymentFintechs {
-		paymentFintech := &models.PaymentFintech{
-			FintEntityID:     v.FintEntityID,
-			FintCode:         v.FintCode,
-			FintName:         v.FintName,
-			FintModifiedDate: v.FintModifiedDate,
+		paymentFintech := &dbContext.Fintech{
+			FintEntityID: v.FintEntityID,
+			FintCode:     v.FintCode,
 		}
 		listPaymentFintechs = append(listPaymentFintechs, paymentFintech)
 	}
@@ -47,7 +45,7 @@ func (pfr PaymentFintechRepository) GetListPaymentFintech(ctx *gin.Context) ([]*
 	return listPaymentFintechs, nil
 }
 
-func (pfr PaymentFintechRepository) GetPaymentFintechByName(ctx *gin.Context, name string) (*models.PaymentFintech, *models.ResponseError) {
+func (pfr PaymentFintechRepository) GetPaymentFintechByName(ctx *gin.Context, name string) (*dbContext.Fintech, *models.ResponseError) {
 
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintech, err := store.GetPaymentFintech(ctx, string(name))
@@ -62,7 +60,7 @@ func (pfr PaymentFintechRepository) GetPaymentFintechByName(ctx *gin.Context, na
 	return &paymentFintech, nil
 }
 
-func (pfr PaymentFintechRepository) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*models.PaymentFintech, *models.ResponseError) {
+func (pfr PaymentFintechRepository) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*dbContext.Fintech, *models.ResponseError) {
 
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintech, err := store.CreatePaymentFintech(ctx, *paymentFintechParams)

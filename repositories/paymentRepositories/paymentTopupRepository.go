@@ -48,3 +48,32 @@ func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbCon
 
 	return listPaymentTopups, nil
 }
+
+func (ptr PaymentTopupRepository) GetTopupDetailById(ctx *gin.Context, id int32) ([]*dbContext.TopupDetail, *models.ResponseError) {
+
+	store := dbContext.New(ptr.dbHandler)
+	paymentTopups, err := store.GetTopupDetailById(ctx, id)
+
+	listPaymentTopups := make([]*dbContext.TopupDetail, 0)
+
+	for _, v := range paymentTopups {
+		paymentTopup := &dbContext.TopupDetail{
+			SourceName:    v.SourceName,
+			SourceAccount: v.SourceAccount,
+			SourceSaldo:   v.SourceSaldo,
+			TargetName:    v.TargetName,
+			TargetAccount: v.TargetAccount,
+			TargetSaldo:   v.TargetSaldo,
+		}
+		listPaymentTopups = append(listPaymentTopups, paymentTopup)
+	}
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listPaymentTopups, nil
+}

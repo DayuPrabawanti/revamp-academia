@@ -20,17 +20,17 @@ func NewPaymentBankService(paymentBankRepository *repositories.PaymentBankReposi
 }
 
 // 1a. ambil get list untuk payment bank
-func (pbr PaymentBankService) GetListPaymentBank(ctx *gin.Context) ([]*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankService) GetListPaymentBank(ctx *gin.Context) ([]*dbContext.Bank, *models.ResponseError) {
 	return pbr.paymentBankRepository.GetListPaymentBank(ctx)
 }
 
 // 1a. ambil get by name untuk payment bank
-func (pbr PaymentBankService) GetPaymentBankByName(ctx *gin.Context, name string) (*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankService) GetPaymentBankByName(ctx *gin.Context, name string) (*dbContext.Bank, *models.ResponseError) {
 	return pbr.paymentBankRepository.GetPaymentBankByName(ctx, name)
 }
 
 // 1b. buat create paymentbank
-func (pbr PaymentBankService) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*models.PaymentBank, *models.ResponseError) {
+func (pbr PaymentBankService) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*dbContext.Bank, *models.ResponseError) {
 	responseErr := validatePaymentBank(paymentBankParams)
 	if responseErr != nil {
 		return nil, responseErr
@@ -55,14 +55,14 @@ func (pbr PaymentBankService) DeletePaymentBank(ctx *gin.Context, id int64) *mod
 }
 
 func validatePaymentBank(paymentBankParams *dbContext.CreatePaymentBankParams) *models.ResponseError {
-	if paymentBankParams.BankEntityID == 0 {
-		return &models.ResponseError{
-			Message: "Invalid category id",
-			Status:  http.StatusBadRequest,
-		}
-	}
+	// if paymentBankParams.BankEntityID == 0 {
+	// 	return &models.ResponseError{
+	// 		Message: "Invalid category id",
+	// 		Status:  http.StatusBadRequest,
+	// 	}
+	// }
 
-	if paymentBankParams.BankName == "" {
+	if paymentBankParams.BankCode == "" {
 		return &models.ResponseError{
 			Message: "Invalid category name",
 			Status:  http.StatusBadRequest,

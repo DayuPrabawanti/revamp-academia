@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 )
 
 type TransactionUser struct {
@@ -15,9 +16,9 @@ type TransactionUser struct {
 	TrpaDebit        sql.NullFloat64 `db:"trpa_debit"`
 	TrpaCredit       sql.NullFloat64 `db:"trpa_credit"`
 	TrpaNote         string          `db:"trpa_note"`
-	TrpaOrderNumber  sql.NullString  `db:"trpa_order_number"`
-	TrpaFromID       int             `db:"trpa_from_id"`
-	TrpaToID         int             `db:"trpa_to_id"`
+	TrpaOrderNumber  string          `db:"trpa_order_number"`
+	TrpaFromID       string          `db:"trpa_from_id"`
+	TrpaToID         string          `db:"trpa_to_id"`
 	TrpaType         string          `db:"trpa_type"`
 	UserName         string          `db:"user_name"`
 }
@@ -100,12 +101,15 @@ WHERE
 	trpa.trpa_user_entity_id = $1
 ORDER BY 
     trpa.trpa_code_number
-LIMIT 5 OFFSET ($2 - 1) * $3;
-`
+	LIMIT $2 OFFSET $3;
+	`
+
+// LIMIT 5 OFFSET ($2 - 1) * $3;
 
 // payment.transaction_payment
-func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, accountID string, pageNo int, pageSize int) ([]TransactionUser, error) {
-	rows, err := q.db.QueryContext(ctx, getPaymentTransaction_payment, accountID, pageSize, pageNo*pageSize)
+func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, metadata *features.Metadata) ([]TransactionUser, error) {
+	rows, err := q.db.QueryContext(ctx, getPaymentTransaction_payment, metadata.SearchBy, metadata.PageSize, metadata.PageNo)
+	// *metadata.PageSize
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +229,7 @@ func (q *Queries) CreatePaymentTransaction_payment(ctx context.Context, arg Crea
 		TrpaCredit:       i.TrpaCredit,
 		TrpaType:         i.TrpaType,
 		TrpaNote:         i.TrpaNote,
-		TrpaModifiedDate: sql.NullTime{Time: time.Now(), Valid: true},
+		TrpaModifiedDate: i.TrpaModifiedDate,
 		TrpaFromID:       i.TrpaFromID,
 		TrpaToID:         i.TrpaToID,
 		TrpaUserEntityID: i.TrpaUserEntityID,

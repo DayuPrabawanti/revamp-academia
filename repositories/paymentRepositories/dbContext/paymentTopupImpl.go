@@ -11,11 +11,11 @@ type PaymentService struct {
 }
 
 type TopupDetail struct {
-	SourceName    string
-	SourceAccount string
+	SourceName    sql.NullString
+	SourceAccount sql.NullString
 	SourceSaldo   float64
-	TargetName    string
-	TargetAccount string
+	TargetName    sql.NullString
+	TargetAccount sql.NullString
 	TargetSaldo   float64
 }
 
@@ -30,15 +30,65 @@ SELECT
 			fs.usac_saldo
 		FROM
 			payment.users_account fs
-		JOIN
+		LEFT JOIN
 			payment.bank b ON fs.usac_bank_entity_id = b.bank_entity_id
-		JOIN
+		LEFT JOIN
 			payment.fintech f ON fs.usac_bank_entity_id = f.fint_entity_id
 
 `
 
 func (q *Queries) ListTopupDetail(ctx context.Context) ([]TopupDetail, error) {
 	rows, err := q.db.QueryContext(ctx, listTopupDetail)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TopupDetail
+	for rows.Next() {
+		var i TopupDetail
+		if err := rows.Scan(
+			&i.SourceName,
+			&i.SourceAccount,
+			&i.SourceSaldo,
+			&i.TargetName,
+			&i.TargetAccount,
+			&i.TargetSaldo,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getTopupDetailById = `-- name: GetTopupDetailById :many
+
+SELECT
+			b.bank_code,
+			b.bank_entity_id,
+			fs.usac_saldo,
+			f.fint_code,
+			f.fint_entity_id,
+			fs.usac_saldo
+		FROM
+			payment.users_account fs
+		LEFT JOIN
+			payment.bank b ON fs.usac_bank_entity_id = b.bank_entity_id
+		LEFT JOIN
+			payment.fintech f ON fs.usac_bank_entity_id = f.fint_entity_id
+		WHERE
+			usac_user_entity_id = $1
+
+`
+
+func (q *Queries) GetTopupDetailById(ctx context.Context, id int32) ([]TopupDetail, error) {
+	rows, err := q.db.QueryContext(ctx, getTopupDetailById, id)
 	if err != nil {
 		return nil, err
 	}

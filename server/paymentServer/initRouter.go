@@ -21,29 +21,30 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	// Router (API) end-point Mockup 2
 	paymentRoute.GET("/fintech", controllerMgr.PaymentFintechController.GetListPaymentFintech)
 	paymentRoute.GET("/fintech/search", controllerMgr.PaymentFintechController.GetPaymentFintechByName)
-	paymentRoute.POST("/fintech/payment/create", controllerMgr.PaymentFintechController.CreateNewPaymentFintech)
+	paymentRoute.POST("/fintech/create", controllerMgr.PaymentFintechController.CreateNewPaymentFintech)
 
-	paymentRoute.PUT("/fintech/payment/update/:id", controllerMgr.PaymentFintechController.UpdatePaymentFintechById)
-	paymentRoute.DELETE("/fintech/payment/delete/:id", controllerMgr.PaymentFintechController.DeletePaymentFintechById)
+	paymentRoute.PUT("/fintech/update/:id", controllerMgr.PaymentFintechController.UpdatePaymentFintechById)
+	paymentRoute.DELETE("/fintech/delete/:id", controllerMgr.PaymentFintechController.DeletePaymentFintechById)
 
 	// Router (API) end-point Mockup 3
 	paymentRoute.GET("/accounts", controllerMgr.PaymentAccountController.GetListPaymentAccount)
-	paymentRoute.GET("/accounts/search", controllerMgr.PaymentAccountController.GetPaymentAccountByName)
-	paymentRoute.POST("/accounts/payment/create", controllerMgr.PaymentAccountController.CreateNewPaymentAccount)
+	paymentRoute.GET("/account/search", controllerMgr.PaymentAccountController.GetPaymentAccountByName)
+	paymentRoute.POST("/account/debitSaldo", controllerMgr.PaymentAccountController.CreateNewPaymentAccount)
 
-	paymentRoute.PUT("/accounts/payment/update/:id", controllerMgr.PaymentAccountController.UpdatePaymentAccountById)
-	paymentRoute.DELETE("/accounts/payment/delete/:id", controllerMgr.PaymentAccountController.DeletePaymentAccountById)
+	paymentRoute.PUT("/account/updateAccountNumber", controllerMgr.PaymentAccountController.UpdatePaymentAccountByAccNum)
+	paymentRoute.DELETE("/account/deleteAccountNumber", controllerMgr.PaymentAccountController.DeletePaymentAccountByAccNum)
 
 	// Router (API) end-point Mockup 4
 	paymentRoute.GET("/topup", controllerMgr.PaymentTopupController.GetListTopupDetail)
+	paymentRoute.GET("/topup/:id", controllerMgr.PaymentTopupController.GetTopupDetailById)
 
 	// router (API) end-point Mockup 5
 	paymentRoute.GET("/transaction", controllerMgr.PaymentTransactionController.GetListPaymentTransaction)
 	paymentRoute.GET("/transaction/view", controllerMgr.PaymentTransactionController.GetPaymentTransactionById)
-	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.CreateNewPaymentTransaction)
+	// paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.CreateNewPaymentTransaction)
 
-	paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
-	paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
+	// paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
+	// paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
 
 	return router
 }

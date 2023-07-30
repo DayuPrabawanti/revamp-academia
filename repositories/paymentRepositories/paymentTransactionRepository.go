@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
@@ -49,9 +50,9 @@ func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Conte
 	return listPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, accountID string, pageNo int, pageSize int) ([]*dbContext.TransactionUser, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.TransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
-	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, accountID, pageSize, pageNo*pageSize)
+	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, metadata)
 	getPaymentTransactions := make([]*dbContext.TransactionUser, 0)
 
 	for _, v := range paymentTransaction {
