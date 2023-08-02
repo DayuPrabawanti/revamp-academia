@@ -10,6 +10,7 @@ type ControllerManager struct {
 	UserEmailController
 	UserPhoneController
 	SignUpController
+	SignUpEmployeeController
 	UserExperienceController
 	UserMediaController
 	UserAddressController
@@ -17,6 +18,7 @@ type ControllerManager struct {
 	UserEducationController
 	UserLicenseController
 	UserSkillController
+	UserListProfileController
 }
 
 // constructor
@@ -26,6 +28,7 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserEmailController(&serviceMgr.UserEmailService),
 		*NewUserPhoneController(&serviceMgr.UserPhoneService),
 		*NewSignUpController(&serviceMgr.SignUpService),
+		*NewSignUpEmployeeController(&serviceMgr.SignUpEmployeeService),
 		*NewUserExperienceController(&serviceMgr.UserExperienceService),
 		*NewUserMediaController(&serviceMgr.UserMediaService),
 		*NewUseraddressController(&serviceMgr.UserAddressService),
@@ -33,5 +36,6 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserEducationController(&serviceMgr.UserEducationService),
 		*NewUserLicenseController(&serviceMgr.UserLicenseService),
 		*NewUserSkillController(&serviceMgr.UserSkillService),
+		*NewUserListProfileController(&serviceMgr.UserListProfileService),
 	}
 }

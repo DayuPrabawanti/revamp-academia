@@ -10,6 +10,7 @@ type ServiceManager struct {
 	UserEmailService
 	UserPhoneService
 	SignUpService
+	SignUpEmployeeService
 	UserExperienceService
 	UserMediaService
 	UserAddressService
@@ -17,6 +18,7 @@ type ServiceManager struct {
 	UserEducationService
 	UserLicenseService
 	UserSkillService
+	UserListProfileService
 }
 
 // constructor
@@ -26,6 +28,7 @@ func NewServiceManager(repoMgr *usersRepository.RepositoryManager) *ServiceManag
 		UserEmailService:      *NewUserEmailService(&repoMgr.UserEmailRepository),
 		UserPhoneService:      *NewUserPhoneService(&repoMgr.UserPhoneRepository),
 		SignUpService:         *NewSignUpService(&repoMgr.SignUpRepository),
+		SignUpEmployeeService: *NewSignUpEmployeeService(&repoMgr.SignUpEmployeeRepository),
 		UserExperienceService: *NewUserExperienceService(&repoMgr.UserExperienceRepository),
 		UserMediaService:      *NewUserMediaService(&repoMgr.UserMediaRepository),
 		UserAddressService:    *NewUserAddressService(&repoMgr.UserAddressRepository),
@@ -33,5 +36,6 @@ func NewServiceManager(repoMgr *usersRepository.RepositoryManager) *ServiceManag
 		UserEducationService:  *NewUserEducationService(&repoMgr.UserEducationRepository),
 		UserLicenseService:    *NewUserLicenseService(&repoMgr.UserLicenseRepository),
 		UserSkillService:      *NewUserSkillService(&repoMgr.UserSkillRepository),
+		UserListProfileService: *NewUserListProfileService(&repoMgr.UserListProfileRepository),
 	}
 }

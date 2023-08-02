@@ -21,7 +21,7 @@ func NewSignUpRepository(dbHandler *sql.DB) *SignUpRepository {
 }
 
 
-func (cr SignUpRepository) CreateSignUp(ctx *gin.Context, userParams *dbContext.CreateUsersParams, emailParams *dbContext.CreateEmailParams, phoneParams *dbContext.CreatePhonesParams) (*models.SignUpUser, *models.ResponseError) {
+func (cr SignUpRepository) CreateSignUpUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, emailParams *dbContext.CreateEmailParams, phoneParams *dbContext.CreatePhonesParams) (*models.SignUpUser, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
 	user, err := store.CreateUsers(ctx, *userParams)

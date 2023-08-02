@@ -197,3 +197,4 @@ func (q *Queries) DeleteUsers(ctx context.Context, userEntityID int32) error {
 	_, err := q.db.ExecContext(ctx, deleteUsers, userEntityID)
 	return err
 }
+

@@ -11,6 +11,7 @@ type RepositoryManager struct {
 	UserEmailRepository
 	UserPhoneRepository
 	SignUpRepository
+	SignUpEmployeeRepository
 	UserExperienceRepository
 	UserMediaRepository
 	UserAddressRepository
@@ -18,6 +19,7 @@ type RepositoryManager struct {
 	UserEducationRepository
 	UserLicenseRepository
 	UserSkillRepository
+	UserListProfileRepository
 }
 
 // constructor
@@ -27,6 +29,7 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserEmailRepository(dbHandler),
 		*NewUserPhoneRepository(dbHandler),
 		*NewSignUpRepository(dbHandler),
+		*NewSignUpEmployeeRepository(dbHandler),
 		*NewUserExperienceRepository(dbHandler),
 		*NewUserMediaRepository(dbHandler),
 		*NewUserAddressRepository(dbHandler),
@@ -34,5 +37,6 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserEducationRepository(dbHandler),
 		*NewUserLicenseRepository(dbHandler),
 		*NewUserSkillRepository(dbHandler),
+		*NewUserListProfileRepository(dbHandler),
 	}
 }

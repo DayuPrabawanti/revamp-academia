@@ -614,10 +614,12 @@ type UsersUsersSkill struct {
 	UskiSktyName     sql.NullString `db:"uski_skty_name" json:"uskiSktyName"`
 }
 
+// menambahkan sign up model
 type SignUpUser struct {
 	User 	UsersUser
 	Email   UsersUsersEmail
 	Phone 	UsersUsersPhone
 }
 
-// menambahkan sign up model
+
+

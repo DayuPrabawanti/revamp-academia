@@ -49,6 +49,11 @@ func (cs UserService) DeleteUser(ctx *gin.Context, id int32) *models.ResponseErr
 	return cs.userRepository.DeleteUser(ctx, id)
 }
 
+// func (cs UserService) GetProfileUser(ctx *gin.Context, id int32) ([]*dbContext.UsernameParams, *models.ResponseError) {
+// 	return cs.userRepository.GetProfileUser(ctx, id)
+// }
+
+
 func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError {
 	if userParams.UserEntityID == 0 {
 		return &models.ResponseError{

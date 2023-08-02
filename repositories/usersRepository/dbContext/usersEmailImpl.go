@@ -16,6 +16,9 @@ type CreateEmailParams struct {
 	PmailModifiedDate sql.NullTime `db:"pmail_modified_date" json:"pmailModifiedDate"`
 }
 
+
+
+
 const listEmail = `-- name: ListEmail :many
 SELECT pmail_entity_id, pmail_id, pmail_address, pmail_modified_date FROM users.users_email
 ORDER BY pmail_id
@@ -49,21 +52,24 @@ func (q *Queries) ListEmail(ctx context.Context) ([]models.UsersUsersEmail, erro
 	return items, nil
 }
 
+// const getEmail = `-- name: GetEmail :one
+
+// SELECT pmail_entity_id, pmail_id, pmail_address, pmail_modified_date FROM users.users_email
+// WHERE pmail_entity_id = $1
+// `
 const getEmail = `-- name: GetEmail :one
 
-SELECT pmail_entity_id, pmail_id, pmail_address, pmail_modified_date FROM users.users_email
-WHERE pmail_id = $1
+SELECT pmail_address FROM users.users_email
+WHERE pmail_entity_id = $1
 `
 
 // Users Email
 func (q *Queries) GetEmail(ctx context.Context, pmailID int32) (models.UsersUsersEmail, error) {
-	row := q.db.QueryRowContext(ctx, getEmail, pmailID)
+	row, err := q.db.QueryContext(ctx, getEmail, pmailID)
 	var i models.UsersUsersEmail
-	err := row.Scan(
-		&i.PmailEntityID,
-		&i.PmailID,
+	err = row.Scan(
 		&i.PmailAddress,
-		&i.PmailModifiedDate,
+
 	)
 	return i, err
 }

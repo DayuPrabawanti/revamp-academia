@@ -49,6 +49,12 @@ func (cs UserEmailService) DeleteEmail(ctx *gin.Context, id int32) *models.Respo
 	return cs.userEmailRepository.DeleteEmail(ctx, id)
 }
 
+
+// func (cs UserEmailService) EmailProfile(ctx *gin.Context, id int32) ([]*models.UsersUsersEmail, *models.ResponseError) {
+// 	return cs.userEmailRepository.Email(ctx, id)
+// }
+
+
 func validateEmail(emailParams *dbContext.CreateEmailParams) *models.ResponseError {
 	if emailParams.PmailEntityID == 0 {
 		return &models.ResponseError{

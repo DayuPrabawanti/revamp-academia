@@ -37,14 +37,18 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userPhoneRoute.DELETE("/:id", controllerMgr.UserPhoneController.DeletePhones)
 	}
 
-	userSignup := routers.Group("/users/signup")
+	userSignup := routers.Group("/api/users")
 	{
 		// Router endpoint (url) http User Sign Up
-		// userSignup.GET("/", controllerMgr.SignUpController.GetListCategory)
-		// userSignup.GET("/:id", controllerMgr.SignUpController.GetCategory)
-		userSignup.POST("/", controllerMgr.SignUpController.CreateSignUp)
-		// userSignup.PUT("/:id", controllerMgr.SignUpController.UpdateCategory)
-		// userSignup.DELETE("/:id", controllerMgr.SignUpController.DeleteCategory)
+		userSignup.POST("/signup", controllerMgr.SignUpController.CreateSignUpUser)
+		userSignup.POST("/signupEmployee", controllerMgr.SignUpEmployeeController.CreateSignUpEmployee)
+	}
+
+	userProfile := routers.Group("/api/users/profile")
+	{
+		// Router endpoint (url) http User Sign Up
+		// userProfile.GET("/view/:id", controllerMgr.UserListProfileController.GetProfileUser)
+		userProfile.GET("/view/:id", controllerMgr.UserListProfileController.GetProfile)
 	}
 
 	userExperienceRoute := routers.Group("/usersexperience")
@@ -119,4 +123,6 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 		return routers
 	}
+
+
 }

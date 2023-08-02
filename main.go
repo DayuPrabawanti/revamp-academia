@@ -16,7 +16,7 @@ func getConfigFileName() string {
 	if env != "" {
 		return "revamp_academia" + env
 	}
-	// == file revamp_academy.toml
+	// == file revamp_academia.toml
 	return "revamp_academia"
 }
 

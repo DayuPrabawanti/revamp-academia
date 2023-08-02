@@ -20,7 +20,7 @@ func NewSignUpService(signUpRepository *usersRepository.SignUpRepository) *SignU
 }
 
 func (cs *SignUpService) SignUpUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, emailParams *dbContext.CreateEmailParams, phoneParams *dbContext.CreatePhonesParams) (*models.SignUpUser, *models.ResponseError) {
-	return cs.signupRepository.CreateSignUp(ctx, userParams, emailParams, phoneParams)
+	return cs.signupRepository.CreateSignUpUser(ctx, userParams, emailParams, phoneParams)
 }
 
 func validateSignUp(signupParams *dbContext.SignUpUserParams) *models.ResponseError {

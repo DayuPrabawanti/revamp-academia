@@ -137,3 +137,23 @@ func (userEmailController UserEmailController) DeleteEmail(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
+
+// func (userEmailController UserEmailController) EmailProfile(ctx *gin.Context) {
+
+// 	emailId, err := strconv.Atoi(ctx.Param("id")) // atoi mengubah string ke integer
+
+// 	if err != nil {
+// 		log.Println("Error while reading paramater id", err)
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 		return
+// 	}
+
+// 	response, responseErr := userEmailController.userEmailService.EmailProfile(ctx, int32(emailId))
+// 	if responseErr != nil {
+
+// 		ctx.JSON(responseErr.Status, responseErr)
+// 		return
+// 	}
+
+// 	ctx.JSON(http.StatusOK, response)
+// }

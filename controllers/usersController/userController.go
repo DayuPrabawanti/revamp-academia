@@ -138,3 +138,24 @@ func (userController UserController) DeleteUser(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
+
+
+// func (userController UserController) GetProfileUser(ctx *gin.Context){
+
+// 	userId, err := strconv.Atoi(ctx.Param("id")) // atoi mengubah string ke integer
+
+// 	if err != nil {
+// 		log.Println("Error while reading paramater id", err)
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 		return
+// 	}
+
+// 	response, responseErr := userController.userService.GetProfileUser(ctx, int32(userId))
+
+// 	if responseErr != nil{
+// 		ctx.JSON(responseErr.Status,responseErr)
+// 		return 
+// 	}
+
+// 	ctx.JSON(http.StatusOK,response)
+// }
