@@ -10,21 +10,21 @@ import (
 )
 
 type PaymentFintechService struct {
-	paymentFintechRepository *repositories.PaymentFintechRepository
+	repositoriesManager *repositories.RepositoriesManager
 }
 
-func NewPaymentFintechService(paymentFintechRepository *repositories.PaymentFintechRepository) *PaymentFintechService {
+func NewPaymentFintechService(repoMgr *repositories.RepositoriesManager) *PaymentFintechService {
 	return &PaymentFintechService{
-		paymentFintechRepository: paymentFintechRepository,
+		repositoriesManager: repoMgr,
 	}
 }
 
 func (pfs PaymentFintechService) GetListPaymentFintech(ctx *gin.Context) ([]*dbContext.Fintech, *models.ResponseError) {
-	return pfs.paymentFintechRepository.GetListPaymentFintech(ctx)
+	return pfs.repositoriesManager.PaymentFintechRepository.GetListPaymentFintech(ctx)
 }
 
 func (pfs PaymentFintechService) GetPaymentFintechByName(ctx *gin.Context, name string) (*dbContext.Fintech, *models.ResponseError) {
-	return pfs.paymentFintechRepository.GetPaymentFintechByName(ctx, name)
+	return pfs.repositoriesManager.PaymentFintechRepository.GetPaymentFintechByName(ctx, name)
 }
 
 func (pfs PaymentFintechService) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*dbContext.Fintech, *models.ResponseError) {
@@ -33,19 +33,20 @@ func (pfs PaymentFintechService) CreateNewPaymentFintech(ctx *gin.Context, payme
 		return nil, responseErr
 	}
 
-	return pfs.paymentFintechRepository.CreateNewPaymentFintech(ctx, paymentFintechParams)
+	return pfs.repositoriesManager.PaymentFintechRepository.CreateNewPaymentFintech(ctx, paymentFintechParams)
 }
 
-func (pfs PaymentFintechService) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams, id int64) *models.ResponseError {
+func (pfs PaymentFintechService) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams, fintEntityID int64) *models.ResponseError {
 	responseErr := validatepaymentFintech(paymentFintechParams)
 	if responseErr != nil {
 		return responseErr
 	}
-	return pfs.paymentFintechRepository.UpdatePaymentFintechById(ctx, paymentFintechParams)
+
+	return pfs.repositoriesManager.PaymentFintechRepository.UpdatePaymentFintechById(ctx, paymentFintechParams, fintEntityID)
 }
 
 func (pfs PaymentFintechService) DeletePaymentFintechById(ctx *gin.Context, id int64) *models.ResponseError {
-	return pfs.paymentFintechRepository.DeletePaymentFintechById(ctx, id)
+	return pfs.repositoriesManager.PaymentFintechRepository.DeletePaymentFintechById(ctx, id)
 }
 
 func validatepaymentFintech(paymentFintechParams *dbContext.CreatePaymentFintechParams) *models.ResponseError {

@@ -71,10 +71,10 @@ func (pbr PaymentBankRepository) CreateNewPaymentBank(ctx *gin.Context, paymentB
 	return paymentBank, nil
 }
 
-func (cr PaymentBankRepository) UpdatePaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) *models.ResponseError {
+func (cr PaymentBankRepository) UpdatePaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams, bankEntityID int64) *models.ResponseError {
 
 	store := dbContext.New(cr.dbHandler)
-	err := store.UpdatePaymentBank(ctx, *paymentBankParams)
+	err := store.UpdatePaymentBank(ctx, *paymentBankParams, int32(bankEntityID))
 
 	if err != nil {
 		return &models.ResponseError{

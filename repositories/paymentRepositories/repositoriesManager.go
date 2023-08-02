@@ -1,6 +1,8 @@
 package repositories
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type RepositoriesManager struct {
 	PaymentAccountRepository

@@ -77,7 +77,7 @@ func (paymentFintechController PaymentFintechController) CreateNewPaymentFintech
 }
 
 func (paymentFintechController PaymentFintechController) UpdatePaymentFintechById(ctx *gin.Context) {
-	fintEntityId, err := strconv.Atoi(ctx.Param("id"))
+	fintEntityId, err := strconv.Atoi(ctx.Param("fintEntityId"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)

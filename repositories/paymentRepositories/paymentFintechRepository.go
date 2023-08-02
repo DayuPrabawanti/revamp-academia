@@ -21,8 +21,10 @@ func NewPaymentFintechRepository(dbHandler *sql.DB) *PaymentFintechRepository {
 }
 
 func (pfr PaymentFintechRepository) GetListPaymentFintech(ctx *gin.Context) ([]*dbContext.Fintech, *models.ResponseError) {
+
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintechs, err := store.ListPaymentFintech(ctx)
+
 	listPaymentFintechs := make([]*dbContext.Fintech, 0)
 
 	for _, v := range paymentFintechs {
@@ -44,6 +46,7 @@ func (pfr PaymentFintechRepository) GetListPaymentFintech(ctx *gin.Context) ([]*
 }
 
 func (pfr PaymentFintechRepository) GetPaymentFintechByName(ctx *gin.Context, name string) (*dbContext.Fintech, *models.ResponseError) {
+
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintech, err := store.GetPaymentFintech(ctx, string(name))
 
@@ -58,6 +61,7 @@ func (pfr PaymentFintechRepository) GetPaymentFintechByName(ctx *gin.Context, na
 }
 
 func (pfr PaymentFintechRepository) CreateNewPaymentFintech(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) (*dbContext.Fintech, *models.ResponseError) {
+
 	store := dbContext.New(pfr.dbHandler)
 	paymentFintech, err := store.CreatePaymentFintech(ctx, *paymentFintechParams)
 
@@ -70,10 +74,10 @@ func (pfr PaymentFintechRepository) CreateNewPaymentFintech(ctx *gin.Context, pa
 	return paymentFintech, nil
 }
 
-func (pfr PaymentFintechRepository) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) *models.ResponseError {
+func (pfr PaymentFintechRepository) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams, fintEntityID int64) *models.ResponseError {
 
 	store := dbContext.New(pfr.dbHandler)
-	err := store.UpdatePaymentFintech(ctx, *paymentFintechParams)
+	err := store.UpdatePaymentFintech(ctx, *paymentFintechParams, int32(fintEntityID))
 
 	if err != nil {
 		return &models.ResponseError{

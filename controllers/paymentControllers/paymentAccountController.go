@@ -23,23 +23,22 @@ func NewPaymentAccountController(paymentAccountService *services.PaymentAccountS
 }
 
 // Method
-func (paymentAccountController PaymentAccountController) GetListPaymentAccount(ctx *gin.Context) {
-	response, responseErr := paymentAccountController.paymentAccountService.GetListPaymentAccount(ctx)
+func (paymentAccountController PaymentAccountController) GetListPaymentUsers_accountByUserName(ctx *gin.Context) {
+	userName := ctx.Query("userName")
 
+	response, responseErr := paymentAccountController.paymentAccountService.GetListPaymentUsers_accountByUserName(ctx, userName)
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
 
 	ctx.JSON(http.StatusOK, response)
-
-	// ctx.JSON(http.StatusOK, "Hello Gin Framework!")
 }
 
-func (paymentAccountController PaymentAccountController) GetPaymentAccountByName(ctx *gin.Context) {
-	paymentAccountName := ctx.Query("name")
+func (paymentAccountController PaymentAccountController) GetPaymentAccountByAccountNumber(ctx *gin.Context) {
+	usacAccountNumber := ctx.Query("usacAccountNumber")
 
-	response, responseErr := paymentAccountController.paymentAccountService.GetPaymentAccountByName(ctx, paymentAccountName)
+	response, responseErr := paymentAccountController.paymentAccountService.GetPaymentAccountByAccountNumber(ctx, usacAccountNumber)
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
@@ -75,27 +74,54 @@ func (paymentAccountController PaymentAccountController) CreateNewPaymentAccount
 
 }
 
-func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByAccNum(ctx *gin.Context) {
-	paymentAccountNumber := ctx.Query("accnum")
+func (paymentAccountController PaymentAccountController) UpdatePaymentUsers_accountPlus(ctx *gin.Context) {
+	usacAccountNumber := ctx.Query("usacAccountNumber")
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		log.Println("Error while reading update category request body", err)
+		log.Println("Error while reading create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var paymentAccount dbContext.CreatePaymentUsers_accountParams
+	var paymentAccount dbContext.UpdatePaymentUsers_accountParams
 	err = json.Unmarshal(body, &paymentAccount)
 	if err != nil {
-		log.Println("Error while unmarshaling update category request body", err)
+		log.Println("Error while unmarshaling create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response := paymentAccountController.paymentAccountService.UpdatePaymentAccountByAccNum(ctx, &paymentAccount, paymentAccountNumber)
-	if response != nil {
-		ctx.AbortWithStatusJSON(response.Status, response)
+	response, responseErr := paymentAccountController.paymentAccountService.UpdatePaymentUsers_accountPlus(ctx, &paymentAccount, usacAccountNumber)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+}
+
+func (paymentAccountController PaymentAccountController) UpdatePaymentUsers_accountMinus(ctx *gin.Context) {
+	usacAccountNumber := ctx.Query("usacAccountNumber")
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create category request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var paymentAccount dbContext.UpdatePaymentUsers_accountParams
+	err = json.Unmarshal(body, &paymentAccount)
+	if err != nil {
+		log.Println("Error while unmarshaling create category request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := paymentAccountController.paymentAccountService.UpdatePaymentUsers_accountMinus(ctx, &paymentAccount, usacAccountNumber)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
 	}
 
@@ -103,10 +129,9 @@ func (paymentAccountController PaymentAccountController) UpdatePaymentAccountByA
 }
 
 func (paymentAccountController PaymentAccountController) DeletePaymentAccountByAccNum(ctx *gin.Context) {
+	usacAccountNumber := ctx.Query("usacAccountNumber")
 
-	paymentAccountNumber := ctx.Query("accnum")
-
-	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountByAccNum(ctx, paymentAccountNumber)
+	responseErr := paymentAccountController.paymentAccountService.DeletePaymentAccountByAccNum(ctx, usacAccountNumber)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

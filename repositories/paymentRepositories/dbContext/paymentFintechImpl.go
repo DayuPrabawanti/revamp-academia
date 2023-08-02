@@ -13,12 +13,11 @@ type Fintech struct {
 }
 
 const listPaymentFintech = `-- name: ListPaymentFintech :many
-
 SELECT 
 	fint_entity_id, 
-	fint_code
+	fint_code 
 FROM 
-	payment.fintech 
+	payment.fintech
 ORDER BY 
 	fint_entity_id;
 `
@@ -52,16 +51,16 @@ func (q *Queries) ListPaymentFintech(ctx context.Context) ([]Fintech, error) {
 const getPaymentFintech = `-- name: GetPaymentFintech :one
 SELECT 
 	fint_entity_id, 
-	fint_code
+	fint_code 
 FROM 
-	payment.fintech 
-WHERE 
-	fint_code = $1
+	payment.fintech
+WHERE
+	fint_code = $1;
 `
 
 // payment.fintech
-func (q *Queries) GetPaymentFintech(ctx context.Context, name string) (Fintech, error) {
-	row := q.db.QueryRowContext(ctx, getPaymentFintech, name)
+func (q *Queries) GetPaymentFintech(ctx context.Context, fintCode string) (Fintech, error) {
+	row := q.db.QueryRowContext(ctx, getPaymentFintech, fintCode)
 	var i Fintech
 	err := row.Scan(
 		&i.FintEntityID,
@@ -72,10 +71,13 @@ func (q *Queries) GetPaymentFintech(ctx context.Context, name string) (Fintech, 
 
 const createPaymentFintech = `-- name: CreatePaymentFintech :one
 INSERT INTO
-    payment.fintech (
+    payment.fintech(
         fint_code
     )
-VALUES ($1) RETURNING fint_entity_id, fint_code
+VALUES ($1)
+RETURNING 
+	fint_entity_id,
+	fint_code
 `
 
 type CreatePaymentFintechParams struct {
@@ -107,24 +109,22 @@ func (q *Queries) CreatePaymentFintech(ctx context.Context, arg CreatePaymentFin
 }
 
 const updatePaymentFintech = `-- name: UpdatePaymentFintech :exec
-
 UPDATE 
 	payment.fintech
 SET
-    fint_code = $2
-WHERE 
-	fint_entity_id = $1
+    fint_code = $1
+WHERE
+	fint_entity_id = $2
 `
 
-func (q *Queries) UpdatePaymentFintech(ctx context.Context, arg CreatePaymentFintechParams) error {
-	_, err := q.db.ExecContext(ctx, updatePaymentFintech, arg.FintEntityID, arg.FintCode)
+func (q *Queries) UpdatePaymentFintech(ctx context.Context, arg CreatePaymentFintechParams, fintEntityID int32) error {
+	_, err := q.db.ExecContext(ctx, updatePaymentFintech, arg.FintCode, fintEntityID)
 	return err
 }
 
 const deletePaymentFintech = `-- name: DeletePaymentFintech :exec
-
 DELETE FROM 
-	payment.fintech 
+	payment.fintech
 WHERE 
 	fint_entity_id = $1
 `

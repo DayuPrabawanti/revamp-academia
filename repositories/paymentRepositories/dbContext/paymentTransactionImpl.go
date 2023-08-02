@@ -3,10 +3,8 @@ package dbContext
 import (
 	"context"
 	"database/sql"
-	"net/http"
 	"time"
 
-	"codeid.revampacademy/models"
 	"codeid.revampacademy/models/features"
 )
 
@@ -16,7 +14,7 @@ type TransactionUser struct {
 	TrpaDebit        sql.NullFloat64 `db:"trpa_debit"`
 	TrpaCredit       sql.NullFloat64 `db:"trpa_credit"`
 	TrpaNote         string          `db:"trpa_note"`
-	TrpaOrderNumber  string          `db:"trpa_order_number"`
+	TrpaOrderNumber  sql.NullString  `db:"trpa_order_number"`
 	TrpaFromID       string          `db:"trpa_from_id"`
 	TrpaToID         string          `db:"trpa_to_id"`
 	TrpaType         string          `db:"trpa_type"`
@@ -80,7 +78,7 @@ func (q *Queries) ListPaymentTransaction_payment(ctx context.Context) ([]Transac
 	return items, nil
 }
 
-const getPaymentTransaction_payment = `-- name: GetPaymentTransaction_payment :one
+const getPaymentTransaction_payment = `-- name: GetPaymentTransaction_payment :many
 SELECT 
     trpa.trpa_code_number, 
     trpa.trpa_modified_date,
@@ -143,140 +141,110 @@ func (q *Queries) GetPaymentTransaction_payment(ctx context.Context, metadata *f
 	return items, nil
 }
 
-const createPaymentTransaction_payment = `-- name: CreatePaymentTransaction_payment :one
-
+const createPaymentTransaction_payment = `-- name: CreatePaymentTransaction_payment :exec
 INSERT INTO
     payment.transaction_payment (
-        trpa_id,
-        trpa_code_number,
-        trpa_order_number,
         trpa_debit,
         trpa_credit,
         trpa_type,
         trpa_note,
-        trpa_modified_date,
-        trpa_source_id,
-        trpa_target_id,
+        trpa_from_id,
+        trpa_to_id,
         trpa_user_entity_id
     )
-VALUES (
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7,
-        $8,
-        $9,
-        $10,
-        $11
-    ) RETURNING *
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING
+		trpa_code_number,
+		trpa_modified_date,
+		trpa_debit,
+		trpa_credit,
+		trpa_note,
+		trpa_order_number,
+		trpa_from_id,
+		trpa_to_id,
+		trpa_type,
+		(SELECT user_name FROM users.users WHERE user_entity_id = $7) AS user_name;
 `
 
-type CreatePaymentTransaction_paymentParams struct {
-	TrpaID           int32          `db:"trpa_id" json:"trpaId"`
-	TrpaCodeNumber   sql.NullString `db:"trpa_code_number" json:"trpaCodeNumber"`
-	TrpaOrderNumber  sql.NullString `db:"trpa_order_number" json:"trpaOrderNumber"`
-	TrpaDebit        sql.NullString `db:"trpa_debit" json:"trpaDebit"`
-	TrpaCredit       sql.NullString `db:"trpa_credit" json:"trpaCredit"`
-	TrpaType         sql.NullString `db:"trpa_type" json:"trpaType"`
-	TrpaNote         sql.NullString `db:"trpa_note" json:"trpaNote"`
-	TrpaModifiedDate sql.NullTime   `db:"trpa_modified_date" json:"trpaModifiedDate"`
-	TrpaSourceID     string         `db:"trpa_source_id" json:"trpaSourceId"`
-	TrpaTargetID     string         `db:"trpa_target_id" json:"trpaTargetId"`
-	TrpaUserEntityID sql.NullInt32  `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
+type CreateTransactionUser struct {
+	TrpaDebit        sql.NullFloat64 `db:"trpa_debit" json:"trpaDebit"`
+	TrpaCredit       sql.NullFloat64 `db:"trpa_credit" json:"trpaCredit"`
+	TrpaType         string          `db:"trpa_type" json:"trpaType"`
+	TrpaNote         string          `db:"trpa_note" json:"trpaNote"`
+	TrpaFromID       string          `db:"trpa_from_id" json:"trpaFromId"`
+	TrpaToID         string          `db:"trpa_to_id" json:"trpaToId"`
+	TrpaUserEntityID int32           `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
 }
 
-func (q *Queries) CreatePaymentTransaction_payment(ctx context.Context, arg CreatePaymentTransaction_paymentParams) (*models.PaymentTransactionPayment, *models.ResponseError) {
+func (q *Queries) CreatePaymentTransaction_payment(ctx context.Context, params CreateTransactionUser) (*TransactionUser, error) {
 	row := q.db.QueryRowContext(ctx, createPaymentTransaction_payment,
-		arg.TrpaID,
-		arg.TrpaCodeNumber,
-		arg.TrpaOrderNumber,
-		arg.TrpaDebit,
-		arg.TrpaCredit,
-		arg.TrpaType,
-		arg.TrpaNote,
-		arg.TrpaModifiedDate,
-		arg.TrpaSourceID,
-		arg.TrpaTargetID,
-		arg.TrpaUserEntityID,
+		params.TrpaDebit,
+		params.TrpaCredit,
+		params.TrpaType,
+		params.TrpaNote,
+		params.TrpaFromID,
+		params.TrpaToID,
+		params.TrpaUserEntityID,
 	)
-	i := models.PaymentTransactionPayment{}
+	var i TransactionUser
 	err := row.Scan(
-		&i.TrpaID,
 		&i.TrpaCodeNumber,
-		&i.TrpaOrderNumber,
+		&i.TrpaModifiedDate,
 		&i.TrpaDebit,
 		&i.TrpaCredit,
-		&i.TrpaType,
 		&i.TrpaNote,
-		&i.TrpaModifiedDate,
-		&i.TrpaSourceID,
-		&i.TrpaTargetID,
-		&i.TrpaUserEntityID,
+		&i.TrpaOrderNumber,
+		&i.TrpaFromID,
+		&i.TrpaToID,
+		&i.TrpaType,
+		&i.UserName,
 	)
 	if err != nil {
-		return nil, &models.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
+		return nil, err
 	}
-	return &models.PaymentTransactionPayment{
-		TrpaID:           i.TrpaID,
-		TrpaCodeNumber:   i.TrpaCodeNumber,
-		TrpaOrderNumber:  i.TrpaOrderNumber,
-		TrpaDebit:        i.TrpaDebit,
-		TrpaCredit:       i.TrpaCredit,
-		TrpaType:         i.TrpaType,
-		TrpaNote:         i.TrpaNote,
-		TrpaModifiedDate: i.TrpaModifiedDate,
-		TrpaSourceID:     i.TrpaSourceID,
-		TrpaTargetID:     i.TrpaTargetID,
-		TrpaUserEntityID: i.TrpaUserEntityID,
-	}, nil
+	return &i, nil
 }
 
-const updatePaymentTransaction_payment = `-- name: UpdatePaymentTransaction_payment :exec
+// const updatePaymentTransaction_payment = `-- name: UpdatePaymentTransaction_payment :exec
 
-UPDATE
-    payment.transaction_payment
-set
-    trpa_code_number = $2,
-    trpa_order_number = $3,
-    trpa_debit = $4,
-    trpa_credit = $5,
-    trpa_type = $6,
-    trpa_note = $7,
-    trpa_modified_date = $8,
-    trpa_source_id = $9,
-    trpa_target_id = $10,
-    trpa_user_entity_id = $11
-WHERE trpa_id = $1
-`
+// UPDATE
+//     payment.transaction_payment
+// set
+//     trpa_code_number = $2,
+//     trpa_order_number = $3,
+//     trpa_debit = $4,
+//     trpa_credit = $5,
+//     trpa_type = $6,
+//     trpa_note = $7,
+//     trpa_modified_date = $8,
+//     trpa_source_id = $9,
+//     trpa_target_id = $10,
+//     trpa_user_entity_id = $11
+// WHERE trpa_id = $1
+// `
 
-func (q *Queries) UpdatePaymentTransaction_payment(ctx context.Context, arg CreatePaymentTransaction_paymentParams) error {
-	_, err := q.db.ExecContext(ctx, updatePaymentTransaction_payment,
-		arg.TrpaID,
-		arg.TrpaCodeNumber,
-		arg.TrpaOrderNumber,
-		arg.TrpaDebit,
-		arg.TrpaCredit,
-		arg.TrpaType,
-		arg.TrpaNote,
-		sql.NullTime{Time: arg.TrpaModifiedDate.Time, Valid: true}, //
-		arg.TrpaSourceID,
-		arg.TrpaTargetID,
-		arg.TrpaUserEntityID,
-	)
-	return err
-}
+// func (q *Queries) UpdatePaymentTransaction_payment(ctx context.Context, arg CreatePaymentTransaction_paymentParams) error {
+// 	_, err := q.db.ExecContext(ctx, updatePaymentTransaction_payment,
+// 		arg.TrpaID,
+// 		arg.TrpaCodeNumber,
+// 		arg.TrpaOrderNumber,
+// 		arg.TrpaDebit,
+// 		arg.TrpaCredit,
+// 		arg.TrpaType,
+// 		arg.TrpaNote,
+// 		sql.NullTime{Time: arg.TrpaModifiedDate.Time, Valid: true}, //
+// 		arg.TrpaSourceID,
+// 		arg.TrpaTargetID,
+// 		arg.TrpaUserEntityID,
+// 	)
+// 	return err
+// }
 
-const deletePaymentTransaction_payment = `-- name: DeletePaymentTransaction_payment :exec
-DELETE FROM payment.transaction_payment WHERE trpa_id = $1
-`
+// const deletePaymentTransaction_payment = `-- name: DeletePaymentTransaction_payment :exec
+// DELETE FROM payment.transaction_payment WHERE trpa_id = $1
+// `
 
-func (q *Queries) DeletePaymentTransaction_payment(ctx context.Context, trpaID int32) error {
-	_, err := q.db.ExecContext(ctx, deletePaymentTransaction_payment, trpaID)
-	return err
-}
+// func (q *Queries) DeletePaymentTransaction_payment(ctx context.Context, trpaID int32) error {
+// 	_, err := q.db.ExecContext(ctx, deletePaymentTransaction_payment, trpaID)
+// 	return err
+// }

@@ -41,14 +41,14 @@ func (pts PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context,
 	return pts.repositoryManager.PaymentTransactionRepository.GetPaymentTransactionById(ctx, metadata)
 }
 
-// func (ptr PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) (*models.PaymentTransactionPayment, *models.ResponseError) {
-// 	responseErr := validatePaymentTransaction(paymentTransactionParams)
-// 	if responseErr != nil {
-// 		return nil, responseErr
-// 	}
+func (ptr PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreateTransactionUser) (*dbContext.TransactionUser, *models.ResponseError) {
+	responseErr := validatePaymentTransaction(paymentTransactionParams)
+	if responseErr != nil {
+		return nil, responseErr
+	}
 
-// 	return ptr.paymentTransactionRepository.CreatePaymentTransaction(ctx, paymentTransactionParams)
-// }
+	return ptr.repositoryManager.CreatePaymentTransaction(ctx, paymentTransactionParams)
+}
 
 // func (ptr PaymentTransactionService) UpdatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams, id int64) *models.ResponseError {
 // 	responseErr := validatePaymentTransaction(paymentTransactionParams)
@@ -63,10 +63,10 @@ func (pts PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context,
 // 	return ptr.paymentTransactionRepository.DeletePaymentTransaction(ctx, id)
 // }
 
-func validatePaymentTransaction(paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) *models.ResponseError {
-	if paymentTransactionParams.TrpaID == 0 {
+func validatePaymentTransaction(paymentTransactionParams *dbContext.CreateTransactionUser) *models.ResponseError {
+	if paymentTransactionParams.TrpaUserEntityID == 0 {
 		return &models.ResponseError{
-			Message: "Invalid category id",
+			Message: "Invalid TrpaUserEntityID",
 			Status:  http.StatusBadRequest,
 		}
 	}

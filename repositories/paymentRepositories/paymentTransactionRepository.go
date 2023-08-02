@@ -79,47 +79,47 @@ func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Conte
 	return getPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) CreatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) (*models.PaymentTransactionPayment, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) CreatePaymentTransaction(ctx *gin.Context, createTransactionUser *dbContext.CreateTransactionUser) (*dbContext.TransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
-	paymentTransaction, err := store.CreatePaymentTransaction_payment(ctx, *paymentTransactionParams)
+	transactionUser, err := store.CreatePaymentTransaction_payment(ctx, *createTransactionUser)
 
 	if err != nil {
 		return nil, &models.ResponseError{
-			Message: err.Message,
+			Message: err.Error(),
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return paymentTransaction, nil
+	return transactionUser, nil
 }
 
-func (ptr PaymentTransactionRepository) UpdatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) *models.ResponseError {
-	store := dbContext.New(ptr.dbHandler)
-	err := store.UpdatePaymentTransaction_payment(ctx, *paymentTransactionParams)
+// func (ptr PaymentTransactionRepository) UpdatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams) *models.ResponseError {
+// 	store := dbContext.New(ptr.dbHandler)
+// 	err := store.UpdatePaymentTransaction_payment(ctx, *paymentTransactionParams)
 
-	if err != nil {
-		return &models.ResponseError{
-			Message: "error when update",
-			Status:  http.StatusInternalServerError,
-		}
-	}
-	return &models.ResponseError{
-		Message: "data telah terupdate",
-		Status:  http.StatusOK,
-	}
-}
+// 	if err != nil {
+// 		return &models.ResponseError{
+// 			Message: "error when update",
+// 			Status:  http.StatusInternalServerError,
+// 		}
+// 	}
+// 	return &models.ResponseError{
+// 		Message: "data telah terupdate",
+// 		Status:  http.StatusOK,
+// 	}
+// }
 
-func (ptr PaymentTransactionRepository) DeletePaymentTransaction(ctx *gin.Context, id int64) *models.ResponseError {
-	store := dbContext.New(ptr.dbHandler)
-	err := store.DeletePaymentTransaction_payment(ctx, int32(id))
+// func (ptr PaymentTransactionRepository) DeletePaymentTransaction(ctx *gin.Context, id int64) *models.ResponseError {
+// 	store := dbContext.New(ptr.dbHandler)
+// 	err := store.DeletePaymentTransaction_payment(ctx, int32(id))
 
-	if err != nil {
-		return &models.ResponseError{
-			Message: "error when update",
-			Status:  http.StatusInternalServerError,
-		}
-	}
-	return &models.ResponseError{
-		Message: "data telah terhapus",
-		Status:  http.StatusOK,
-	}
-}
+// 	if err != nil {
+// 		return &models.ResponseError{
+// 			Message: "error when update",
+// 			Status:  http.StatusInternalServerError,
+// 		}
+// 	}
+// 	return &models.ResponseError{
+// 		Message: "data telah terhapus",
+// 		Status:  http.StatusOK,
+// 	}
+// }
