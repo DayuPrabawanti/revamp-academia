@@ -76,7 +76,7 @@ func (paymentBankController PaymentBankController) CreateNewPaymentBank(ctx *gin
 
 func (paymentBankController PaymentBankController) UpdatePaymentBank(ctx *gin.Context) {
 
-	bankEntityID, err := strconv.Atoi(ctx.Param("id"))
+	bankEntityID, err := strconv.Atoi(ctx.Param("bankEntityID"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)

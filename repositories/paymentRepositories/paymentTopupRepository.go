@@ -1,12 +1,12 @@
 package repositories
 
 import (
+	"context"
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
-	"github.com/gin-gonic/gin"
 )
 
 type PaymentTopupRepository struct {
@@ -20,24 +20,9 @@ func NewPaymentTopupRepository(dbHandler *sql.DB) *PaymentTopupRepository {
 	}
 }
 
-func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
-
-	store := dbContext.New(ptr.dbHandler)
-	paymentTopups, err := store.ListTopupDetail(ctx)
-
-	listPaymentTopups := make([]*dbContext.TopupDetail, 0)
-
-	for _, v := range paymentTopups {
-		paymentTopup := &dbContext.TopupDetail{
-			SourceName:    v.SourceName,
-			SourceAccount: v.SourceAccount,
-			SourceSaldo:   v.SourceSaldo,
-			TargetName:    v.TargetName,
-			TargetAccount: v.TargetAccount,
-			TargetSaldo:   v.TargetSaldo,
-		}
-		listPaymentTopups = append(listPaymentTopups, paymentTopup)
-	}
+func (pttr *PaymentTopupRepository) GetAccountByBankCodeAndAccountNumber(ctx context.Context, bankCode string, usacAccountNumber string) (*dbContext.BankAccount, *models.ResponseError) {
+	store := dbContext.New(pttr.dbHandler)
+	bankAccount, err := store.GetBankAccount(ctx, bankCode, usacAccountNumber)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -46,27 +31,12 @@ func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbCon
 		}
 	}
 
-	return listPaymentTopups, nil
+	return &bankAccount, nil
 }
 
-func (ptr PaymentTopupRepository) GetTopupDetailById(ctx *gin.Context, id int32) ([]*dbContext.TopupDetail, *models.ResponseError) {
-
-	store := dbContext.New(ptr.dbHandler)
-	paymentTopups, err := store.GetTopupDetailById(ctx, id)
-
-	listPaymentTopups := make([]*dbContext.TopupDetail, 0)
-
-	for _, v := range paymentTopups {
-		paymentTopup := &dbContext.TopupDetail{
-			SourceName:    v.SourceName,
-			SourceAccount: v.SourceAccount,
-			SourceSaldo:   v.SourceSaldo,
-			TargetName:    v.TargetName,
-			TargetAccount: v.TargetAccount,
-			TargetSaldo:   v.TargetSaldo,
-		}
-		listPaymentTopups = append(listPaymentTopups, paymentTopup)
-	}
+func (pttr *PaymentTopupRepository) GetAccountByFintCodeAndAccountNumber(ctx context.Context, fintCode string, usacAccountNumber string) (*dbContext.FintechAccount, *models.ResponseError) {
+	store := dbContext.New(pttr.dbHandler)
+	fintAccount, err := store.GetFintechAccount(ctx, fintCode, usacAccountNumber)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -75,5 +45,5 @@ func (ptr PaymentTopupRepository) GetTopupDetailById(ctx *gin.Context, id int32)
 		}
 	}
 
-	return listPaymentTopups, nil
+	return &fintAccount, nil
 }

@@ -1,10 +1,14 @@
 package controllers
 
 import (
+	"encoding/json"
+	"io"
+	"log"
 	"net/http"
 	"strconv"
 
 	"codeid.revampacademy/models/features"
+	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	services "codeid.revampacademy/services/paymentServices"
 	"github.com/gin-gonic/gin"
 )
@@ -50,32 +54,32 @@ func (PaymentTransactionController PaymentTransactionController) GetPaymentTrans
 	ctx.JSON(http.StatusOK, response)
 }
 
-// func (paymentTransactionController PaymentTransactionController) CreateNewPaymentTransaction(ctx *gin.Context) {
+func (paymentTransactionController PaymentTransactionController) CreateNewPaymentTransaction(ctx *gin.Context) {
 
-// 	body, err := io.ReadAll(ctx.Request.Body)
-// 	if err != nil {
-// 		log.Println("Error while reading create category request body", err)
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create transaction request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-// 	var paymentTransaction dbContext.CreatePaymentTransaction_paymentParams
-// 	err = json.Unmarshal(body, &paymentTransaction)
-// 	if err != nil {
-// 		log.Println("Error while unmarshaling create category request body", err)
-// 		ctx.AbortWithError(http.StatusInternalServerError, err)
-// 		return
-// 	}
+	var paymentTransaction dbContext.CreateTransactionUser
+	err = json.Unmarshal(body, &paymentTransaction)
+	if err != nil {
+		log.Println("Error while unmarshaling create transaction request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 
-// 	response, responseErr := paymentTransactionController.paymentTransactionService.CreateNewPaymentTransaction(ctx, &paymentTransaction)
-// 	if responseErr != nil {
-// 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
-// 		return
-// 	}
+	response, responseErr := paymentTransactionController.paymentTransactionService.CreateNewPaymentTransaction(ctx, &paymentTransaction)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
 
-// 	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, response)
 
-// }
+}
 
 // func (paymentTransactionController PaymentTransactionController) UpdatePaymentTransaction(ctx *gin.Context) {
 

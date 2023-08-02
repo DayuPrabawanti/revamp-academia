@@ -114,13 +114,13 @@ const updatePaymentBank = `-- name: UpdatePaymentBank :exec
 UPDATE 
 	payment.bank
 SET
-    bank_code = $2
+    bank_code = $1
 WHERE
-	bank_entity_id = $1
+	bank_entity_id = $2
 `
 
-func (q *Queries) UpdatePaymentBank(ctx context.Context, arg CreatePaymentBankParams) error {
-	_, err := q.db.ExecContext(ctx, updatePaymentBank, arg.BankEntityID, arg.BankCode)
+func (q *Queries) UpdatePaymentBank(ctx context.Context, arg CreatePaymentBankParams, bankEntityID int32) error {
+	_, err := q.db.ExecContext(ctx, updatePaymentBank, arg.BankCode, bankEntityID)
 	return err
 }
 

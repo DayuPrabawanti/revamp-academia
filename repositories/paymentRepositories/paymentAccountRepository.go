@@ -20,15 +20,16 @@ func NewPaymentAccountRepository(dbHandler *sql.DB) *PaymentAccountRepository {
 	}
 }
 
-func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*dbContext.UserAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetListPaymentUsers_accountByUserName(ctx *gin.Context, userName string) ([]*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
-	paymentAccounts, err := store.ListPaymentUsers_account(ctx)
+	paymentAccounts, err := store.ListPaymentUsers_accountByUserName(ctx, userName)
 
 	listPaymentAccounts := make([]*dbContext.UserAccount, 0)
 
 	for _, v := range paymentAccounts {
 		paymentAccount := &dbContext.UserAccount{
+			UserName:      v.UserName,
 			AccountNumber: v.AccountNumber,
 			Description:   v.Description,
 			Saldo:         v.Saldo,
@@ -47,10 +48,10 @@ func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*
 	return listPaymentAccounts, nil
 }
 
-func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, name string) (*dbContext.UserAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetPaymentAccountByAccountNumber(ctx *gin.Context, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
-	paymentAccount, err := store.GetPaymentUsers_account(ctx, string(name))
+	paymentAccount, err := store.GetPaymentUsers_account(ctx, usacAccountNumber)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -62,7 +63,7 @@ func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, na
 	return &paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) (*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) (*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
 	paymentAccount, err := store.CreatePaymentUsers_account(ctx, *paymentAccountParams)
@@ -76,31 +77,42 @@ func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, pa
 	return paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) UpdatePaymentAccountByAccNum(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) *models.ResponseError {
-
+func (par *PaymentAccountRepository) UpdatePaymentUsers_accountPlus(ctx *gin.Context, params *dbContext.UpdatePaymentUsers_accountParams, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
 	store := dbContext.New(par.dbHandler)
-	err := store.UpdatePaymentUsers_account(ctx, *paymentAccountParams)
+	paymentAccount, err := store.UpdatePaymentUsers_accountPlus(ctx, *params, usacAccountNumber)
 
 	if err != nil {
-		return &models.ResponseError{
-			Message: "error when update",
+		return nil, &models.ResponseError{
+			Message: err.Error(),
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &models.ResponseError{
-		Message: "data has been update",
-		Status:  http.StatusOK,
-	}
+
+	return paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Context, accNum string) *models.ResponseError {
+func (par *PaymentAccountRepository) UpdatePaymentUsers_accountMinus(ctx *gin.Context, params *dbContext.UpdatePaymentUsers_accountParams, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
+	store := dbContext.New(par.dbHandler)
+	paymentAccount, err := store.UpdatePaymentUsers_accountMinus(ctx, *params, usacAccountNumber)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return paymentAccount, nil
+}
+
+func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Context, usacAccountNumber string) *models.ResponseError {
 
 	store := dbContext.New(par.dbHandler)
-	err := store.DeletePaymentUsers_account(ctx, accNum)
+	err := store.DeletePaymentUsers_account(ctx, usacAccountNumber)
 
 	if err != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when delete",
 			Status:  http.StatusInternalServerError,
 		}
 	}

@@ -8,50 +8,19 @@ import (
 )
 
 type PaymentTopupService struct {
-	paymentTopupRepository *repositories.PaymentTopupRepository
+	repositoriesManager *repositories.RepositoriesManager
 }
 
-func NewPaymentTopupService(paymentTopupRepository *repositories.PaymentTopupRepository) *PaymentTopupService {
+func NewPaymentTopupService(repoMgr *repositories.RepositoriesManager) *PaymentTopupService {
 	return &PaymentTopupService{
-		paymentTopupRepository: paymentTopupRepository,
+		repositoriesManager: repoMgr,
 	}
 }
 
-func (pts PaymentTopupService) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
-	return pts.paymentTopupRepository.GetListTopupDetail(ctx)
+func (ptts *PaymentTopupService) GetAccountByBankCodeAndAccountNumber(ctx *gin.Context, bankCode string, usacAccountNumber string) (*dbContext.BankAccount, *models.ResponseError) {
+	return ptts.repositoriesManager.PaymentTopupRepository.GetAccountByBankCodeAndAccountNumber(ctx, bankCode, usacAccountNumber)
 }
 
-func (pts PaymentTopupService) GetTopupDetailById(ctx *gin.Context, id int32) ([]*dbContext.TopupDetail, *models.ResponseError) {
-	return pts.paymentTopupRepository.GetTopupDetailById(ctx, id)
+func (ptts *PaymentTopupService) GetAccountByFintCodeAndAccountNumber(ctx *gin.Context, fintCode string, usacAccountNumber string) (*dbContext.FintechAccount, *models.ResponseError) {
+	return ptts.repositoriesManager.PaymentTopupRepository.GetAccountByFintCodeAndAccountNumber(ctx, fintCode, usacAccountNumber)
 }
-
-// func (pts PaymentTopupService) CreateTopupProductDto(ctx *gin.Context, topupWithProductDto *models.CreateTopupProductDto) (*dbContext.TopupDetail, *models.ResponseError) {
-
-// 	err := repositories.BeginTransaction(pts.repositoryManager)
-// 	if err != nil {
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to start transaction",
-// 			Status:  http.StatusBadRequest,
-// 		}
-// 	}
-// 	//first query statement
-// 	response, responseErr := pts.CreateTopup(ctx, (*dbContext.CreateTopupParams)(&topupWithProductDto.CreateTopupDto))
-// 	if responseErr != nil {
-// 		repositories.RollbackTransaction(pts.repositoryManager)
-// 		return nil, responseErr
-// 	}
-// 	//second query statement
-// 	responseErr = pts.DeleteCategory(ctx, int64(response.CategoryID))
-// 	if responseErr != nil {
-// 		//when delete not succeed, transaction will rollback
-// 		repositories.RollbackTransaction(pts.repositoryManager)
-// 		return nil, responseErr
-// 	}
-// 	// if all statement ok, transaction will commit/save to db
-// 	repositories.CommitTransaction(pts.repositoryManager)
-
-// 	return nil, &models.ResponseError{
-// 		Message: "Data has been created",
-// 		Status:  http.StatusOK,
-// 	}
-// }

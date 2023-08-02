@@ -74,10 +74,10 @@ func (pfr PaymentFintechRepository) CreateNewPaymentFintech(ctx *gin.Context, pa
 	return paymentFintech, nil
 }
 
-func (pfr PaymentFintechRepository) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams) *models.ResponseError {
+func (pfr PaymentFintechRepository) UpdatePaymentFintechById(ctx *gin.Context, paymentFintechParams *dbContext.CreatePaymentFintechParams, fintEntityID int64) *models.ResponseError {
 
 	store := dbContext.New(pfr.dbHandler)
-	err := store.UpdatePaymentFintech(ctx, *paymentFintechParams)
+	err := store.UpdatePaymentFintech(ctx, *paymentFintechParams, int32(fintEntityID))
 
 	if err != nil {
 		return &models.ResponseError{
