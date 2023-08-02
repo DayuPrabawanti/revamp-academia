@@ -14,9 +14,9 @@ type ServiceManager struct {
 // constructor
 func NewServiceManager(repoMgr *repositories.RepositoryManager) *ServiceManager {
 	return &ServiceManager{
-		ProgEntityService:            *NewProgEntityService(&repoMgr.ProgEntityRepository),
-		ProgEntityDescService:        *NewProgEntityDescService(&repoMgr.ProgEntityDescRepository),
-		ProgReviewService:            *NewProgReviewsService(&repoMgr.ProgReviewsRepository),
-		SectionDetailMaterialService: *NewSectionDetailMaterialService(&repoMgr.SectionDetailMaterialRepository),
+		ProgEntityService:            *NewProgEntityService(repoMgr),
+		ProgEntityDescService:        *NewProgEntityDescService(repoMgr),
+		ProgReviewService:            *NewProgReviewsService(repoMgr),
+		SectionDetailMaterialService: *NewSectionDetailMaterialService(repoMgr),
 	}
 }

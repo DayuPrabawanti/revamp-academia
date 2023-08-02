@@ -7,6 +7,7 @@ import (
 
 	curi "codeid.revampacademy/models"
 	mod "codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 )
 
 const createProgEntityDesc = `-- name: CreateProgEntityDesc :one
@@ -70,7 +71,6 @@ SELECT pred_prog_entity_id, pred_item_learning, pred_description, pred_target_le
 WHERE pred_prog_entity_id = $1
 `
 
-// curriculum.program_entity_description
 func (q *Queries) Getprogram_entity_description(ctx context.Context, predProgEntityID int32) (curi.CurriculumProgramEntityDescription, error) {
 	row := q.db.QueryRowContext(ctx, getprogram_entity_description, predProgEntityID)
 	var i curi.CurriculumProgramEntityDescription
@@ -84,11 +84,16 @@ func (q *Queries) Getprogram_entity_description(ctx context.Context, predProgEnt
 }
 
 const listprogram_entity_description = `-- name: Listprogram_entity_description :many
-SELECT pred_prog_entity_id, pred_item_learning, pred_description, pred_target_level FROM curriculum.program_entity_description
+SELECT pred_prog_entity_id,
+pred_item_learning, 
+pred_description, 
+pred_target_level FROM curriculum.program_entity_description
+ORDER BY pred_prog_entity_id
+limit $1 offset $2
 `
 
-func (q *Queries) Listprogram_entity_description(ctx context.Context) ([]curi.CurriculumProgramEntityDescription, error) {
-	rows, err := q.db.QueryContext(ctx, listprogram_entity_description)
+func (q *Queries) Listprogram_entity_description(ctx context.Context, metadata *features.Metadata) ([]curi.CurriculumProgramEntityDescription, error) {
+	rows, err := q.db.QueryContext(ctx, listprogram_entity_description, metadata.PageSize, metadata.PageNo)
 	if err != nil {
 		return nil, err
 	}
@@ -118,17 +123,29 @@ func (q *Queries) Listprogram_entity_description(ctx context.Context) ([]curi.Cu
 const updateprogram_entity_description = `-- name: Updateprogram_entity_description :exec
 UPDATE curriculum.program_entity_description
   set pred_item_learning= $2,
-  pred_description = $3
+  pred_description = $3,
+  pred_target_level = $4
 WHERE pred_prog_entity_id= $1
 `
 
-type Updateprogram_entity_descriptionParams struct {
+type UpdateProgEntityDescParams struct {
 	PredProgEntityID int32          `db:"pred_prog_entity_id" json:"predProgEntityId"`
 	PredItemLearning sql.NullString `db:"pred_item_learning" json:"predItemLearning"`
-	PredItemInclude  sql.NullString `db:"pred_item_include" json:"predItemInclude"`
+	PredDescription  sql.NullString `db:"pred_description" json:"predDescription"`
+	PredTargetLevel  sql.NullString `db:"pred_target_level" json:"predTargetLevel"`
 }
 
-func (q *Queries) Updateprogram_entity_description(ctx context.Context, arg Updateprogram_entity_descriptionParams) error {
-	_, err := q.db.ExecContext(ctx, updateprogram_entity_description, arg.PredProgEntityID, arg.PredItemLearning, arg.PredItemInclude)
+func (q *Queries) UpdateProgEntityDesc(ctx context.Context, arg UpdateProgEntityDescParams) error {
+	_, err := q.db.ExecContext(ctx, updateprogram_entity_description, arg.PredProgEntityID, arg.PredItemLearning, arg.PredDescription, arg.PredTargetLevel)
+	return err
+}
+
+const deleteprogEntityDesc = `-- name: DeleteProgEntityDesc :exec
+DELETE FROM curriculum.program_entity_description
+WHERE pred_prog_entity_id = $1
+`
+
+func (q *Queries) DeleteProgEntityDesc(ctx context.Context, predProgEntityId int32) error {
+	_, err := q.db.ExecContext(ctx, deleteprogEntityDesc, predProgEntityId)
 	return err
 }

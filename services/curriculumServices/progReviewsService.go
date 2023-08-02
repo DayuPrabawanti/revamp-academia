@@ -2,24 +2,25 @@ package curriculumServices
 
 import (
 	models "codeid.revampacademy/models"
-	repositories "codeid.revampacademy/repositories/curriculumRepositories"
+	"codeid.revampacademy/models/features"
+	repo "codeid.revampacademy/repositories/curriculumRepositories"
 	"github.com/gin-gonic/gin"
 )
 
 type ProgReviewService struct {
-	progReviewsRepository *repositories.ProgReviewsRepository
+	repositoryManager repo.RepositoryManager
 }
 
-func NewProgReviewsService(progReviewsRepository *repositories.ProgReviewsRepository) *ProgReviewService {
+func NewProgReviewsService(repoMgr *repo.RepositoryManager) *ProgReviewService {
 	return &ProgReviewService{
-		progReviewsRepository: progReviewsRepository,
+		repositoryManager: *repoMgr,
 	}
 }
 
-func (pr ProgReviewService) GetListProgReviews(ctx *gin.Context) ([]*models.CurriculumProgramReview, *models.ResponseError) {
-	return pr.progReviewsRepository.GetListProgReviews(ctx)
+func (pr ProgReviewService) GetListProgReviews(ctx *gin.Context, metadata *features.Metadata) ([]*models.CurriculumProgramReview, *models.ResponseError) {
+	return pr.repositoryManager.ProgEntityRepository.GetListProgReviews(ctx)
 }
 
 func (pr ProgReviewService) GetProgramReviews(ctx *gin.Context, id int64) (*models.CurriculumProgramReview, *models.ResponseError) {
-	return pr.progReviewsRepository.GetProgramReviews(ctx, id)
+	return pr.repositoryManager.ProgEntityRepository.GetProgramReviews(ctx, id)
 }

@@ -15,7 +15,7 @@ type Gabung struct {
 	CurriculumSection 					CurriculumSection
 	CurriculumProgramEntityDescription 	CurriculumProgramEntityDescription
 	// SectionGroup []SectionGroup
-	// CurriculumSectionDetail CurriculumSectionDetail
+	CurriculumSectionDetail 			CurriculumSectionDetail
 	MasterCategory          			MasterCategory
 }
 
@@ -26,15 +26,18 @@ type Gabung struct {
 // }
 
 type GetGabung struct {
-	CurriculumProgramEntity CurriculumProgramEntity
-	CurriculumProgramEntityDescription []CurriculumProgramEntityDescription
-	CurriculumSectionGet    []CurriculumSectionGet
-	MasterCategory			 []MasterCategory
+	CurriculumProgramEntity 			CurriculumProgramEntity
+	CurriculumProgramEntityDescription 	CurriculumProgramEntityDescription
+	CurriculumSectionGet    			[]CurriculumSectionGet
+	CurriculumSectionDetail				CurriculumSectionDetail
+	MasterCategory			 			[]MasterCategory
 }
 type CreateGabung struct {
-	CurriculumProgramEntity CreateCurriculumProgramEntity
-	CurriculumSection       CurriculumSection
-	MasterCategory 			MasterCategory
+	CurriculumProgramEntity 			CreateCurriculumProgramEntity
+	CurriculumSection       			CurriculumSection
+	CurriculumSectionDetail				CurriculumSectionDetail
+	CurriculumProgramEntityDescription 	CurriculumProgramEntityDescription
+	MasterCategory 						MasterCategory
 }
 type CreateCurriculumProgramEntity struct {
 	ProgEntityID     int32          `db:"prog_entity_id" json:"progEntityId"`
@@ -186,7 +189,7 @@ type CurriculumProgramEntity struct {
 	ProgType         string         `db:"prog_type" json:"progType"`
 	ProgLearningType string         `db:"prog_learning_type" json:"progLearningType"`
 	ProgRating       string `db:"prog_rating" json:"progRating"`
-	ProgTotalTraniee string `db:"prog_total_traniee" json:"progTotalTraniee"`
+	ProgTotalTraniee int32 `db:"prog_total_traniee" json:"progTotalTraniee"`
 	ProgModifiedDate time.Time      `db:"prog_modified_date" json:"progModifiedDate"`
 	ProgImage        string         `db:"prog_image" json:"progImage"`
 	ProgBestSeller   string `db:"prog_best_seller" json:"progBestSeller"`
@@ -195,10 +198,11 @@ type CurriculumProgramEntity struct {
 	ProgDuration     int32          `db:"prog_duration" json:"progDuration"`
 	ProgDurationType string         `db:"prog_duration_type" json:"progDurationType"`
 	ProgTagSkill     string `db:"prog_tag_skill" json:"progTagSkill"`
-	ProgCityID       string `db:"prog_city_id" json:"progCityId"`
+	ProgCityID       int32 `db:"prog_city_id" json:"progCityId"`
 	ProgCateID       int32          `db:"prog_cate_id" json:"progCateId"`
 	ProgCreatedBy    int32  `db:"prog_created_by" json:"progCreatedBy"`
 	ProgStatus       string         `db:"prog_status" json:"progStatus"`
+	RegistrasiNumber string `json:"registrasiNumber"`
 }
 
 

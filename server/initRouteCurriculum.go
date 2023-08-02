@@ -15,6 +15,8 @@ func InitRouterCurriculum(router *gin.Engine, controllerMrg *controllers.Control
 		progentityRoute.PUT("/progentity/:id", controllerMrg.ProgEntityController.UpdateProgEntity)
 		progentityRoute.DELETE("/progentity/:id", controllerMrg.ProgEntityController.DeleteProgEntity)
 
+		// progentityRoute.POST("/withSection", controllerMrg.ProgEntityController.CreateProgEntityWithSection)
+
 		progentityRoute.GET("/sections", controllerMrg.ProgEntityController.GetListSection)
 		progentityRoute.GET("/sections/:id", controllerMrg.ProgEntityController.GetSection)
 		progentityRoute.POST("/sections", controllerMrg.ProgEntityController.CreateSection)
@@ -35,6 +37,7 @@ func InitRouterCurriculum(router *gin.Engine, controllerMrg *controllers.Control
 		progentitydescRoute.GET("/progEntityDesc", controllerMrg.ProgEntityDescController.GetListProgEntityDesc)
 		progentitydescRoute.GET("/progEntityDesc/:id", controllerMrg.ProgEntityDescController.GetProgEntityDesc)
 		progentitydescRoute.POST("/progEntityDesc", controllerMrg.ProgEntityDescController.CreateProgEntityDesc)
+		progentitydescRoute.DELETE("/progEntityDesc/:id", controllerMrg.ProgEntityDescController.DeleteProgEntityDesc)
 
 	}
 	progreviewsRoute := router.Group("/curriculum")
@@ -42,13 +45,13 @@ func InitRouterCurriculum(router *gin.Engine, controllerMrg *controllers.Control
 		progreviewsRoute.GET("/progReviews", controllerMrg.ProgReviewsController.GetListProgReviews)
 		progreviewsRoute.GET("/progReviews/:id", controllerMrg.ProgReviewsController.GetProgramReviews)
 	}
-	sectionsetailmaterialRoute := router.Group("/curriculum")
+	sectionDetailmaterialRoute := router.Group("/curriculum")
 	{
-		sectionsetailmaterialRoute.GET("/sectionDetailMaterial", controllerMrg.SectionDetailMaterialController.GetListSectionDetailMaterial)
-		sectionsetailmaterialRoute.GET("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.GetSectionDetailMaterial)
-		sectionsetailmaterialRoute.POST("/sectionDetailMaterial", controllerMrg.SectionDetailMaterialController.CreatesectiondetailMaterial)
-		sectionsetailmaterialRoute.PUT("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.UpdateSectionDetailMaterial)
-		sectionsetailmaterialRoute.DELETE("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.DeleteSectionDetailMaterial)
+		sectionDetailmaterialRoute.GET("/sectionDetailMaterial", controllerMrg.SectionDetailMaterialController.GetListSectionDetailMaterial)
+		sectionDetailmaterialRoute.GET("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.GetSectionDetailMaterial)
+		sectionDetailmaterialRoute.POST("/sectionDetailMaterial", controllerMrg.SectionDetailMaterialController.CreatesectiondetailMaterial)
+		sectionDetailmaterialRoute.PUT("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.UpdateSectionDetailMaterial)
+		sectionDetailmaterialRoute.DELETE("/sectionDetailMaterial/:id", controllerMrg.SectionDetailMaterialController.DeleteSectionDetailMaterial)
 
 	}
 	return router

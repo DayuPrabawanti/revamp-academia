@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	models "codeid.revampacademy/models"
-	repositories "codeid.revampacademy/repositories/curriculumRepositories"
+	"codeid.revampacademy/models/features"
+	repo "codeid.revampacademy/repositories/curriculumRepositories"
 	dbcontext "codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,21 +13,21 @@ import (
 // SECTION DETAIL MATERIAL
 
 type SectionDetailMaterialService struct {
-	sectionDetailMaterialRepository *repositories.SectionDetailMaterialRepository
+	repositoryManager repo.RepositoryManager
 }
 
-func NewSectionDetailMaterialService(sectionDetailMaterialRepository *repositories.SectionDetailMaterialRepository) *SectionDetailMaterialService {
+func NewSectionDetailMaterialService(repoMgr *repo.RepositoryManager) *SectionDetailMaterialService {
 	return &SectionDetailMaterialService{
-		sectionDetailMaterialRepository: sectionDetailMaterialRepository,
+		repositoryManager: *repoMgr,
 	}
 }
 
-func (sdm SectionDetailMaterialService) GetListSectionDetailMaterial(ctx *gin.Context) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
-	return sdm.sectionDetailMaterialRepository.GetListSectionDetailMaterial(ctx)
+func (sdm SectionDetailMaterialService) GetListSectionDetailMaterial(ctx *gin.Context, metadata *features.Metadata) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+	return sdm.repositoryManager.ProgEntityRepository.GetListSectionDetailMaterial(ctx)
 }
 
 func (sdm SectionDetailMaterialService) GetSectionDetailMaterial(ctx *gin.Context, id int64) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
-	return sdm.sectionDetailMaterialRepository.GetSectionDetailMaterial(ctx, id)
+	return sdm.repositoryManager.ProgEntityRepository.GetSectionDetailMaterial(ctx, id)
 }
 
 func (sdm SectionDetailMaterialService) CreatesectiondetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
@@ -35,7 +36,7 @@ func (sdm SectionDetailMaterialService) CreatesectiondetailMaterial(ctx *gin.Con
 		return nil, responseErr
 	}
 
-	return sdm.sectionDetailMaterialRepository.CreatesectiondetailMaterial(ctx, sectionDetailMaterialParams)
+	return sdm.repositoryManager.ProgEntityRepository.CreatesectiondetailMaterial(ctx, sectionDetailMaterialParams)
 }
 
 func (sdm SectionDetailMaterialService) UpdateSectionDetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams, id int64) *models.ResponseError {
@@ -44,11 +45,11 @@ func (sdm SectionDetailMaterialService) UpdateSectionDetailMaterial(ctx *gin.Con
 		return responseErr
 	}
 
-	return sdm.sectionDetailMaterialRepository.UpdateSectionDetailMaterial(ctx, sectionDetailMaterialParams)
+	return sdm.repositoryManager.UpdateSectionDetailMaterial(ctx, sectionDetailMaterialParams)
 }
 
 func (sdm SectionDetailMaterialService) DeleteSectionDetailMaterial(ctx *gin.Context, id int64) *models.ResponseError {
-	return sdm.sectionDetailMaterialRepository.DeleteSectionDetailMaterial(ctx, id)
+	return sdm.repositoryManager.DeleteSectionDetailMaterial(ctx, id)
 }
 
 func validateSectDetMaterial(sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) *models.ResponseError {

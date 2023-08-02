@@ -89,7 +89,6 @@ SELECT  sect_prog_entity_id, sect_title, sect_description,sect_total_minute FROM
 WHERE sect_prog_entity_id = $1
 `
 
-// curriculum.sections
 func (q *Queries) Getsections(ctx context.Context, sectID int32) ([]mod.CurriculumSectionGet, error) {
 	rows, err := q.db.QueryContext(ctx, getsections, sectID)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	mod "codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 	db "codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 
@@ -14,18 +15,20 @@ import (
 type ProgEntityRepository struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewProgEntityRepository(dbHandler *sql.DB) *ProgEntityRepository {
 	return &ProgEntityRepository{
 		dbHandler: dbHandler,
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 
-func (per ProgEntityRepository) GetListProgEntity(ctx *gin.Context) ([]*mod.CurriculumProgramEntity, *mod.ResponseError) {
+func (per ProgEntityRepository) GetListProgEntity(ctx *gin.Context, metadata *features.Metadata) ([]*mod.CurriculumProgramEntity, *mod.ResponseError) {
 
-	store := dbContext.New(per.dbHandler)
-	progentity, err := store.Listprogram_entity(ctx)
+	// store := dbContext.New(per.dbHandler)
+	progentity, err := per.dbQueries.Listprogram_entity(ctx, metadata)
 
 	listProgEntity := make([]*mod.CurriculumProgramEntity, 0)
 
@@ -63,10 +66,10 @@ func (per ProgEntityRepository) GetListProgEntity(ctx *gin.Context) ([]*mod.Curr
 
 	return listProgEntity, nil
 }
-func (per ProgEntityRepository) GetListMasterCategory(ctx *gin.Context) ([]*mod.MasterCategory, *mod.ResponseError) {
+func (per ProgEntityRepository) GetListMasterCategory(ctx *gin.Context, metadata *features.Metadata) ([]*mod.MasterCategory, *mod.ResponseError) {
 
-	store := dbContext.New(per.dbHandler)
-	section, err := store.ListMasterCategories(ctx)
+	// store := dbContext.New(per.dbHandler)
+	section, err := per.dbQueries.ListMasterCategories(ctx)
 
 	listSections := make([]*mod.MasterCategory, 0)
 
@@ -90,10 +93,10 @@ func (per ProgEntityRepository) GetListMasterCategory(ctx *gin.Context) ([]*mod.
 	return listSections, nil
 }
 
-func (per ProgEntityRepository) GetListSection(ctx *gin.Context) ([]*mod.CurriculumSection, *mod.ResponseError) {
+func (per ProgEntityRepository) GetListSection(ctx *gin.Context, metadata *features.Metadata) ([]*mod.CurriculumSection, *mod.ResponseError) {
 
-	store := dbContext.New(per.dbHandler)
-	section, err := store.Listsections(ctx)
+	// store := dbContext.New(per.dbHandler)
+	section, err := per.dbQueries.Listsections(ctx)
 
 	listSections := make([]*mod.CurriculumSection, 0)
 
@@ -120,10 +123,10 @@ func (per ProgEntityRepository) GetListSection(ctx *gin.Context) ([]*mod.Curricu
 
 	return listSections, nil
 }
-func (per ProgEntityRepository) GetListSectionDetail(ctx *gin.Context) ([]*mod.CurriculumSectionDetail, *mod.ResponseError) {
+func (per ProgEntityRepository) GetListSectionDetail(ctx *gin.Context, metadata *features.Metadata) ([]*mod.CurriculumSectionDetail, *mod.ResponseError) {
 
-	store := dbContext.New(per.dbHandler)
-	sectiondetail, err := store.Listsection_detail(ctx)
+	// store := dbContext.New(per.dbHandler)
+	sectiondetail, err := per.dbQueries.Listsection_detail(ctx)
 
 	listSectionsDetail := make([]*mod.CurriculumSectionDetail, 0)
 
@@ -151,46 +154,84 @@ func (per ProgEntityRepository) GetListSectionDetail(ctx *gin.Context) ([]*mod.C
 	return listSectionsDetail, nil
 }
 
-func (per ProgEntityRepository) Gabung(ctx *gin.Context) ([]*mod.Gabung, *mod.ResponseError) {
+func (ped ProgEntityRepository) GetListProgEntityDesc(ctx *gin.Context, metadata *features.Metadata) ([]*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
 
-	// Ambil daftar CurriculumProgramEntity
-	progEntities, err := per.GetListProgEntity(ctx)
+	// store := db.New(ped.dbHandler)
+	progEntityDesc, err := ped.dbQueries.Listprogram_entity_description(ctx, metadata)
+
+	listProgEntityDesc := make([]*mod.CurriculumProgramEntityDescription, 0)
+
+	for _, v := range progEntityDesc {
+		progEntityDesc := &mod.CurriculumProgramEntityDescription{
+			PredProgEntityID: v.PredProgEntityID,
+			PredItemLearning: v.PredItemLearning,
+			PredDescription:  v.PredDescription,
+			PredTargetLevel:  v.PredTargetLevel,
+		}
+		listProgEntityDesc = append(listProgEntityDesc, progEntityDesc)
+	}
+
+	if err != nil {
+		return nil, &mod.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return listProgEntityDesc, nil
+}
+
+func (per ProgEntityRepository) Gabung(ctx *gin.Context, metadata *features.Metadata) ([]*mod.Gabung, *mod.ResponseError) {
+
+	// Ambil data dari tiap table
+	progEntities, err := per.GetListProgEntity(ctx, metadata)
 	if err != nil {
 		return nil, err
 	}
 
-	// Ambil daftar CurriculumSection
-	sections, err := per.GetListSection(ctx)
+	sections, err := per.GetListSection(ctx, metadata)
 	if err != nil {
 		return nil, err
 	}
 
-	// sectionDetails, err := per.GetListSectionDetail(ctx)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	masterCategories, err := per.GetListMasterCategory(ctx)
+	progEntityDesc, err := per.GetListProgEntityDesc(ctx, metadata)
 	if err != nil {
 		return nil, err
 	}
 
-	// Buat map untuk menyimpan CurriculumSection berdasarkan SectProgEntityID
+	sectionDetails, err := per.GetListSectionDetail(ctx, metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	masterCategories, err := per.GetListMasterCategory(ctx, metadata)
+	if err != nil {
+		return nil, err
+	}
+
+	// Buat map untuk menyimpan data
 	sectionMap := make(map[int32]*mod.CurriculumSection)
 	for _, section := range sections {
 		sectionMap[section.SectProgEntityID] = section
 	}
 
-	// sectionDetailMap := make(map[int32]*mod.CurriculumSectionDetail)
-	// for _, sectionDetail := range sectionDetails {
-	// 	sectionDetailMap[sectionDetail.SecdSectID] = sectionDetail
-	// }
+	progEntityDescMap := make(map[int32]*mod.CurriculumProgramEntityDescription)
+	for _, progEntityDesc := range progEntityDesc {
+		progEntityDescMap[progEntityDesc.PredProgEntityID] = progEntityDesc
+
+	}
+
+	sectionDetailMap := make(map[int32]*mod.CurriculumSectionDetail)
+	for _, sectionDetail := range sectionDetails {
+		sectionDetailMap[sectionDetail.SecdSectID] = sectionDetail
+	}
+
 	masterCategoryMap := make(map[int32]*mod.MasterCategory)
 	for _, masterCategory := range masterCategories {
 		masterCategoryMap[masterCategory.CateID] = masterCategory
 	}
 
-	// Gabungkan data dari CurriculumProgramEntity dan CurriculumSection
+	// Gabungkan data
 	gabungList := make([]*mod.Gabung, 0)
 	for _, progEntity := range progEntities {
 		section, ok := sectionMap[progEntity.ProgEntityID]
@@ -198,12 +239,19 @@ func (per ProgEntityRepository) Gabung(ctx *gin.Context) ([]*mod.Gabung, *mod.Re
 			// Jika tidak ada CurriculumSection yang cocok, lanjutkan ke iterasi selanjutnya
 			continue
 		}
-		// sectionDetail, ok := sectionDetailMap[section.SectID]
+		progEntityDesc, ok := progEntityDescMap[progEntity.ProgEntityID]
+		if !ok {
+			// jika tidak ada Curriculumprogramentitydesc yang cocok, lanjut ke iterasi selanjutnya
+			continue
+		}
 
-		// if !ok {
-		// 	// Jika tidak ada CurriculumSectionDetail yang cocok, lanjutkan ke iterasi selanjutnya
-		// 	continue
-		// }
+		sectionDetail, ok := sectionDetailMap[section.SectID]
+
+		if !ok {
+			// Jika tidak ada CurriculumSectionDetail yang cocok, lanjutkan ke iterasi selanjutnya
+			continue
+		}
+
 		masterCategory, ok := masterCategoryMap[progEntity.ProgCateID]
 		if !ok {
 			// Jika tidak ada MasterCategory yang cocok, lanjutkan ke iterasi selanjutnya
@@ -211,10 +259,11 @@ func (per ProgEntityRepository) Gabung(ctx *gin.Context) ([]*mod.Gabung, *mod.Re
 		}
 
 		gabung := &mod.Gabung{
-			CurriculumProgramEntity: *progEntity,
-			CurriculumSection:       *section,
-			// CurriculumSectionDetail: *sectionDetail,
-			MasterCategory: *masterCategory,
+			CurriculumProgramEntity:            *progEntity,
+			CurriculumSection:                  *section,
+			CurriculumProgramEntityDescription: *progEntityDesc,
+			CurriculumSectionDetail:            *sectionDetail,
+			MasterCategory:                     *masterCategory,
 		}
 
 		gabungList = append(gabungList, gabung)
@@ -268,6 +317,21 @@ func (per ProgEntityRepository) GetCategory(ctx *gin.Context, id int64) (*[]mod.
 	return &category, nil
 }
 
+func (per ProgEntityRepository) Getsection_detail(ctx *gin.Context, id int64) (*mod.CurriculumSectionDetail, *mod.ResponseError) {
+
+	store := dbContext.New(per.dbHandler)
+	secDetail, err := store.Getsection_detail(ctx, int32(id))
+
+	if err != nil {
+		return nil, &mod.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &secDetail, nil
+}
+
 func (per ProgEntityRepository) GetGabung(ctx *gin.Context, id int64) (*[]mod.GetGabung, *mod.ResponseError) {
 
 	// Ambil data CurriculumProgramEntity
@@ -282,17 +346,31 @@ func (per ProgEntityRepository) GetGabung(ctx *gin.Context, id int64) (*[]mod.Ge
 		return nil, err
 	}
 
+	// Ambil data CurriculumProgEntityDesc
+	progEntityDesc, err := per.GetProgEntityDesc(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
 	// Ambil data MasterCategory
 	category, err := per.GetCategory(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
+	// Ambil data Section Detail
+	secDetail, err := per.Getsection_detail(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
 	// Buat objek GetGabung
 	getGabung := &mod.GetGabung{
-		CurriculumProgramEntity: *progEntity,
-		CurriculumSectionGet:    *sections,
-		MasterCategory:          *category,
+		CurriculumProgramEntity:            *progEntity,
+		CurriculumSectionGet:               *sections,
+		CurriculumSectionDetail:            *secDetail,
+		CurriculumProgramEntityDescription: *progEntityDesc,
+		MasterCategory:                     *category,
 	}
 
 	// Masukkan objek GetGabung ke dalam slice, karena GetGabung berada dalam slice
@@ -327,6 +405,18 @@ func (per ProgEntityRepository) CreateSection(ctx *gin.Context, sectionsParams *
 	return section, nil
 }
 
+func (per ProgEntityRepository) Createsection_detail(ctx *gin.Context, section_detailParams *db.Createsection_detailParams) (*mod.CurriculumSectionDetail, *mod.ResponseError) {
+	store := dbContext.New(per.dbHandler)
+	sectionDetail, err := store.Createsection_detail(ctx, *section_detailParams)
+	if err != nil {
+		return nil, &mod.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return sectionDetail, nil
+}
+
 func (per ProgEntityRepository) CreateCategory(ctx *gin.Context, categoryParams *db.CreateCategoryParams) (*mod.MasterCategory, *mod.ResponseError) {
 	store := dbContext.New(per.dbHandler)
 	category, err := store.CreateCategory(ctx, *categoryParams)
@@ -341,7 +431,6 @@ func (per ProgEntityRepository) CreateCategory(ctx *gin.Context, categoryParams 
 
 func (per ProgEntityRepository) CreateGabung(ctx *gin.Context, gabungParams *db.CreateGabung) (*mod.Gabung, *mod.ResponseError) {
 
-	// Buat CurriculumProgramEntity
 	progEntity, err := per.CreateProgEntity(ctx, &gabungParams.Createprogram_entityParams)
 	if err != nil {
 		return nil, err
@@ -352,16 +441,27 @@ func (per ProgEntityRepository) CreateGabung(ctx *gin.Context, gabungParams *db.
 		return nil, err
 	}
 
+	secDetail, err := per.Createsection_detail(ctx, &gabungParams.Createsection_detailParams)
+	if err != nil {
+		return nil, err
+	}
+
+	progEntityDesc, err := per.CreateProgEntityDesc(ctx, &gabungParams.CreateProgEntityDescParams)
+	if err != nil {
+		return nil, err
+	}
+
 	category, err := per.CreateCategory(ctx, &gabungParams.CreateCategoryParams)
 	if err != nil {
 		return nil, err
 	}
 
-	// Buat Gabung
 	gabung := &mod.Gabung{
-		CurriculumProgramEntity: *progEntity,
-		CurriculumSection:       *section,
-		MasterCategory:          *category,
+		CurriculumProgramEntity:            *progEntity,
+		CurriculumSection:                  *section,
+		CurriculumSectionDetail:            *secDetail,
+		CurriculumProgramEntityDescription: *progEntityDesc,
+		MasterCategory:                     *category,
 	}
 
 	return gabung, nil

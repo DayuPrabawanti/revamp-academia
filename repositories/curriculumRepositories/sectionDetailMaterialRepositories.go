@@ -1,7 +1,6 @@
 package curriculumRepositories
 
 import (
-	"database/sql"
 	"net/http"
 
 	models "codeid.revampacademy/models"
@@ -9,18 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type SectionDetailMaterialRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
-}
-
-func NewSectionDetailMaterialRepository(dbHandler *sql.DB) *SectionDetailMaterialRepository {
-	return &SectionDetailMaterialRepository{
-		dbHandler: dbHandler,
-	}
-}
-
-func (sdm SectionDetailMaterialRepository) GetListSectionDetailMaterial(ctx *gin.Context) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+func (sdm ProgEntityRepository) GetListSectionDetailMaterial(ctx *gin.Context) ([]*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
 
 	store := dbcontext.New(sdm.dbHandler)
 	sectionDetailMaterials, err := store.ListSectionDetailMaterial(ctx)
@@ -50,7 +38,7 @@ func (sdm SectionDetailMaterialRepository) GetListSectionDetailMaterial(ctx *gin
 	return listSectionDetailMaterial, nil
 }
 
-func (sdm SectionDetailMaterialRepository) GetSectionDetailMaterial(ctx *gin.Context, id int64) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+func (sdm ProgEntityRepository) GetSectionDetailMaterial(ctx *gin.Context, id int64) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
 
 	store := dbcontext.New(sdm.dbHandler)
 	sectionDetailMaterial, err := store.GetSectionDetailMaterial(ctx, int16(id))
@@ -65,7 +53,7 @@ func (sdm SectionDetailMaterialRepository) GetSectionDetailMaterial(ctx *gin.Con
 	return &sectionDetailMaterial, nil
 }
 
-func (sdm SectionDetailMaterialRepository) CreatesectiondetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
+func (sdm ProgEntityRepository) CreatesectiondetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) (*models.CurriculumSectionDetailMaterial, *models.ResponseError) {
 
 	store := dbcontext.New(sdm.dbHandler)
 	sectionDetailMaterial, err := store.CreatesectiondetailMaterial(ctx, *sectionDetailMaterialParams)
@@ -79,7 +67,7 @@ func (sdm SectionDetailMaterialRepository) CreatesectiondetailMaterial(ctx *gin.
 	return sectionDetailMaterial, nil
 }
 
-func (sdm SectionDetailMaterialRepository) UpdateSectionDetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) *models.ResponseError {
+func (sdm ProgEntityRepository) UpdateSectionDetailMaterial(ctx *gin.Context, sectionDetailMaterialParams *dbcontext.CreatesectionDetailMaterialParams) *models.ResponseError {
 
 	store := dbcontext.New(sdm.dbHandler)
 	err := store.UpdateSectionDetailMaterial(ctx, *sectionDetailMaterialParams)
@@ -96,7 +84,7 @@ func (sdm SectionDetailMaterialRepository) UpdateSectionDetailMaterial(ctx *gin.
 	}
 }
 
-func (sdm SectionDetailMaterialRepository) DeleteSectionDetailMaterial(ctx *gin.Context, id int64) *models.ResponseError {
+func (sdm ProgEntityRepository) DeleteSectionDetailMaterial(ctx *gin.Context, id int64) *models.ResponseError {
 
 	store := dbcontext.New(sdm.dbHandler)
 	err := store.DeleteSectionDetailMaterial(ctx, int16(id))

@@ -1,7 +1,6 @@
 package curriculumRepositories
 
 import (
-	"database/sql"
 	"net/http"
 
 	models "codeid.revampacademy/models"
@@ -10,18 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ProgReviewsRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
-}
-
-func NewProgReviewsRepository(dbHandler *sql.DB) *ProgReviewsRepository {
-	return &ProgReviewsRepository{
-		dbHandler: dbHandler,
-	}
-}
-
-func (pr ProgReviewsRepository) GetListProgReviews(ctx *gin.Context) ([]*models.CurriculumProgramReview, *models.ResponseError) {
+func (pr ProgEntityRepository) GetListProgReviews(ctx *gin.Context) ([]*models.CurriculumProgramReview, *models.ResponseError) {
 
 	store := dbcontext.New(pr.dbHandler)
 	progReview, err := store.ListProgReviews(ctx)
@@ -49,7 +37,7 @@ func (pr ProgReviewsRepository) GetListProgReviews(ctx *gin.Context) ([]*models.
 	return listProgReviews, nil
 }
 
-func (pr ProgReviewsRepository) GetProgramReviews(ctx *gin.Context, id int64) (*models.CurriculumProgramReview, *models.ResponseError) {
+func (pr ProgEntityRepository) GetProgramReviews(ctx *gin.Context, id int64) (*models.CurriculumProgramReview, *models.ResponseError) {
 
 	store := dbcontext.New(pr.dbHandler)
 	programReviews, err := store.GetProgramReviews(ctx, int16(id))

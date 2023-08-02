@@ -3,22 +3,21 @@ package dbContext
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
 	mod "codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 )
 
 type CreateGabung struct {
 	Createprogram_entityParams Createprogram_entityParams
 	CreatesectionsParams       CreatesectionsParams
 	CreateCategoryParams       CreateCategoryParams
-}
-
-type CreateGabungParams struct {
-	Createprogram_entityParams
-	CreatesectionsParams
-	CreateCategoryParams
+	CreateProgEntityDescParams CreateProgEntityDescParams
+	Createsection_detailParams Createsection_detailParams
+	// CreatesectionDetailMaterialParams CreatesectionDetailMaterialParams
 }
 
 const createprogram_entity = `-- name: Createprogram_entity :one
@@ -51,7 +50,7 @@ type Createprogram_entityParams struct {
 	ProgHeadline     string    `db:"prog_headline" json:"progHeadline"`
 	ProgType         string    `db:"prog_type" json:"progType"`
 	ProgLearningType string    `db:"prog_learning_type" json:"progLearningType"`
-	ProgRating       int32     `db:"prog_rating" json:"progRating"`
+	ProgRating       string    `db:"prog_rating" json:"progRating"`
 	ProgTotalTraniee int32     `db:"prog_total_trainee" json:"progTotalTrainee"`
 	ProgModifiedDate time.Time `db:"prog_modified_date" json:"progModifiedDate"`
 	ProgImage        string    `db:"prog_image" json:"progImage"`
@@ -226,15 +225,41 @@ func (q *Queries) Getprogram_entity(ctx context.Context, progEntityID int32) (mo
 		&i.ProgCreatedBy,
 		&i.ProgStatus,
 	)
+	yearMonth := time.Now().Format("200601")
+	seqNo := i.ProgEntityID // Atur nomor sekuen sesuai dengan kondisi Anda
+
+	// Format nomor registrasi CURR-TAHUN-BULAN-SEQNO
+	i.RegistrasiNumber = fmt.Sprintf("CURR%s#%03d", yearMonth, seqNo)
+
 	return i, err
 }
 
 const listprogram_entity = `-- name: Listprogram_entity :many
-SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_traniee, prog_modified_date, prog_image, prog_best_seller, prog_price, prog_language, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status FROM curriculum.program_entity
+SELECT prog_entity_id, 
+prog_title, 
+prog_headline, 
+prog_type, 
+prog_learning_type, 
+prog_rating, 
+prog_total_traniee, 
+prog_modified_date, 
+prog_image, 
+prog_best_seller, 
+prog_price, 
+prog_language, 
+prog_duration, 
+prog_duration_type, 
+prog_tag_skill, 
+prog_city_id, 
+prog_cate_id, 
+prog_created_by, 
+prog_status FROM curriculum.program_entity
+ORDER BY prog_entity_id
+limit $1 offset $2
 `
 
-func (q *Queries) Listprogram_entity(ctx context.Context) ([]mod.CurriculumProgramEntity, error) {
-	rows, err := q.db.QueryContext(ctx, listprogram_entity)
+func (q *Queries) Listprogram_entity(ctx context.Context, metadata *features.Metadata) ([]mod.CurriculumProgramEntity, error) {
+	rows, err := q.db.QueryContext(ctx, listprogram_entity, metadata.PageSize, metadata.PageNo)
 	if err != nil {
 		return nil, err
 	}
@@ -314,8 +339,8 @@ SELECT cate_id, cate_name,cate_cate_id, cate_modified_date FROM master.category
 WHERE cate_id = $1
 `
 
-func (q *Queries) GetCategories(ctx context.Context, cateID int32) ([]mod.MasterCategory, error) {
-	rows, err := q.db.QueryContext(ctx, getCategories, cateID)
+func (q *Queries) GetCategories(ctx context.Context, cateId int32) ([]mod.MasterCategory, error) {
+	rows, err := q.db.QueryContext(ctx, getCategories, cateId)
 	if err != nil {
 		return nil, err
 	}

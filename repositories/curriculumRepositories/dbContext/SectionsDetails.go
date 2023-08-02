@@ -2,9 +2,11 @@ package dbContext
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	curi "codeid.revampacademy/models"
+	mod "codeid.revampacademy/models"
 )
 
 const createsection_detail = `-- name: Createsection_detail :one
@@ -32,7 +34,7 @@ type Createsection_detailParams struct {
 	SecdSectID       int32     `db:"secd_sect_id" json:"secdSectId"`
 }
 
-func (q *Queries) Createsection_detail(ctx context.Context, arg Createsection_detailParams) (int32, error) {
+func (q *Queries) Createsection_detail(ctx context.Context, arg Createsection_detailParams) (*mod.CurriculumSectionDetail, *mod.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createsection_detail,
 		arg.SecdID,
 		arg.SecdTitle,
@@ -43,9 +45,33 @@ func (q *Queries) Createsection_detail(ctx context.Context, arg Createsection_de
 		arg.SecdModifiedDate,
 		arg.SecdSectID,
 	)
-	var secd_id int32
-	err := row.Scan(&secd_id)
-	return secd_id, err
+	i := mod.CurriculumSectionDetail{}
+	err := row.Scan(
+		&i.SecdID,
+		&i.SecdTitle,
+		&i.SecdPreview,
+		&i.SecdScore,
+		&i.SecdNote,
+		&i.SecdMinute,
+		&i.SecdModifiedDate,
+		&i.SecdSectID,
+	)
+	if err != nil {
+		return nil, &mod.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &mod.CurriculumSectionDetail{
+		SecdID:           i.SecdID,
+		SecdTitle:        i.SecdTitle,
+		SecdPreview:      i.SecdPreview,
+		SecdScore:        i.SecdScore,
+		SecdNote:         i.SecdNote,
+		SecdMinute:       i.SecdMinute,
+		SecdModifiedDate: i.SecdModifiedDate,
+		SecdSectID:       i.SecdSectID,
+	}, nil
 }
 
 const deletesection_detail = `-- name: Deletesection_detail :exec
@@ -64,7 +90,6 @@ SELECT secd_id, secd_title, secd_preview, secd_score, secd_note, secd_minute, se
 WHERE secd_id = $1
 `
 
-// curriculum.section_detail
 func (q *Queries) Getsection_detail(ctx context.Context, secdID int32) (curi.CurriculumSectionDetail, error) {
 	row := q.db.QueryRowContext(ctx, getsection_detail, secdID)
 	var i curi.CurriculumSectionDetail

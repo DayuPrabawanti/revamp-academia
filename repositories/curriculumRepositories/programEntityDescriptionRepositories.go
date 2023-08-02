@@ -1,7 +1,6 @@
 package curriculumRepositories
 
 import (
-	"database/sql"
 	"net/http"
 
 	mod "codeid.revampacademy/models"
@@ -10,47 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// PROGRAM ENTITY DESCRIPTION
-
-type ProgEntityDescRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
-}
-
-func NewProgEntityDescRepository(dbHandler *sql.DB) *ProgEntityDescRepository {
-	return &ProgEntityDescRepository{
-		dbHandler: dbHandler,
-	}
-}
-
-func (ped ProgEntityDescRepository) GetListProgEntityDesc(ctx *gin.Context) ([]*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
-
-	store := db.New(ped.dbHandler)
-	progEntityDesc, err := store.Listprogram_entity_description(ctx)
-
-	listProgEntityDesc := make([]*mod.CurriculumProgramEntityDescription, 0)
-
-	for _, v := range progEntityDesc {
-		progEntityDesc := &mod.CurriculumProgramEntityDescription{
-			PredProgEntityID: v.PredProgEntityID,
-			PredItemLearning: v.PredItemLearning,
-			PredDescription:  v.PredDescription,
-			PredTargetLevel:  v.PredTargetLevel,
-		}
-		listProgEntityDesc = append(listProgEntityDesc, progEntityDesc)
-	}
-
-	if err != nil {
-		return nil, &mod.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
-	}
-
-	return listProgEntityDesc, nil
-}
-
-func (ped ProgEntityDescRepository) GetProgEntityDesc(ctx *gin.Context, id int64) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
+func (ped ProgEntityRepository) GetProgEntityDesc(ctx *gin.Context, id int64) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
 
 	store := db.New(ped.dbHandler)
 	programEntityDescription, err := store.Getprogram_entity_description(ctx, int32(id))
@@ -65,7 +24,7 @@ func (ped ProgEntityDescRepository) GetProgEntityDesc(ctx *gin.Context, id int64
 	return (*mod.CurriculumProgramEntityDescription)(&programEntityDescription), nil
 }
 
-func (ped ProgEntityDescRepository) CreateProgEntityDesc(ctx *gin.Context, programEntityDescriptionParams *db.CreateProgEntityDescParams) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
+func (ped ProgEntityRepository) CreateProgEntityDesc(ctx *gin.Context, programEntityDescriptionParams *db.CreateProgEntityDescParams) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
 	store := dbContext.New(ped.dbHandler)
 	progEntityDesc, err := store.CreateProgEntityDesc(ctx, *programEntityDescriptionParams)
 	if err != nil {
@@ -75,4 +34,38 @@ func (ped ProgEntityDescRepository) CreateProgEntityDesc(ctx *gin.Context, progr
 		}
 	}
 	return progEntityDesc, nil
+}
+
+func (per ProgEntityRepository) UpdateProgEntityDesc(ctx *gin.Context, progEntityDescParams *db.UpdateProgEntityDescParams) *mod.ResponseError {
+
+	store := dbContext.New(per.dbHandler)
+	err := store.UpdateProgEntityDesc(ctx, *progEntityDescParams)
+
+	if err != nil {
+		return &mod.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &mod.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}
+
+func (per ProgEntityRepository) DeleteProgEntityDesc(ctx *gin.Context, id int64) *mod.ResponseError {
+
+	store := dbContext.New(per.dbHandler)
+	err := store.DeleteProgEntityDesc(ctx, int32(id))
+
+	if err != nil {
+		return &mod.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &mod.ResponseError{
+		Message: "data has been deleted",
+		Status:  http.StatusOK,
+	}
 }

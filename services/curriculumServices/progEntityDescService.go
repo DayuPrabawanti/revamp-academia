@@ -4,27 +4,28 @@ import (
 	"net/http"
 
 	mod "codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 	repo "codeid.revampacademy/repositories/curriculumRepositories"
 	db "codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
 type ProgEntityDescService struct {
-	progEntityDescRepository *repo.ProgEntityDescRepository
+	repositoryManager repo.RepositoryManager
 }
 
-func NewProgEntityDescService(progEntityDescRepository *repo.ProgEntityDescRepository) *ProgEntityDescService {
+func NewProgEntityDescService(repoMgr *repo.RepositoryManager) *ProgEntityDescService {
 	return &ProgEntityDescService{
-		progEntityDescRepository: progEntityDescRepository,
+		repositoryManager: *repoMgr,
 	}
 }
 
-func (ped ProgEntityDescService) GetListProgEntityDesc(ctx *gin.Context) ([]*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
-	return ped.progEntityDescRepository.GetListProgEntityDesc(ctx)
+func (ped ProgEntityDescService) GetListProgEntityDesc(ctx *gin.Context, metadata *features.Metadata) ([]*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
+	return ped.repositoryManager.ProgEntityRepository.GetListProgEntityDesc(ctx, metadata)
 }
 
 func (ped ProgEntityDescService) GetProgEntityDesc(ctx *gin.Context, id int64) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
-	return ped.progEntityDescRepository.GetProgEntityDesc(ctx, id)
+	return ped.repositoryManager.ProgEntityRepository.GetProgEntityDesc(ctx, id)
 }
 
 func (ped ProgEntityDescService) CreateProgEntityDesc(ctx *gin.Context, progEntityDescParams *db.CreateProgEntityDescParams) (*mod.CurriculumProgramEntityDescription, *mod.ResponseError) {
@@ -33,7 +34,20 @@ func (ped ProgEntityDescService) CreateProgEntityDesc(ctx *gin.Context, progEnti
 		return nil, responseErr
 	}
 
-	return ped.progEntityDescRepository.CreateProgEntityDesc(ctx, progEntityDescParams)
+	return ped.repositoryManager.ProgEntityRepository.CreateProgEntityDesc(ctx, progEntityDescParams)
+}
+
+func (ped ProgEntityDescService) UpdateProgEntityDesc(ctx *gin.Context, progEntityDescParams *db.CreateProgEntityDescParams, id int64) *mod.ResponseError {
+	responseErr := validateProgEntityDesc(progEntityDescParams)
+	if responseErr != nil {
+		return responseErr
+	}
+
+	return ped.repositoryManager.UpdateProgEntityDesc(ctx, (*db.UpdateProgEntityDescParams)(progEntityDescParams))
+}
+
+func (ped ProgEntityDescService) DeleteProgEntityDesc(ctx *gin.Context, id int64) *mod.ResponseError {
+	return ped.repositoryManager.DeleteProgEntityDesc(ctx, id)
 }
 
 func validateProgEntityDesc(progEntityDescParams *db.CreateProgEntityDescParams) *mod.ResponseError {

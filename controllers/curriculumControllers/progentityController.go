@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"codeid.revampacademy/models/features"
 	db "codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 	services "codeid.revampacademy/services/curriculumServices"
 
@@ -24,38 +25,90 @@ func NewProgEntityController(progentityService *services.ProgEntityService) *Pro
 }
 
 func (progentityController ProgEntityController) GetListProgEntity(ctx *gin.Context) {
-	response, responerr := progentityController.progentityService.GetListProgEntity(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+
+	response, responerr := progentityController.progentityService.GetListProgEntity(ctx, &metadata)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 	}
 	ctx.JSON(http.StatusOK, response)
 }
+
 func (progentityController ProgEntityController) GetListMasterCategory(ctx *gin.Context) {
-	response, responerr := progentityController.progentityService.GetListMasterCategory(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+	response, responerr := progentityController.progentityService.GetListMasterCategory(ctx, &metadata)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 	}
 	ctx.JSON(http.StatusOK, response)
-	//ctx.JSON(http.StatusOK, "bisa")
 }
+
 func (progentityController ProgEntityController) GetListSection(ctx *gin.Context) {
-	response, responerr := progentityController.progentityService.GetListSection(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+	response, responerr := progentityController.progentityService.GetListSection(ctx, &metadata)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 	}
 	ctx.JSON(http.StatusOK, response)
-	//ctx.JSON(http.StatusOK, "bisa")
 }
 func (progentityController ProgEntityController) GetListSectionDetail(ctx *gin.Context) {
-	response, responerr := progentityController.progentityService.GetListSectionDetail(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+	response, responerr := progentityController.progentityService.GetListSectionDetail(ctx, &metadata)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 	}
 	ctx.JSON(http.StatusOK, response)
-	//ctx.JSON(http.StatusOK, "bisa")
+
 }
 func (progentityController ProgEntityController) GetListGabung(ctx *gin.Context) {
-	response, responerr := progentityController.progentityService.Gabung(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+
+	response, responerr := progentityController.progentityService.Gabung(ctx, &metadata)
 	if responerr != nil {
 		ctx.JSON(responerr.Status, responerr)
 		return
@@ -121,7 +174,7 @@ func (progentityController ProgEntityController) CreateProgEntity(ctx *gin.Conte
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		log.Println("Error while reading create category request body", err)
+		log.Println("Error while reading create programEntity request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -129,7 +182,7 @@ func (progentityController ProgEntityController) CreateProgEntity(ctx *gin.Conte
 	var progentity db.Createprogram_entityParams
 	err = json.Unmarshal(body, &progentity)
 	if err != nil {
-		log.Println("Error while unmarshaling create category request body", err)
+		log.Println("Error while unmarshaling create programEntity request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -178,15 +231,15 @@ func (progentityController ProgEntityController) CreateGabung(ctx *gin.Context) 
 		return
 	}
 
-	var gabungParams db.CreateGabung
-	err = json.Unmarshal(body, &gabungParams)
+	var gabung db.CreateGabung
+	err = json.Unmarshal(body, &gabung)
 	if err != nil {
 		log.Println("Error while unmarshaling create Gabung request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response, responseErr := progentityController.progentityService.CreateGabung(ctx, &gabungParams)
+	response, responseErr := progentityController.progentityService.CreateGabung(ctx, &gabung)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
@@ -248,3 +301,30 @@ func (progentityController ProgEntityController) DeleteProgEntity(ctx *gin.Conte
 
 	ctx.Status(http.StatusNoContent)
 }
+
+// func (progentityController ProgEntityController) CreateProgEntityWithSection(ctx *gin.Context) {
+
+// 	body, err := io.ReadAll(ctx.Request.Body)
+// 	if err != nil {
+// 		log.Println("Error while reading create programEntity request body", err)
+// 		ctx.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
+
+// 	var curriculumProgEntity models.CreateGroupDto
+// 	err = json.Unmarshal(body, &curriculumProgEntity)
+// 	if err != nil {
+// 		log.Println("Error while unmarshaling create programEntity request body", err)
+// 		ctx.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
+
+// 	response, responseErr := progentityController.progentityService.CreateGroupDto(ctx, &curriculumProgEntity)
+// 	if responseErr != nil {
+// 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+// 		return
+// 	}
+
+// 	ctx.JSON(http.StatusOK, response)
+
+// }

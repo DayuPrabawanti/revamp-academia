@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"codeid.revampacademy/models/features"
 	services "codeid.revampacademy/services/curriculumServices"
 	"github.com/gin-gonic/gin"
 )
@@ -20,7 +21,17 @@ func NewProgReviewsController(progReviewsService *services.ProgReviewService) *P
 }
 
 func (progReviewsController ProgReviewsController) GetListProgReviews(ctx *gin.Context) {
-	response, responseErr := progReviewsController.progReviewsService.GetListProgReviews(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+	response, responseErr := progReviewsController.progReviewsService.GetListProgReviews(ctx, &metadata)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)

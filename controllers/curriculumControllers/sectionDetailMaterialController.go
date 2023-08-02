@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"codeid.revampacademy/models/features"
 	dbcontext "codeid.revampacademy/repositories/curriculumRepositories/dbContext"
 	services "codeid.revampacademy/services/curriculumServices"
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,17 @@ func NewSectionDetailMaterialController(sectionDetailMaterialService *services.S
 }
 
 func (sectionDetailMaterialController SectionDetailMaterialController) GetListSectionDetailMaterial(ctx *gin.Context) {
-	response, responseErr := sectionDetailMaterialController.sectionDetailMaterialService.GetListSectionDetailMaterial(ctx)
+
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	searchBy := ctx.DefaultQuery("searchBy", "")
+
+	metadata := features.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+		SearchBy: searchBy,
+	}
+	response, responseErr := sectionDetailMaterialController.sectionDetailMaterialService.GetListSectionDetailMaterial(ctx, &metadata)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
@@ -106,10 +117,10 @@ func (sectionDetailMaterialController SectionDetailMaterialController) UpdateSec
 	}
 
 	response := sectionDetailMaterialController.sectionDetailMaterialService.UpdateSectionDetailMaterial(ctx, &sectionDetailMaterial, int64(sedmId))
-	// if response != nil {
-	// 	ctx.AbortWithStatusJSON(response.Status, response)
-	// 	return
-	// }
+	if response != nil {
+		ctx.AbortWithStatusJSON(response.Status, response)
+		return
+	}
 
 	ctx.JSON(http.StatusOK, response)
 
