@@ -2,6 +2,7 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -17,12 +18,12 @@ RETURNING *
 `
 
 type CreateEmployeeDepartmentHistoryParams struct {
-	EdhiID           int32     `db:"edhi_id" json:"edhiId"`
-	EdhiEntityID     int32     `db:"edhi_entity_id" json:"edhiEntityId"`
-	EdhiStartDate    time.Time `db:"edhi_start_date" json:"edhiStartDate"`
-	EdhiEndDate      time.Time `db:"edhi_end_date" json:"edhiEndDate"`
-	EdhiModifiedDate time.Time `db:"edhi_modified_date" json:"edhiModifiedDate"`
-	EdhiDeptID       int32     `db:"edhi_dept_id" json:"edhiDeptId"`
+	EdhiID           int32         `db:"edhi_id" json:"edhiId"`
+	EdhiEntityID     int32         `db:"edhi_entity_id" json:"edhiEntityId"`
+	EdhiStartDate    sql.NullTime  `db:"edhi_start_date" json:"edhiStartDate"`
+	EdhiEndDate      sql.NullTime  `db:"edhi_end_date" json:"edhiEndDate"`
+	EdhiModifiedDate sql.NullTime  `db:"edhi_modified_date" json:"edhiModifiedDate"`
+	EdhiDeptID       sql.NullInt32 `db:"edhi_dept_id" json:"edhiDeptId"`
 }
 
 func (q *Queries) CreateEmployeeDepartmentHistory(ctx context.Context, arg CreateEmployeeDepartmentHistoryParams) (*models.HrEmployeeDepartmentHistory, *models.ResponseError) {
@@ -31,7 +32,7 @@ func (q *Queries) CreateEmployeeDepartmentHistory(ctx context.Context, arg Creat
 		arg.EdhiEntityID,
 		arg.EdhiStartDate,
 		arg.EdhiEndDate,
-		arg.EdhiModifiedDate,
+		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.EdhiDeptID,
 	)
 	i := models.HrEmployeeDepartmentHistory{}
@@ -125,6 +126,13 @@ UPDATE hr.employee_department_history
   edhi_dept_id = $6
 WHERE edhi_id = $1
 `
+
+type UpdateEmployeeDepartmentHistoryParams struct {
+	EdhiID           int32        `db:"edhi_id" json:"edhiId"`
+	EdhiStartDate    sql.NullTime `db:"edhi_start_date" json:"edhiStartDate"`
+	EdhiEndDate      sql.NullTime `db:"edhi_end_date" json:"edhiEndDate"`
+	EdhiModifiedDate sql.NullTime `db:"edhi_modified_date" json:"edhiModifiedDate"`
+}
 
 func (q *Queries) UpdateEmployeeDepartmentHistory(ctx context.Context, arg CreateEmployeeDepartmentHistoryParams) error {
 	_, err := q.db.ExecContext(ctx, updateEmployeeDepartmentHistory, arg.EdhiID, arg.EdhiEntityID, arg.EdhiStartDate, arg.EdhiEndDate, arg.EdhiModifiedDate, arg.EdhiDeptID)

@@ -2,6 +2,8 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
+	"time"
 
 	"codeid.revampacademy/models"
 )
@@ -174,4 +176,38 @@ func (q *Queries) SearchTalentDetail(ctx context.Context, clitName string) ([]mo
 		return nil, err
 	}
 	return talents, nil
+}
+
+const updateSwitch = `-- name: UpdateSwitch :exec
+UPDATE bootcamp.batch
+SET batch_start_date = $2,
+	batch_reason = $3,
+	batch_modified_date = $4,
+    batch_status = $5
+WHERE batch_id = $1
+`
+
+type UpdateSwitchParams struct {
+	BatchID           int32          `db:"batch_id" json:"batchId"`
+	BatchStartDate    sql.NullTime   `db:"batch_start_date" json:"batchStartDate"`
+	BatchReason       sql.NullString `db:"batch_reason" json:"batchReason"`
+	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
+	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
+}
+
+func (q *Queries) UpdateSwitch(ctx context.Context, arg UpdateSwitchParams) error {
+	// Set the default value "Idle" for BatchStatus if it is not provided or empty
+	if !arg.BatchStatus.Valid || arg.BatchStatus.String == "" {
+		arg.BatchStatus.String = "Idle"
+		arg.BatchStatus.Valid = true
+	}
+
+	_, err := q.db.ExecContext(ctx, updateSwitch,
+		arg.BatchID,
+		arg.BatchStartDate,
+		arg.BatchReason,
+		sql.NullTime{Time: time.Now(), Valid: true},
+		arg.BatchStatus,
+	)
+	return err
 }

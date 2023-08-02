@@ -2,6 +2,7 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -15,11 +16,11 @@ RETURNING *
 `
 
 type CreatePayHistoryParams struct {
-	EphiEntityID       int32     `db:"ephi_entity_id" json:"ephiEntityId"`
-	EphiRateChangeDate time.Time `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
-	EphiRateSalary     int32     `db:"ephi_rate_salary" json:"ephiRateSalary"`
-	EphiPayFrequence   int16     `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
-	EphiModifiedDate   time.Time `db:"ephi_modified_date" json:"ephiModifiedDate"`
+	EphiEntityID       int32         `db:"ephi_entity_id" json:"ephiEntityId"`
+	EphiRateChangeDate time.Time     `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
+	EphiRateSalary     sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiPayFrequence   sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
+	EphiModifiedDate   sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
 }
 
 func (q *Queries) CreatePayHistory(ctx context.Context, arg CreatePayHistoryParams) (*models.HrEmployeePayHistory, *models.ResponseError) {
@@ -28,7 +29,7 @@ func (q *Queries) CreatePayHistory(ctx context.Context, arg CreatePayHistoryPara
 		arg.EphiRateChangeDate,
 		arg.EphiRateSalary,
 		arg.EphiPayFrequence,
-		arg.EphiModifiedDate,
+		sql.NullTime{Time: time.Now(), Valid: true},
 	)
 	i := models.HrEmployeePayHistory{}
 	err := row.Scan(
@@ -116,6 +117,13 @@ UPDATE hr.employee_pay_history
   ephi_modified_date = $5
 WHERE ephi_entity_id = $1
 `
+
+type UpdatePayHistoryParams struct {
+	EphiEntityID     int32         `db:"ephi_entity_id" json:"ephiEntityId"`
+	EphiRateSalary   sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiPayFrequence sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
+	EphiModifiedDate sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
+}
 
 func (q *Queries) UpdatePayHistory(ctx context.Context, arg CreatePayHistoryParams) error {
 	_, err := q.db.ExecContext(ctx, updatePayHistory, arg.EphiEntityID, arg.EphiRateChangeDate, arg.EphiRateSalary, arg.EphiPayFrequence, arg.EphiModifiedDate)

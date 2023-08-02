@@ -8,16 +8,6 @@ import (
 func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerManager) *gin.Engine {
 
 	// Register routes here
-	clientContractRoute := routers.Group("/clientcontract")
-	{
-		// routers endpoint/url http category
-		clientContractRoute.GET("", controllerMgr.ClientContractController.GetListClientContract)
-		clientContractRoute.GET("/:id", controllerMgr.ClientContractController.GetClientContract)
-		clientContractRoute.POST("", controllerMgr.ClientContractController.CreateClientContract)
-		clientContractRoute.PUT("/:id", controllerMgr.ClientContractController.UpdateClientContract)
-		clientContractRoute.DELETE("/:id", controllerMgr.ClientContractController.DeleteClientContract)
-	}
-
 	departmentHistoryRoute := routers.Group("/departmenthistory")
 	{
 		// routers endpoint/url http category
@@ -63,7 +53,8 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		// routers endpoint/url http category
 		talentDetailRoute.GET("/talentdetail", controllerMgr.TalentsDetailMockupController.GetListTalentDetailMockupDetail)
 		talentDetailRoute.GET("/talentdetail/:id", controllerMgr.TalentsDetailMockupController.GetTalentDetail)
-		talentDetailRoute.GET("talentdetail/search", controllerMgr.TalentsDetailMockupController.SearchTalentDetail)
+		talentDetailRoute.GET("/talentdetail/search", controllerMgr.TalentsDetailMockupController.SearchTalentDetail)
+		talentDetailRoute.GET("/talentdetail/switchStatus", controllerMgr.TalentsDetailMockupController.UpdateSwitch)
 
 	}
 
@@ -78,19 +69,24 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 
 	}
 
+	clientContractRoute := routers.Group("/api/hr")
+	{
+		// routers endpoint/url http category
+		clientContractRoute.GET("clientcontract", controllerMgr.ClientContractController.GetListClientContract)
+		clientContractRoute.GET("/clientcontract/:id", controllerMgr.ClientContractController.GetClientContract)
+		clientContractRoute.POST("clientcontract/create", controllerMgr.ClientContractController.CreateClientContract)
+		clientContractRoute.PUT("/clientcontract/:id", controllerMgr.ClientContractController.UpdateClientContract)
+		clientContractRoute.DELETE("clientcontract/:id", controllerMgr.ClientContractController.DeleteClientContract)
+	}
+
 	employeesRoute := routers.Group("/api/hr")
 	{
 		// routers endpoint/url http category
 		employeesRoute.GET("/employees", controllerMgr.EmployeeMockupController.ListEmployeeMockup)
+		employeesRoute.GET("/employees/create", controllerMgr.EmployeeMockupController.CreateEmployeeMockup)
 		employeesRoute.GET("/employees/search", controllerMgr.EmployeeMockupController.SearchEmployee)
 
 	}
 
-	empClientContractRoute := routers.Group("/api/hr")
-	{
-		// routers endpoint/url http category
-		empClientContractRoute.GET("/empclientcontract/:id")
-		empClientContractRoute.PUT("/empclientcontract/update")
-	}
 	return routers
 }

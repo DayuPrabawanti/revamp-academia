@@ -57,7 +57,7 @@ func validatePayHistory(payHistoryParams *dbContext.CreatePayHistoryParams) *mod
 		}
 	}
 
-	if payHistoryParams.EphiRateSalary == 0 {
+	if payHistoryParams.EphiRateSalary.Valid == false {
 		return &models.ResponseError{
 			Message: "Ephi Rate Salary Required",
 			Status:  http.StatusBadRequest,

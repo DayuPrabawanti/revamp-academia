@@ -11,20 +11,18 @@ type ServiceManager struct {
 	TalentsDetailMockupService
 	TalentsMockupService
 	EmployeeMockupService
-	TalentClientContractService
 }
 
 // constructor
 func NewServiceManager(repoMgr *hrRepository.RepositoryManager) *ServiceManager {
 	return &ServiceManager{
-		ClientContractService:       *NewClientContractService(&repoMgr.ClientContractRepository),
-		DepartmentHistoryService:    *NewDepartmentHistoryService(&repoMgr.DepartmentHistoryRepository),
-		DepartmentService:           *NewDepartmentService(&repoMgr.DepartmentRepository),
-		EmployeeService:             *NewEmployeeService(&repoMgr.EmployeeRepository),
-		PayHistoryService:           *NewPayHistoryService(&repoMgr.PayHistoryRepository),
-		TalentsDetailMockupService:  *NewTalentDetailMockupService(&repoMgr.TalentsDetailMockupRepository),
-		TalentsMockupService:        *NewTalentMockupService(&repoMgr.TalentsMockupRepository),
-		EmployeeMockupService:       *NewEmployeeMockupService(&repoMgr.EmployeeMockupRepository),
-		TalentClientContractService: *NewTalentClientContractService(&repoMgr.TalentClientContractRepository),
+		ClientContractService:      *NewClientContractService(&repoMgr.ClientContractRepository),
+		DepartmentHistoryService:   *NewDepartmentHistoryService(&repoMgr.DepartmentHistoryRepository),
+		DepartmentService:          *NewDepartmentService(&repoMgr.DepartmentRepository),
+		EmployeeService:            *NewEmployeeService(&repoMgr.EmployeeRepository),
+		PayHistoryService:          *NewPayHistoryService(&repoMgr.PayHistoryRepository),
+		TalentsDetailMockupService: *NewTalentDetailMockupService(&repoMgr.TalentsDetailMockupRepository),
+		TalentsMockupService:       *NewTalentMockupService(&repoMgr.TalentsMockupRepository),
+		EmployeeMockupService:      *NewEmployeeMockupService(&repoMgr.EmployeeMockupRepository),
 	}
 }

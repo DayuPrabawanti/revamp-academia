@@ -2,6 +2,7 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"time"
 
@@ -15,19 +16,19 @@ RETURNING *
 `
 
 type CreateClientContractParams struct {
-	EccoID             int32     `db:"ecco_id" json:"eccoId"`
-	EccoEntityID       int32     `db:"ecco_entity_id" json:"eccoEntityId"`
-	EccoContractNo     string    `db:"ecco_contract_no" json:"eccoContractNo"`
-	EccoContractDate   time.Time `db:"ecco_contract_date" json:"eccoContractDate"`
-	EccoStartDate      time.Time `db:"ecco_start_date" json:"eccoStartDate"`
-	EccoEndDate        time.Time `db:"ecco_end_date" json:"eccoEndDate"`
-	EccoNotes          string    `db:"ecco_notes" json:"eccoNotes"`
-	EccoModifiedDate   time.Time `db:"ecco_modified_date" json:"eccoModifiedDate"`
-	EccoMediaLink      string    `db:"ecco_media_link" json:"eccoMediaLink"`
-	EccoJotyID         int32     `db:"ecco_joty_id" json:"eccoJotyId"`
-	EccoAccountManager int32     `db:"ecco_account_manager" json:"eccoAccountManager"`
-	EccoClitID         int32     `db:"ecco_clit_id" json:"eccoClitId"`
-	EccoStatus         string    `db:"ecco_status" json:"eccoStatus"`
+	EccoID             int32          `db:"ecco_id" json:"eccoId"`
+	EccoEntityID       int32          `db:"ecco_entity_id" json:"eccoEntityId"`
+	EccoContractNo     sql.NullString `db:"ecco_contract_no" json:"eccoContractNo"`
+	EccoContractDate   sql.NullTime   `db:"ecco_contract_date" json:"eccoContractDate"`
+	EccoStartDate      sql.NullTime   `db:"ecco_start_date" json:"eccoStartDate"`
+	EccoEndDate        sql.NullTime   `db:"ecco_end_date" json:"eccoEndDate"`
+	EccoNotes          sql.NullString `db:"ecco_notes" json:"eccoNotes"`
+	EccoModifiedDate   sql.NullTime   `db:"ecco_modified_date" json:"eccoModifiedDate"`
+	EccoMediaLink      sql.NullString `db:"ecco_media_link" json:"eccoMediaLink"`
+	EccoJotyID         sql.NullInt32  `db:"ecco_joty_id" json:"eccoJotyId"`
+	EccoAccountManager sql.NullInt32  `db:"ecco_account_manager" json:"eccoAccountManager"`
+	EccoClitID         sql.NullInt32  `db:"ecco_clit_id" json:"eccoClitId"`
+	EccoStatus         sql.NullString `db:"ecco_status" json:"eccoStatus"`
 }
 
 func (q *Queries) CreateClientContract(ctx context.Context, arg CreateClientContractParams) (*models.HrEmployeeClientContract, *models.ResponseError) {
@@ -87,7 +88,8 @@ func (q *Queries) CreateClientContract(ctx context.Context, arg CreateClientCont
 }
 
 const listClientContract = `-- name: ListClientContract :many
-SELECT ecco_id, ecco_entity_id, ecco_contract_no, ecco_contract_date, ecco_start_date, ecco_end_date, ecco_notes, ecco_modified_date, ecco_media_link, ecco_joty_id, ecco_account_manager, ecco_clit_id, ecco_status FROM hr.employee_client_contract
+SELECT ecco_id, ecco_entity_id, ecco_contract_no, ecco_start_date, ecco_end_date, ecco_notes
+FROM hr.employee_client_contract
 ORDER BY ecco_id
 `
 
@@ -104,16 +106,9 @@ func (q *Queries) ListClientContract(ctx context.Context) ([]models.HrEmployeeCl
 			&i.EccoID,
 			&i.EccoEntityID,
 			&i.EccoContractNo,
-			&i.EccoContractDate,
 			&i.EccoStartDate,
 			&i.EccoEndDate,
 			&i.EccoNotes,
-			&i.EccoModifiedDate,
-			&i.EccoMediaLink,
-			&i.EccoJotyID,
-			&i.EccoAccountManager,
-			&i.EccoClitID,
-			&i.EccoStatus,
 		); err != nil {
 			return nil, err
 		}
@@ -130,7 +125,8 @@ func (q *Queries) ListClientContract(ctx context.Context) ([]models.HrEmployeeCl
 
 const getClientContract = `-- name: GetClientContract :one
 
-SELECT ecco_id, ecco_entity_id, ecco_contract_no, ecco_contract_date, ecco_start_date, ecco_end_date, ecco_notes, ecco_modified_date, ecco_media_link, ecco_joty_id, ecco_account_manager, ecco_clit_id, ecco_status FROM hr.employee_client_contract
+SELECT ecco_id, ecco_entity_id, ecco_contract_no, ecco_start_date, ecco_end_date, ecco_notes 
+FROM hr.employee_client_contract
 WHERE ecco_id = $1
 `
 
@@ -142,16 +138,9 @@ func (q *Queries) GetClientContract(ctx context.Context, eccoID int32) (models.H
 		&i.EccoID,
 		&i.EccoEntityID,
 		&i.EccoContractNo,
-		&i.EccoContractDate,
 		&i.EccoStartDate,
 		&i.EccoEndDate,
 		&i.EccoNotes,
-		&i.EccoModifiedDate,
-		&i.EccoMediaLink,
-		&i.EccoJotyID,
-		&i.EccoAccountManager,
-		&i.EccoClitID,
-		&i.EccoStatus,
 	)
 	return i, err
 }
@@ -164,17 +153,21 @@ UPDATE hr.employee_client_contract
   ecco_start_date = $5,
   ecco_end_date = $6,
   ecco_notes = $7,
-  ecco_modified_date = $8,
-  ecco_media_link = $9,
-  ecco_joty_id = $10,
-  ecco_account_manager = $11,
-  ecco_clit_id = $12,
-  ecco_status = $13
+  ecco_modified_date = $8
 WHERE ecco_id = $1
 `
 
 func (q *Queries) UpdateClientContract(ctx context.Context, arg CreateClientContractParams) error {
-	_, err := q.db.ExecContext(ctx, updateClientContract, arg.EccoID, arg.EccoEntityID, arg.EccoContractNo, arg.EccoContractDate, arg.EccoStartDate, arg.EccoEndDate, arg.EccoNotes, arg.EccoModifiedDate, arg.EccoMediaLink, arg.EccoJotyID, arg.EccoAccountManager, arg.EccoClitID, arg.EccoStatus)
+	_, err := q.db.ExecContext(ctx, updateClientContract,
+		arg.EccoID,
+		arg.EccoEntityID,
+		arg.EccoContractNo,
+		sql.NullTime{Time: time.Now(), Valid: true},
+		arg.EccoStartDate,
+		arg.EccoEndDate,
+		arg.EccoNotes,
+		sql.NullTime{Time: time.Now(), Valid: true},
+	)
 	return err
 }
 

@@ -136,3 +136,67 @@ func (employeeController EmployeeController) DeleteEmployee(ctx *gin.Context) {
 
 	ctx.Status(http.StatusNoContent)
 }
+
+// USER
+
+func (employeeController EmployeeController) CreateUser(ctx *gin.Context) {
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create category request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var user dbContext.CreateUsersParams
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		log.Println("Error while unmarshaling create User request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := employeeController.employeeService.CreateUser(ctx, &user)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}
+
+func (employeeController EmployeeController) UpdateUser(ctx *gin.Context) {
+
+	userId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading update category request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var user dbContext.CreateUsersParams
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		log.Println("Error while unmarshaling update category request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response := employeeController.employeeService.UpdateUser(ctx, &user, int64(userId))
+	if response != nil {
+		ctx.AbortWithStatusJSON(response.Status, response)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}

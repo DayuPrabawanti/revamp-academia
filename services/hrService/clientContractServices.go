@@ -57,13 +57,6 @@ func validateClientContract(clientContractParams *dbContext.CreateClientContract
 		}
 	}
 
-	if clientContractParams.EccoContractNo == "" {
-		return &models.ResponseError{
-			Message: "Contract Number Required",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
 	return nil
 
 }

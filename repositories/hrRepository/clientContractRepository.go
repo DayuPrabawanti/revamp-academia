@@ -29,19 +29,12 @@ func (ccr ClientContractRepository) GetListClientContract(ctx *gin.Context) ([]*
 
 	for _, v := range clientContracts {
 		clientContract := &models.HrEmployeeClientContract{
-			EccoID:             v.EccoID,
-			EccoEntityID:       v.EccoEntityID,
-			EccoContractNo:     v.EccoContractNo,
-			EccoContractDate:   v.EccoContractDate,
-			EccoStartDate:      v.EccoStartDate,
-			EccoEndDate:        v.EccoEndDate,
-			EccoNotes:          v.EccoNotes,
-			EccoModifiedDate:   v.EccoModifiedDate,
-			EccoMediaLink:      v.EccoMediaLink,
-			EccoJotyID:         v.EccoJotyID,
-			EccoAccountManager: v.EccoAccountManager,
-			EccoClitID:         v.EccoClitID,
-			EccoStatus:         v.EccoStatus,
+			EccoID:         v.EccoID,
+			EccoEntityID:   v.EccoEntityID,
+			EccoContractNo: v.EccoContractNo,
+			EccoStartDate:  v.EccoStartDate,
+			EccoEndDate:    v.EccoEndDate,
+			EccoNotes:      v.EccoNotes,
 		}
 		listClientContract = append(listClientContract, clientContract)
 	}

@@ -3,6 +3,7 @@ package hrService
 import (
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/hrRepository"
+	"codeid.revampacademy/repositories/hrRepository/dbContext"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,4 +28,9 @@ func (tdms TalentsDetailMockupService) GetTalentDetail(ctx *gin.Context, id int6
 
 func (tdms TalentsDetailMockupService) SearchTalentDetail(ctx *gin.Context, clitName string) ([]models.TalentDetailSearchUpdate, *models.ResponseError) {
 	return tdms.talentDetailRepository.SearchTalentDetail(ctx, clitName)
+}
+
+func (bs TalentsDetailMockupService) UpdateSwitch(ctx *gin.Context, switchParams *dbContext.UpdateSwitchParams, id int64) *models.ResponseError {
+
+	return bs.talentDetailRepository.UpdateSwitch(ctx, switchParams)
 }

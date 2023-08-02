@@ -80,3 +80,20 @@ func (tdmr TalentsDetailMockupRepository) SearchTalentDetail(ctx *gin.Context, c
 
 	return talents, nil
 }
+
+func (br TalentsDetailMockupRepository) UpdateSwitch(ctx *gin.Context, switchParams *dbContext.UpdateSwitchParams) *models.ResponseError {
+
+	store := dbContext.New(br.dbHandler)
+	err := store.UpdateSwitch(ctx, *switchParams)
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}

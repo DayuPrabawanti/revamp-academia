@@ -120,3 +120,34 @@ func (er EmployeeRepository) DeleteEmployee(ctx *gin.Context, id int64) *models.
 		Status:  http.StatusOK,
 	}
 }
+
+func (cr EmployeeRepository) CreateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
+
+	store := dbContext.New(cr.dbHandler)
+	user, err := store.CreateUsers(ctx, *userParams)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return user, nil
+}
+
+func (cr EmployeeRepository) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams) *models.ResponseError {
+
+	store := dbContext.New(cr.dbHandler)
+	err := store.UpdateUser(ctx, *userParams)
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}

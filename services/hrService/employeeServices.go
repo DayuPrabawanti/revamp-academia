@@ -57,9 +57,54 @@ func validateEmployee(employeeParams *dbContext.CreateEmployeeParams) *models.Re
 		}
 	}
 
-	if employeeParams.EmpEmpNumber == "" {
+	if employeeParams.EmpEmpNumber.Valid == false {
 		return &models.ResponseError{
 			Message: "Emp Number Required",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	return nil
+
+}
+
+// USER
+func (cs EmployeeService) CreateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
+	responseErr := validateUser(userParams)
+	if responseErr != nil {
+		return nil, responseErr
+	}
+
+	return cs.employeeRepository.CreateUser(ctx, userParams)
+}
+
+func (cs EmployeeService) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, id int64) *models.ResponseError {
+	responseErr := validateUser(userParams)
+	if responseErr != nil {
+		return responseErr
+	}
+
+	return cs.employeeRepository.UpdateUser(ctx, userParams)
+}
+
+func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError {
+	if userParams.UserEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid User id",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if userParams.UserName.Valid == false {
+		return &models.ResponseError{
+			Message: "Required Username",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if userParams.UserPassword.Valid == false {
+		return &models.ResponseError{
+			Message: "Required Password",
 			Status:  http.StatusBadRequest,
 		}
 	}

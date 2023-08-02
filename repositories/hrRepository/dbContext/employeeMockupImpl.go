@@ -7,9 +7,17 @@ import (
 )
 
 type EmployeeMockupParams struct {
+	User      CreateUsersParams
 	General   CreateEmployeeParams
 	Salary    CreatePayHistoryParams
 	Assigment CreateEmployeeDepartmentHistoryParams
+}
+
+type EmployeeUpdateMockupParams struct {
+	UpdateUser      UpdateUsersParams
+	UpdateGeneral   UpdateEmployeeParams
+	UpdateSalary    UpdatePayHistoryParams
+	UpdateAssigment UpdateEmployeeDepartmentHistoryParams
 }
 
 const listEmployeeMockup = `-- name: ListEmployeeMockup :many

@@ -48,6 +48,15 @@ func (er EmployeeMockupRepository) ListEmployeeMockup(ctx *gin.Context) ([]*mode
 func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employeemockupParams *dbContext.EmployeeMockupParams) (*models.EmployeeMockupModel, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
+	user, err := store.CreateUsers(ctx, employeemockupParams.User)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
 	general, err := store.CreateEmployee(ctx, employeemockupParams.General)
 
 	if err != nil {
@@ -73,9 +82,10 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employ
 		}
 	}
 	employeeMockup := &models.EmployeeMockupModel{
-		General:    *general,
-		Department: *salary,
-		Assigment:  *assigment,
+		User:      *user,
+		General:   *general,
+		Salary:    *salary,
+		Assigment: *assigment,
 	}
 
 	return employeeMockup, nil

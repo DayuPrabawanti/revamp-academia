@@ -1,8 +1,6 @@
 package hrService
 
 import (
-	"net/http"
-
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/hrRepository"
 	"codeid.revampacademy/repositories/hrRepository/dbContext"
@@ -28,21 +26,6 @@ func (tdms EmployeeMockupService) SearchEmployee(ctx *gin.Context, userName stri
 }
 
 func (cs *EmployeeMockupService) EmployeeMockup(ctx *gin.Context, employeeMockup *dbContext.EmployeeMockupParams) (*models.EmployeeMockupModel, *models.ResponseError) {
-	responseErr := validateEmployeeMockup(employeeMockup)
-	if responseErr != nil {
-		return nil, responseErr
-	}
 
 	return cs.employeeMockupRepository.CreateEmployeeMockup(ctx, employeeMockup)
-}
-
-func validateEmployeeMockup(employeemockupParams *dbContext.EmployeeMockupParams) *models.ResponseError {
-	if employeemockupParams.General.EmpEntityID != 0 {
-		return &models.ResponseError{
-			Message: "ID Pengguna tidak valid",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
-	return nil
 }
