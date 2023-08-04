@@ -12,7 +12,7 @@ import (
 
 type PaymentTransactionService struct {
 	// paymentTransactionRepository *repositories.PaymentTransactionRepository
-	repositoryManager repositories.RepositoriesManager
+	repositoriesManager repositories.RepositoriesManager
 }
 
 // func NewPaymentTransactionService(paymentTransactionRepository *repositories.PaymentTransactionRepository) *PaymentTransactionService {
@@ -23,7 +23,7 @@ type PaymentTransactionService struct {
 
 func NewPaymentTransactionService(repoMgr *repositories.RepositoriesManager) *PaymentTransactionService {
 	return &PaymentTransactionService{
-		repositoryManager: *repoMgr,
+		repositoriesManager: *repoMgr,
 	}
 }
 
@@ -31,23 +31,23 @@ func NewPaymentTransactionService(repoMgr *repositories.RepositoriesManager) *Pa
 // 	return ptr.paymentTransactionRepository.GetListPaymentTransaction(ctx)
 // }
 
-func (pts PaymentTransactionService) GetListPaymentTransaction(ctx *gin.Context) ([]*dbContext.TransactionUser, *models.ResponseError) {
+func (pts PaymentTransactionService) GetListPaymentTransaction(ctx *gin.Context) ([]*dbContext.RecordTransactionUser, *models.ResponseError) {
 	// return pts.paymentTransactionRepository.GetListPaymentTransaction(ctx)
 
-	return pts.repositoryManager.PaymentTransactionRepository.GetListPaymentTransaction(ctx)
+	return pts.repositoriesManager.PaymentTransactionRepository.GetListPaymentTransaction(ctx)
 }
 
-func (pts PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.TransactionUser, *models.ResponseError) {
-	return pts.repositoryManager.PaymentTransactionRepository.GetPaymentTransactionById(ctx, metadata)
+func (pts PaymentTransactionService) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.RecordTransactionUser, *models.ResponseError) {
+	return pts.repositoriesManager.PaymentTransactionRepository.GetPaymentTransactionById(ctx, metadata)
 }
 
-func (ptr PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreateTransactionUser) (*dbContext.TransactionUser, *models.ResponseError) {
-	responseErr := validatePaymentTransaction(paymentTransactionParams)
+func (pts PaymentTransactionService) RecordPaymentTransactionUser(ctx *gin.Context, params *dbContext.RecordTransactionUserParams) (*dbContext.RecordTransactionUser, *models.ResponseError) {
+	responseErr := validatePaymentTransaction(params)
 	if responseErr != nil {
 		return nil, responseErr
 	}
 
-	return ptr.repositoryManager.CreatePaymentTransaction(ctx, paymentTransactionParams)
+	return pts.repositoriesManager.PaymentTransactionRepository.RecordPaymentTransactionUser(ctx, params)
 }
 
 // func (ptr PaymentTransactionService) UpdatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams, id int64) *models.ResponseError {
@@ -63,8 +63,8 @@ func (ptr PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Contex
 // 	return ptr.paymentTransactionRepository.DeletePaymentTransaction(ctx, id)
 // }
 
-func validatePaymentTransaction(paymentTransactionParams *dbContext.CreateTransactionUser) *models.ResponseError {
-	if paymentTransactionParams.TrpaUserEntityID == 0 {
+func validatePaymentTransaction(params *dbContext.RecordTransactionUserParams) *models.ResponseError {
+	if params.TrpaUserEntityID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid TrpaUserEntityID",
 			Status:  http.StatusBadRequest,

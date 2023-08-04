@@ -1,6 +1,7 @@
 package services
 
 import (
+	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
@@ -118,57 +119,72 @@ func (pas PaymentAccountService) DeletePaymentAccountByAccNum(ctx *gin.Context, 
 	return pas.repositoriesManager.PaymentAccountRepository.DeletePaymentAccountByAccNum(ctx, usacAccountNumber)
 }
 
-// func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber string, amount float64, note string) (*dbContext.TransactionUser, *models.ResponseError) {
+// func (pas PaymentAccountService) RecordTransaction(ctx *gin.Context, params *dbContext.CreateTransactionUserParams) (*dbContext.TransactionUserDebit, *models.ResponseError) {
+// 	responseErr := validateRecordTransaction(params)
+// 	if responseErr != nil {
+// 		return nil, responseErr
+// 	}
 
-// 	err := repositories.BeginTransaction(pas.repositoryManager)
-// 	if err != nil {
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to start transaction",
+// 	return pas.repositoriesManager.PaymentAccountRepository.RecordPaymentTransaction(ctx, params)
+// }
+
+// func validateRecordTransaction(paymentTransactionParams *dbContext.CreateTransactionUserParams) *models.ResponseError {
+// 	if paymentTransactionParams.TrpaUserEntityID == 0 {
+// 		return &models.ResponseError{
+// 			Message: "Invalid TrpaUserEntityID",
 // 			Status:  http.StatusBadRequest,
 // 		}
 // 	}
+// 	return nil
 
-// 	// First, get user account information
-// 	userAccount, err := ps.GetPaymentUsers_account(ctx, usacAccountNumber)
-// 	if err != nil {
-// 		repositories.RollbackTransaction(ps.repositoryManager)
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to retrieve account information",
-// 			Status:  http.StatusNotFound,
-// 		}
-// 	}
-
-// 	// Update user's account with the debit amount
-// 	updateParams := UpdatePaymentUsers_accountParams{
-// 		Amount: amount,
-// 	}
-// 	_, err = ps.UpdatePaymentUsers_accountPlus(ctx, updateParams, usacAccountNumber)
-// 	if err != nil {
-// 		repositories.RollbackTransaction(ps.repositoryManager)
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to update account balance",
-// 			Status:  http.StatusInternalServerError,
-// 		}
-// 	}
-
-// 	// Create a transaction record
-// 	transactionParams := CreateTransactionUser{
-// 		TrpaDebit:        sql.NullFloat64{Float64: amount, Valid: true},
-// 		TrpaNote:         note,
-// 		TrpaFromID:       usacAccountNumber,       // adjust according to your logic
-// 		TrpaToID:         "",                      // adjust according to your logic
-// 		TrpaUserEntityID: int32(userAccount.Type), // adjust according to your logic
-// 	}
-// 	transaction, err := ps.CreatePaymentTransaction_payment(ctx, transactionParams)
-// 	if err != nil {
-// 		repositories.RollbackTransaction(ps.repositoryManager)
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to record transaction",
-// 			Status:  http.StatusInternalServerError,
-// 		}
-// 	}
-
-// 	repositories.CommitTransaction(ps.repositoryManager)
-
-// 	return transaction, nil
 // }
+
+func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber string, amount float64) (*dbContext.RecordTransactionUser, *models.ResponseError) {
+
+	err := repositories.BeginTransaction(pas.repositoriesManager)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to start transaction",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	// First, get user account information
+	userAccount, responseErr := pas.GetPaymentAccountByAccountNumber(ctx, usacAccountNumber)
+	if responseErr != nil {
+		repositories.RollbackTransaction(pas.repositoriesManager)
+		return nil, responseErr
+	}
+
+	// Update user's account with the debit amount
+	updateParams := &dbContext.UpdatePaymentUsers_accountParams{
+		Amount: amount,
+	}
+	_, responseErr = pas.UpdatePaymentUsers_accountPlus(ctx, updateParams, usacAccountNumber)
+	if responseErr != nil {
+		repositories.RollbackTransaction(pas.repositoriesManager)
+		return nil, &models.ResponseError{
+			Message: "Failed to update account balance",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	// Create a transaction record
+	transactionUser := &dbContext.RecordTransactionUserParams{
+		TrpaDebit:        sql.NullFloat64{Float64: amount, Valid: true},
+		TrpaCredit:       sql.NullFloat64{},
+		TrpaType:         "SD",
+		TrpaNote:         "Isi SALDO",
+		TrpaFromID:       usacAccountNumber,
+		TrpaToID:         "",
+		TrpaUserEntityID: userAccount.UserEntityID,
+	}
+	transaction, responseErr := pas.repositoriesManager.PaymentTransactionRepository.RecordPaymentTransactionUser(ctx, transactionUser)
+	if responseErr != nil {
+		repositories.RollbackTransaction(pas.repositoriesManager)
+		return nil, responseErr
+	}
+	repositories.CommitTransaction(pas.repositoriesManager)
+
+	return transaction, nil
+}

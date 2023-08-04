@@ -1,6 +1,9 @@
 package services
 
 import (
+	"database/sql"
+	"net/http"
+
 	"codeid.revampacademy/models"
 	repositories "codeid.revampacademy/repositories/paymentRepositories"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
@@ -25,52 +28,85 @@ func (ptts *PaymentTopupService) GetAccountByFintCodeAndAccountNumber(ctx *gin.C
 	return ptts.repositoriesManager.PaymentTopupRepository.GetAccountByFintCodeAndAccountNumber(ctx, fintCode, usacAccountNumber)
 }
 
-// func (pts PaymentTopupService) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
-// 	return pts.paymentTopupRepository.GetListTopupDetail(ctx)
-// }
+func (ptts PaymentTopupService) TransferTopup(ctx *gin.Context, bankCode string, accountFrom string, fintCode string, accountTo string, amount float64) (*dbContext.RecordTransactionUser, *models.ResponseError) {
 
-// func (pts PaymentTopupService) GetTopupDetailById(ctx *gin.Context, id int32) ([]*dbContext.TopupDetail, *models.ResponseError) {
-// 	return pts.paymentTopupRepository.GetTopupDetailById(ctx, id)
-// }
+	err := repositories.BeginTransaction(ptts.repositoriesManager)
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: "Failed to start transaction",
+			Status:  http.StatusBadRequest,
+		}
+	}
 
-// func (pts PaymentTopupService) PerformTransfer(ctx *gin.Context, fromAccount string, amount float64, toAccount string, fromUserID int, toUSerID int) *models.ResponseError {
-// 	// memanggil PerfomTransfer dari repository
-// 	err := pts.paymentTopupRepository.PerformTransfer(ctx, fromAccount, amount, toAccount, fromUserID, toUSerID)
+	// First, get user account information
+	userAccountBank, responseErr := ptts.GetAccountByBankCodeAndAccountNumber(ctx, bankCode, accountFrom)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, responseErr
+	}
 
-// 	// jika terjadi error, maka return fungsi ini
-// 	if err != nil {
-// 		return err
-// 	}
-// 	return nil
-// }
+	userAccountFint, responseErr := ptts.GetAccountByFintCodeAndAccountNumber(ctx, fintCode, accountTo)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, responseErr
+	}
 
-// func (pts PaymentTopupService) CreateTopupProductDto(ctx *gin.Context, topupWithProductDto *models.CreateTopupProductDto) (*dbContext.TopupDetail, *models.ResponseError) {
+	// Update user's account with the debit amount
+	updateParams := &dbContext.UpdatePaymentUsers_accountParams{
+		Amount: amount,
+	}
+	_, responseErr = ptts.repositoriesManager.PaymentAccountRepository.UpdatePaymentUsers_accountMinus(ctx, updateParams, accountFrom)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, &models.ResponseError{
+			Message: "Failed to update account balance",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	_, responseErr = ptts.repositoriesManager.PaymentAccountRepository.UpdatePaymentUsers_accountPlus(ctx, updateParams, accountTo)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, &models.ResponseError{
+			Message: "Failed to update account balance",
+			Status:  http.StatusInternalServerError,
+		}
+	}
 
-// 	err := repositories.BeginTransaction(pts.repositoryManager)
-// 	if err != nil {
-// 		return nil, &models.ResponseError{
-// 			Message: "Failed to start transaction",
-// 			Status:  http.StatusBadRequest,
-// 		}
-// 	}
-// 	//first query statement
-// 	response, responseErr := pts.CreateTopup(ctx, (*dbContext.CreateTopupParams)(&topupWithProductDto.CreateTopupDto))
-// 	if responseErr != nil {
-// 		repositories.RollbackTransaction(pts.repositoryManager)
-// 		return nil, responseErr
-// 	}
-// 	//second query statement
-// 	responseErr = pts.DeleteTopup(ctx, int64(response.CategoryID))
-// 	if responseErr != nil {
-// 		//when delete not succeed, transaction will rollback
-// 		repositories.RollbackTransaction(pts.repositoryManager)
-// 		return nil, responseErr
-// 	}
-// 	// if all statement ok, transaction will commit/save to db
-// 	repositories.CommitTransaction(pts.repositoryManager)
+	// Create a transaction record
+	transactionUserBank := &dbContext.RecordTransactionUserParams{
+		TrpaDebit:        sql.NullFloat64{},
+		TrpaCredit:       sql.NullFloat64{Float64: amount, Valid: true},
+		TrpaType:         "TR",
+		TrpaNote:         "Transfer",
+		TrpaFromID:       accountFrom,
+		TrpaToID:         accountTo,
+		TrpaUserEntityID: userAccountBank.UserEntityID,
+	}
+	_, responseErr = ptts.repositoriesManager.PaymentTransactionRepository.RecordPaymentTransactionUser(ctx, transactionUserBank)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, responseErr
+	}
 
-// 	return nil, &models.ResponseError{
-// 		Message: "Data has been created",
-// 		Status:  http.StatusOK,
-// 	}
-// }
+	transactionUserFint := &dbContext.RecordTransactionUserParams{
+		TrpaDebit:        sql.NullFloat64{Float64: amount, Valid: true},
+		TrpaCredit:       sql.NullFloat64{},
+		TrpaType:         "TP",
+		TrpaNote:         "Topup",
+		TrpaFromID:       accountFrom,
+		TrpaToID:         accountTo,
+		TrpaUserEntityID: userAccountFint.UserEntityID,
+	}
+	_, responseErr = ptts.repositoriesManager.PaymentTransactionRepository.RecordPaymentTransactionUser(ctx, transactionUserFint)
+	if responseErr != nil {
+		repositories.RollbackTransaction(ptts.repositoriesManager)
+		return nil, responseErr
+	}
+
+	repositories.CommitTransaction(ptts.repositoriesManager)
+
+	return nil, &models.ResponseError{
+		Message: "Transfer & Topup Successfull",
+		Status:  http.StatusOK,
+	}
+}

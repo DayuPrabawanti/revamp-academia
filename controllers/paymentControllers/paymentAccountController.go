@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	services "codeid.revampacademy/services/paymentServices"
@@ -138,4 +139,23 @@ func (paymentAccountController PaymentAccountController) DeletePaymentAccountByA
 	}
 
 	ctx.Status(http.StatusNoContent)
+}
+
+func (paymentAccountController *PaymentAccountController) DebitSaldo(ctx *gin.Context) {
+	usacAccountNumber := ctx.PostForm("usacAccountNumber")
+	amountStr := ctx.PostForm("amountStr")
+
+	amount, err := strconv.ParseFloat(amountStr, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid amount"})
+		return
+	}
+
+	transaction, responseErr := paymentAccountController.paymentAccountService.DebitSaldo(ctx, usacAccountNumber, amount)
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, transaction)
 }
