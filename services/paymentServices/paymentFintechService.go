@@ -50,12 +50,6 @@ func (pfs PaymentFintechService) DeletePaymentFintechById(ctx *gin.Context, id i
 }
 
 func validatepaymentFintech(paymentFintechParams *dbContext.CreatePaymentFintechParams) *models.ResponseError {
-	// if paymentFintechParams.FintEntityID == 0 {
-	// 	return &models.ResponseError{
-	// 		Message: "Invalid paymentFintech id",
-	// 		Status:  http.StatusBadRequest,
-	// 	}
-	// }
 
 	if paymentFintechParams.FintCode == "" {
 		return &models.ResponseError{

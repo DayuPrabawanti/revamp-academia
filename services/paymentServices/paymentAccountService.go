@@ -119,26 +119,6 @@ func (pas PaymentAccountService) DeletePaymentAccountByAccNum(ctx *gin.Context, 
 	return pas.repositoriesManager.PaymentAccountRepository.DeletePaymentAccountByAccNum(ctx, usacAccountNumber)
 }
 
-// func (pas PaymentAccountService) RecordTransaction(ctx *gin.Context, params *dbContext.CreateTransactionUserParams) (*dbContext.TransactionUserDebit, *models.ResponseError) {
-// 	responseErr := validateRecordTransaction(params)
-// 	if responseErr != nil {
-// 		return nil, responseErr
-// 	}
-
-// 	return pas.repositoriesManager.PaymentAccountRepository.RecordPaymentTransaction(ctx, params)
-// }
-
-// func validateRecordTransaction(paymentTransactionParams *dbContext.CreateTransactionUserParams) *models.ResponseError {
-// 	if paymentTransactionParams.TrpaUserEntityID == 0 {
-// 		return &models.ResponseError{
-// 			Message: "Invalid TrpaUserEntityID",
-// 			Status:  http.StatusBadRequest,
-// 		}
-// 	}
-// 	return nil
-
-// }
-
 func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber string, amount float64) (*dbContext.RecordTransactionUser, *models.ResponseError) {
 
 	err := repositories.BeginTransaction(pas.repositoriesManager)

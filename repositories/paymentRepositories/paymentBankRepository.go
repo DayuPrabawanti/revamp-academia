@@ -10,8 +10,8 @@ import (
 )
 
 type PaymentBankRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
+	dbHandler *sql.DB
+	// transaction *sql.Tx
 }
 
 func NewPaymentBankRepository(dbHandler *sql.DB) *PaymentBankRepository {

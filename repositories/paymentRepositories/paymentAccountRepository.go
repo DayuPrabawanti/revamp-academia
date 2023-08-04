@@ -10,8 +10,8 @@ import (
 )
 
 type PaymentAccountRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
+	dbHandler *sql.DB
+	// transaction *sql.Tx
 }
 
 func NewPaymentAccountRepository(dbHandler *sql.DB) *PaymentAccountRepository {
@@ -122,16 +122,3 @@ func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Contex
 		Status:  http.StatusOK,
 	}
 }
-
-// func (par PaymentAccountRepository) RecordPaymentTransaction(ctx *gin.Context, createTransactionUserParams *dbContext.CreateTransactionUserParams) (*dbContext.TransactionUserDebit, *models.ResponseError) {
-// 	store := dbContext.New(par.dbHandler)
-// 	transactionUser, err := store.RecordTransaction_payment(ctx, *createTransactionUserParams)
-
-// 	if err != nil {
-// 		return nil, &models.ResponseError{
-// 			Message: err.Error(),
-// 			Status:  http.StatusInternalServerError,
-// 		}
-// 	}
-// 	return transactionUser, nil
-// }
