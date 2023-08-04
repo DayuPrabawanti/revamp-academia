@@ -2,12 +2,15 @@ package dbContext
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
+	"time"
 
 	"codeid.revampacademy/models"
 )
 
 type UserAccount struct {
+	UserEntityID  int32   `json:"user_entity_id"`
 	UserName      string  `json:"user_name"`
 	AccountNumber string  `json:"account_number"`
 	Description   string  `json:"description"`
@@ -16,7 +19,8 @@ type UserAccount struct {
 }
 
 const listPaymentUsers_accountByUserName = `-- name: ListPaymentUsers_accountByUserName :many
-SELECT 
+SELECT
+			u.user_entity_id,
 		    u.user_name,
 		    ua.usac_account_number, 
 		    COALESCE(b.bank_code, f.fint_code) AS description,
@@ -44,6 +48,7 @@ func (q *Queries) ListPaymentUsers_accountByUserName(ctx context.Context, userNa
 	for rows.Next() {
 		var i UserAccount
 		if err := rows.Scan(
+			&i.UserEntityID,
 			&i.UserName,
 			&i.AccountNumber,
 			&i.Description,
@@ -65,11 +70,12 @@ func (q *Queries) ListPaymentUsers_accountByUserName(ctx context.Context, userNa
 
 const getPaymentUsers_account = `-- name: GetPaymentUsers_account :one
 SELECT 
-		    u.user_name,
-		    ua.usac_account_number, 
-		    COALESCE(b.bank_code, f.fint_code) AS description,
-		    ua.usac_saldo,
-		    ua.usac_type
+			u.user_entity_id,
+			u.user_name,
+			ua.usac_account_number, 
+			COALESCE(b.bank_code, f.fint_code) AS description,
+			ua.usac_saldo,
+			ua.usac_type
 		FROM 
 		    payment.users_account ua
 		LEFT JOIN 
@@ -87,6 +93,7 @@ func (q *Queries) GetPaymentUsers_account(ctx context.Context, usacAccountNumber
 	row := q.db.QueryRowContext(ctx, getPaymentUsers_account, usacAccountNumber)
 	var i UserAccount
 	err := row.Scan(
+		&i.UserEntityID,
 		&i.UserName,
 		&i.AccountNumber,
 		&i.Description,
@@ -230,4 +237,72 @@ WHERE
 func (q *Queries) DeletePaymentUsers_account(ctx context.Context, usacAccountNumber string) error {
 	_, err := q.db.ExecContext(ctx, deletePaymentUsers_account, usacAccountNumber)
 	return err
+}
+
+type TransactionUserDebit struct {
+	TrpaCodeNumber   string          `db:"trpa_code_number"`
+	TrpaModifiedDate *time.Time      `db:"trpa_modified_date"`
+	TrpaDebit        sql.NullFloat64 `db:"trpa_debit"`
+	TrpaCredit       sql.NullFloat64 `db:"trpa_credit"`
+	TrpaNote         string          `db:"trpa_note"`
+	TrpaOrderNumber  sql.NullString  `db:"trpa_order_number"`
+	TrpaFromID       string          `db:"trpa_from_id"`
+	TrpaToID         string          `db:"trpa_to_id"`
+	TrpaType         string          `db:"trpa_type"`
+	UserName         string          `db:"user_name"`
+}
+
+const recordTransaction_payment = `-- name: RecordTransaction_payment :exec
+INSERT INTO payment.transaction_payment (trpa_debit, trpa_credit, trpa_type, trpa_note, trpa_from_id, trpa_to_id, trpa_user_entity_id)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING
+    trpa_code_number,
+    trpa_modified_date,
+    trpa_debit,
+    trpa_credit,
+    trpa_note,
+    trpa_order_number,
+    trpa_from_id,
+    trpa_to_id,
+    trpa_type,
+    (SELECT user_name FROM users.users WHERE user_entity_id = $7) AS user_name;
+`
+
+type CreateTransactionUserParam struct {
+	TrpaDebit        sql.NullFloat64 `db:"trpa_debit" json:"trpaDebit"`
+	TrpaCredit       sql.NullFloat64 `db:"trpa_credit" json:"trpaCredit"`
+	TrpaType         string          `db:"trpa_type" json:"trpaType"`
+	TrpaNote         string          `db:"trpa_note" json:"trpaNote"`
+	TrpaFromID       string          `db:"trpa_from_id" json:"trpaFromId"`
+	TrpaToID         string          `db:"trpa_to_id" json:"trpaToId"`
+	TrpaUserEntityID int32           `db:"trpa_user_entity_id" json:"trpaUserEntityID"`
+}
+
+func (q *Queries) RecordTransaction_payment(ctx context.Context, params CreateTransactionUserParam) (*TransactionUserDebit, error) {
+	row := q.db.QueryRowContext(ctx, recordTransaction_payment,
+		params.TrpaDebit,
+		params.TrpaCredit,
+		params.TrpaType,
+		params.TrpaNote,
+		params.TrpaFromID,
+		params.TrpaToID,
+		params.TrpaUserEntityID,
+	)
+	var i TransactionUserDebit
+	err := row.Scan(
+		&i.TrpaCodeNumber,
+		&i.TrpaModifiedDate,
+		&i.TrpaDebit,
+		&i.TrpaCredit,
+		&i.TrpaNote,
+		&i.TrpaOrderNumber,
+		&i.TrpaFromID,
+		&i.TrpaToID,
+		&i.TrpaType,
+		&i.UserName,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &i, nil
 }

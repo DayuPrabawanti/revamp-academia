@@ -6,18 +6,18 @@ import (
 )
 
 func BeginTransaction(repoMgr *RepositoriesManager) error {
-	return repoMgr.PaymentTopupRepository.BeginTransaction()
+	return repoMgr.PaymentTransactionRepository.BeginTransaction()
 }
 
 func RollbackTransaction(repoManager *RepositoriesManager) error {
-	return repoManager.PaymentTopupRepository.RollbackTransaction()
+	return repoManager.PaymentTransactionRepository.RollbackTransaction()
 }
 
 func CommitTransaction(repoManager *RepositoriesManager) error {
-	return repoManager.PaymentTopupRepository.CommitTransaction()
+	return repoManager.PaymentTransactionRepository.CommitTransaction()
 }
 
-func (repo *PaymentTopupRepository) BeginTransaction() error {
+func (repo *PaymentTransactionRepository) BeginTransaction() error {
 	ctx := context.Background()
 	transaction, err := repo.dbHandler.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -27,7 +27,7 @@ func (repo *PaymentTopupRepository) BeginTransaction() error {
 	return nil
 }
 
-func (repo *PaymentTopupRepository) RollbackTransaction() error {
+func (repo *PaymentTransactionRepository) RollbackTransaction() error {
 	if repo.transaction != nil {
 		err := repo.transaction.Rollback()
 		repo.transaction = nil
@@ -36,7 +36,7 @@ func (repo *PaymentTopupRepository) RollbackTransaction() error {
 	return nil
 }
 
-func (repo *PaymentTopupRepository) CommitTransaction() error {
+func (repo *PaymentTransactionRepository) CommitTransaction() error {
 	if repo.transaction != nil {
 		err := repo.transaction.Commit()
 		repo.transaction = nil

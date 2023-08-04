@@ -34,6 +34,8 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	paymentRoute.PUT("/account/updatePlus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountPlus)
 	paymentRoute.PUT("/account/updateMinus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountMinus)
 	paymentRoute.DELETE("/account/deleteAccountNumber", controllerMgr.PaymentAccountController.DeletePaymentAccountByAccNum)
+	// Transaction (Debit Saldo)
+	paymentRoute.POST("/account/debitSaldo", controllerMgr.PaymentAccountController.DebitSaldo)
 
 	// Router (API) end-point Mockup 4
 	paymentRoute.GET("/topup-bank", controllerMgr.PaymentTopupController.GetAccountByBankCodeAndAccountNumber)

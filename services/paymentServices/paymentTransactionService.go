@@ -43,7 +43,7 @@ func (pts PaymentTransactionService) CreateNewPaymentTransaction(ctx *gin.Contex
 		return nil, responseErr
 	}
 
-	return pts.repositoriesManager.CreatePaymentTransaction(ctx, paymentTransactionParams)
+	return pts.repositoriesManager.PaymentTransactionRepository.CreatePaymentTransaction(ctx, paymentTransactionParams)
 }
 
 // func (ptr PaymentTransactionService) UpdatePaymentTransaction(ctx *gin.Context, paymentTransactionParams *dbContext.CreatePaymentTransaction_paymentParams, id int64) *models.ResponseError {

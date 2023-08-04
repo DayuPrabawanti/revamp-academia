@@ -29,6 +29,7 @@ func (par PaymentAccountRepository) GetListPaymentUsers_accountByUserName(ctx *g
 
 	for _, v := range paymentAccounts {
 		paymentAccount := &dbContext.UserAccount{
+			UserEntityID:  v.UserEntityID,
 			UserName:      v.UserName,
 			AccountNumber: v.AccountNumber,
 			Description:   v.Description,
@@ -120,4 +121,17 @@ func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Contex
 		Message: "data has been deleted",
 		Status:  http.StatusOK,
 	}
+}
+
+func (par PaymentAccountRepository) RecordPaymentTransaction(ctx *gin.Context, params *dbContext.CreateTransactionUserParam) (*dbContext.TransactionUserDebit, *models.ResponseError) {
+	store := dbContext.New(par.dbHandler)
+	transactionUser, err := store.RecordTransaction_payment(ctx, *params)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return transactionUser, nil
 }
