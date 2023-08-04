@@ -45,10 +45,10 @@ func (er EmployeeMockupRepository) ListEmployeeMockup(ctx *gin.Context) ([]*mode
 	return listEmployees, nil
 }
 
-func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employeemockupParams *dbContext.EmployeeMockupParams) (*models.EmployeeMockupModel, *models.ResponseError) {
+func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, userParam *dbContext.CreateUsersParams, empParam *dbContext.CreateEmployeeParams, salaryParam *dbContext.CreatePayHistoryParams, assigmentParam *dbContext.CreateEmployeeDepartmentHistoryParams) (*models.EmployeeMockupModel, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
-	user, err := store.CreateUsers(ctx, employeemockupParams.User)
+	user, err := store.CreateUsers(ctx, *userParam)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -57,7 +57,7 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employ
 		}
 	}
 
-	general, err := store.CreateEmployee(ctx, employeemockupParams.General)
+	general, err := store.CreateEmployee(ctx, *empParam)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -66,7 +66,7 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employ
 		}
 	}
 
-	salary, err := store.CreatePayHistory(ctx, employeemockupParams.Salary)
+	salary, err := store.CreatePayHistory(ctx, *salaryParam)
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: err.Message,
@@ -74,7 +74,7 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, employ
 		}
 	}
 
-	assigment, err := store.CreateEmployeeDepartmentHistory(ctx, employeemockupParams.Assigment)
+	assigment, err := store.CreateEmployeeDepartmentHistory(ctx, *assigmentParam)
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: err.Message,

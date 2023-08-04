@@ -87,7 +87,7 @@ func (empMockupController EmployeeMockupController) CreateEmployeeMockup(ctx *gi
 		return
 	}
 
-	response, responseErr := empMockupController.employeeMockupService.EmployeeMockup(ctx, &dbContext.EmployeeMockupParams{})
+	response, responseErr := empMockupController.employeeMockupService.EmployeeMockup(ctx, &user, &general, &salary, &assigment)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

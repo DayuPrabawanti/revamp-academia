@@ -11,8 +11,15 @@ import (
 
 const createPayHistory = `-- name: CreatePayHistory :one
 
-INSERT INTO hr.employee_pay_history (ephi_entity_id, ephi_rate_change_date, ephi_rate_salary, ephi_pay_frequence, ephi_modified_date) VALUES ($1, $2, $3, $4, $5)
-RETURNING *
+WITH inserted_entity AS (
+	SELECT * FROM hr.employee
+	ORDER BY emp_entity_id DESC
+	LIMIT 1
+  )
+  INSERT INTO hr.employee_pay_history (ephi_entity_id, ephi_rate_change_date, ephi_rate_salary, ephi_pay_frequence, ephi_modified_date) 
+  SELECT emp_entity_id, $1, $2, $3, Now()
+  FROM inserted_entity
+  RETURNING ephi_entity_id, ephi_rate_change_date, ephi_rate_salary, ephi_pay_frequence, ephi_modified_date
 `
 
 type CreatePayHistoryParams struct {
@@ -25,11 +32,9 @@ type CreatePayHistoryParams struct {
 
 func (q *Queries) CreatePayHistory(ctx context.Context, arg CreatePayHistoryParams) (*models.HrEmployeePayHistory, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createPayHistory,
-		arg.EphiEntityID,
 		arg.EphiRateChangeDate,
 		arg.EphiRateSalary,
 		arg.EphiPayFrequence,
-		sql.NullTime{Time: time.Now(), Valid: true},
 	)
 	i := models.HrEmployeePayHistory{}
 	err := row.Scan(

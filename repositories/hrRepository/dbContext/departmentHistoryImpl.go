@@ -4,17 +4,21 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"time"
 
 	"codeid.revampacademy/models"
 )
 
 const createEmployeeDepartmentHistory = `-- name: CreateEmployeeDepartmentHistory :one
-
+WITH inserted_entity AS (
+	SELECT * FROM hr.employee
+	ORDER BY emp_entity_id DESC
+	LIMIT 1
+  )
 INSERT INTO hr.employee_department_history 
-(edhi_id, edhi_entity_id, edhi_start_date, edhi_end_date, edhi_modified_date, edhi_dept_id)
-VALUES($1,$2,$3,$4,$5,$6)
-RETURNING *
+(edhi_entity_id, edhi_id, edhi_start_date, edhi_end_date, edhi_modified_date, edhi_dept_id)
+SELECT emp_entity_id, $1, $2, $3, Now(), $4
+FROM inserted_entity
+RETURNING edhi_id, edhi_entity_id, edhi_start_date, edhi_end_date, edhi_modified_date, edhi_dept_id
 `
 
 type CreateEmployeeDepartmentHistoryParams struct {
@@ -29,10 +33,8 @@ type CreateEmployeeDepartmentHistoryParams struct {
 func (q *Queries) CreateEmployeeDepartmentHistory(ctx context.Context, arg CreateEmployeeDepartmentHistoryParams) (*models.HrEmployeeDepartmentHistory, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createEmployeeDepartmentHistory,
 		arg.EdhiID,
-		arg.EdhiEntityID,
 		arg.EdhiStartDate,
 		arg.EdhiEndDate,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.EdhiDeptID,
 	)
 	i := models.HrEmployeeDepartmentHistory{}

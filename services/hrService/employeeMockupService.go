@@ -25,7 +25,7 @@ func (tdms EmployeeMockupService) SearchEmployee(ctx *gin.Context, userName stri
 	return tdms.employeeMockupRepository.SearchEmployee(ctx, userName, status)
 }
 
-func (cs *EmployeeMockupService) EmployeeMockup(ctx *gin.Context, employeeMockup *dbContext.EmployeeMockupParams) (*models.EmployeeMockupModel, *models.ResponseError) {
+func (cs *EmployeeMockupService) EmployeeMockup(ctx *gin.Context, userParam *dbContext.CreateUsersParams, empParam *dbContext.CreateEmployeeParams, salaryParam *dbContext.CreatePayHistoryParams, assigmentParam *dbContext.CreateEmployeeDepartmentHistoryParams) (*models.EmployeeMockupModel, *models.ResponseError) {
 
-	return cs.employeeMockupRepository.CreateEmployeeMockup(ctx, employeeMockup)
+	return cs.employeeMockupRepository.CreateEmployeeMockup(ctx, userParam, empParam, salaryParam, assigmentParam)
 }

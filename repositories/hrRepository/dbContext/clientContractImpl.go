@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"time"
 
 	"codeid.revampacademy/models"
 )
@@ -152,8 +151,9 @@ UPDATE hr.employee_client_contract
   ecco_contract_date = $4,
   ecco_start_date = $5,
   ecco_end_date = $6,
-  ecco_notes = $7,
-  ecco_modified_date = $8
+  ecco_status = $7,
+  ecco_notes = $8,
+  ecco_modified_date = Now()
 WHERE ecco_id = $1
 `
 
@@ -162,11 +162,11 @@ func (q *Queries) UpdateClientContract(ctx context.Context, arg CreateClientCont
 		arg.EccoID,
 		arg.EccoEntityID,
 		arg.EccoContractNo,
-		sql.NullTime{Time: time.Now(), Valid: true},
+		arg.EccoContractDate,
 		arg.EccoStartDate,
 		arg.EccoEndDate,
+		arg.EccoStatus,
 		arg.EccoNotes,
-		sql.NullTime{Time: time.Now(), Valid: true},
 	)
 	return err
 }

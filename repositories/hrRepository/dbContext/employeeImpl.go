@@ -12,15 +12,15 @@ import (
 const createEmployee = `-- name: CreateEmployee :one
 
 WITH inserted_entity AS (
-	INSERT INTO hr.employee 
-	(emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id)
-	VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-	RETURNING *
-)
-
-INSERT INTO hr.employee_client_contract (ecco_entity_id)
-SELECT emp_entity_id
-	FROM inserted_entity
+	SELECT * FROM users.users
+	ORDER BY user_entity_id DESC
+	LIMIT 1
+  )
+INSERT INTO hr.employee 
+(emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id)
+SELECT user_entity_id, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+FROM inserted_entity
+RETURNING emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_marital_status, emp_gender, emp_hire_date, emp_salaried_flag, emp_vacation_hours, emp_sickleave_hours, emp_current_flag, emp_modified_date, emp_type, emp_joro_id, emp_emp_entity_id
 `
 
 type CreateEmployeeParams struct {
@@ -43,7 +43,6 @@ type CreateEmployeeParams struct {
 
 func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (*models.HrEmployee, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createEmployee,
-		arg.EmpEntityID,
 		arg.EmpEmpNumber,
 		arg.EmpNationalID,
 		arg.EmpBirthDate,
@@ -262,19 +261,19 @@ type CreateUsersParams struct {
 const createUsers = `-- name: CreateUsers :one
 
 WITH inserted_entity AS (
-  INSERT INTO users.business_entity 
-  (entity_modified_date)
-  VALUES (Now())
-  RETURNING entity_id
-)
-INSERT INTO users.users 
-(user_entity_id, user_name, user_password, user_first_name, 
-user_last_name, user_birth_date, user_email_promotion, user_demographic, 
-user_modified_date, user_photo, user_current_role)
-SELECT  entity_id, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10 FROM inserted_entity
-RETURNING user_entity_id, user_name, user_password, user_first_name, 
-user_last_name, user_birth_date, user_email_promotion, user_demographic, 
-user_modified_date, user_photo, user_current_role
+	INSERT INTO users.business_entity 
+	(entity_modified_date)
+	VALUES (Now())
+	RETURNING entity_id
+  )
+  INSERT INTO users.users 
+  (user_entity_id, user_name, user_password, user_first_name, 
+  user_last_name, user_birth_date, user_email_promotion, user_demographic, 
+  user_modified_date, user_photo, user_current_role)
+  SELECT entity_id, $1, $2, $3, $4, $5, $6, $7, Now(), $8, $9 FROM inserted_entity
+  RETURNING user_entity_id, user_name, user_password, user_first_name, 
+  user_last_name, user_birth_date, user_email_promotion, user_demographic, 
+  user_modified_date, user_photo, user_current_role
 `
 
 func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
@@ -286,9 +285,8 @@ func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (*mode
 		arg.UserBirthDate,
 		arg.UserEmailPromotion,
 		arg.UserDemographic,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.UserPhoto,
-		sql.NullInt64{Int64: 1, Valid: true},
+		sql.NullInt64{Int64: 12, Valid: true},
 	)
 	i := models.UsersUser{}
 	err := row.Scan(

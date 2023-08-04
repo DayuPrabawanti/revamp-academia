@@ -94,21 +94,6 @@ func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError
 			Status:  http.StatusBadRequest,
 		}
 	}
-
-	if userParams.UserName.Valid == false {
-		return &models.ResponseError{
-			Message: "Required Username",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
-	if userParams.UserPassword.Valid == false {
-		return &models.ResponseError{
-			Message: "Required Password",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
 	return nil
 
 }
