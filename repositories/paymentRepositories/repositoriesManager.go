@@ -1,6 +1,8 @@
 package repositories
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type RepositoriesManager struct {
 	PaymentAccountRepository
@@ -12,7 +14,7 @@ type RepositoriesManager struct {
 
 // constructor
 func NewRepositoriesManager(dbHandler *sql.DB) *RepositoriesManager {
-	return &RepositoriesManager{ // TODO: implement repository instances here and pass db handler to them
+	return &RepositoriesManager{
 		*NewPaymentAccountRepository(dbHandler),
 		*NewPaymentBankRepository(dbHandler),
 		*NewPaymentFintechRepository(dbHandler),

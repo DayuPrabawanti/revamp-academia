@@ -10,8 +10,8 @@ import (
 )
 
 type PaymentAccountRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
+	dbHandler *sql.DB
+	// transaction *sql.Tx
 }
 
 func NewPaymentAccountRepository(dbHandler *sql.DB) *PaymentAccountRepository {
@@ -20,24 +20,21 @@ func NewPaymentAccountRepository(dbHandler *sql.DB) *PaymentAccountRepository {
 	}
 }
 
-func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetListPaymentUsers_accountByUserName(ctx *gin.Context, userName string) ([]*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
-	paymentAccounts, err := store.ListPaymentUsers_account(ctx)
+	paymentAccounts, err := store.ListPaymentUsers_accountByUserName(ctx, userName)
 
-	listPaymentAccounts := make([]*models.PaymentUsersAccount, 0)
+	listPaymentAccounts := make([]*dbContext.UserAccount, 0)
 
 	for _, v := range paymentAccounts {
-		paymentAccount := &models.PaymentUsersAccount{
-			UsacBankEntityID:  v.UsacBankEntityID,
-			UsacUserEntityID:  v.UsacUserEntityID,
-			UsacAccountNumber: v.UsacAccountNumber,
-			UsacSaldo:         v.UsacSaldo,
-			UsacType:          v.UsacType,
-			UsacStartDate:     v.UsacStartDate,
-			UsacEndDate:       v.UsacEndDate,
-			UsacModifiedDate:  v.UsacModifiedDate,
-			UsacStatus:        v.UsacStatus,
+		paymentAccount := &dbContext.UserAccount{
+			UserEntityID:  v.UserEntityID,
+			UserName:      v.UserName,
+			AccountNumber: v.AccountNumber,
+			Description:   v.Description,
+			Saldo:         v.Saldo,
+			Type:          v.Type,
 		}
 		listPaymentAccounts = append(listPaymentAccounts, paymentAccount)
 	}
@@ -52,10 +49,10 @@ func (par PaymentAccountRepository) GetListPaymentAccount(ctx *gin.Context) ([]*
 	return listPaymentAccounts, nil
 }
 
-func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, name string) (*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) GetPaymentAccountByAccountNumber(ctx *gin.Context, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
-	paymentAccount, err := store.GetPaymentUsers_account(ctx, string(name))
+	paymentAccount, err := store.GetPaymentUsers_account(ctx, usacAccountNumber)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -67,7 +64,7 @@ func (par PaymentAccountRepository) GetPaymentAccountByName(ctx *gin.Context, na
 	return &paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) (*models.PaymentUsersAccount, *models.ResponseError) {
+func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) (*dbContext.UserAccount, *models.ResponseError) {
 
 	store := dbContext.New(par.dbHandler)
 	paymentAccount, err := store.CreatePaymentUsers_account(ctx, *paymentAccountParams)
@@ -81,31 +78,42 @@ func (par PaymentAccountRepository) CreateNewPaymentAccount(ctx *gin.Context, pa
 	return paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) UpdatePaymentAccountById(ctx *gin.Context, paymentAccountParams *dbContext.CreatePaymentUsers_accountParams) *models.ResponseError {
-
+func (par *PaymentAccountRepository) UpdatePaymentUsers_accountPlus(ctx *gin.Context, params *dbContext.UpdatePaymentUsers_accountParams, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
 	store := dbContext.New(par.dbHandler)
-	err := store.UpdatePaymentUsers_account(ctx, *paymentAccountParams)
+	paymentAccount, err := store.UpdatePaymentUsers_accountPlus(ctx, *params, usacAccountNumber)
 
 	if err != nil {
-		return &models.ResponseError{
-			Message: "error when update",
+		return nil, &models.ResponseError{
+			Message: err.Error(),
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &models.ResponseError{
-		Message: "data has been update",
-		Status:  http.StatusOK,
-	}
+
+	return paymentAccount, nil
 }
 
-func (par PaymentAccountRepository) DeletePaymentAccountById(ctx *gin.Context, id int64) *models.ResponseError {
+func (par *PaymentAccountRepository) UpdatePaymentUsers_accountMinus(ctx *gin.Context, params *dbContext.UpdatePaymentUsers_accountParams, usacAccountNumber string) (*dbContext.UserAccount, *models.ResponseError) {
+	store := dbContext.New(par.dbHandler)
+	paymentAccount, err := store.UpdatePaymentUsers_accountMinus(ctx, *params, usacAccountNumber)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return paymentAccount, nil
+}
+
+func (par PaymentAccountRepository) DeletePaymentAccountByAccNum(ctx *gin.Context, usacAccountNumber string) *models.ResponseError {
 
 	store := dbContext.New(par.dbHandler)
-	err := store.DeletePaymentUsers_account(ctx, int32(id))
+	err := store.DeletePaymentUsers_account(ctx, usacAccountNumber)
 
 	if err != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when delete",
 			Status:  http.StatusInternalServerError,
 		}
 	}

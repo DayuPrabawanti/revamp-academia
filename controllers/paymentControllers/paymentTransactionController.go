@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
 	services "codeid.revampacademy/services/paymentServices"
 	"github.com/gin-gonic/gin"
@@ -33,11 +34,17 @@ func (paymentTransactionController PaymentTransactionController) GetListPaymentT
 }
 
 func (PaymentTransactionController PaymentTransactionController) GetPaymentTransactionById(ctx *gin.Context) {
-	accountID := ctx.Query("accountid")
+	searchBy := ctx.DefaultQuery("accountid", "")
 	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageno", "0"))
 	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pagesize", "10"))
 
-	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, accountID, pageSize, pageNo*pageSize)
+	metadata := features.Metadata{
+		SearchBy: searchBy,
+		PageNo:   pageNo,
+		PageSize: pageSize,
+	}
+
+	response, responseErr := PaymentTransactionController.paymentTransactionService.GetPaymentTransactionById(ctx, &metadata)
 	if responseErr != nil {
 
 		ctx.JSON(responseErr.Status, responseErr)
@@ -47,7 +54,7 @@ func (PaymentTransactionController PaymentTransactionController) GetPaymentTrans
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentTransactionController PaymentTransactionController) CreateNewPaymentTransaction(ctx *gin.Context) {
+func (paymentTransactionController PaymentTransactionController) RecordPaymentTransactionUser(ctx *gin.Context) {
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
@@ -56,7 +63,7 @@ func (paymentTransactionController PaymentTransactionController) CreateNewPaymen
 		return
 	}
 
-	var paymentTransaction dbContext.CreatePaymentTransaction_paymentParams
+	var paymentTransaction dbContext.RecordTransactionUserParams
 	err = json.Unmarshal(body, &paymentTransaction)
 	if err != nil {
 		log.Println("Error while unmarshaling create category request body", err)
@@ -64,7 +71,7 @@ func (paymentTransactionController PaymentTransactionController) CreateNewPaymen
 		return
 	}
 
-	response, responseErr := paymentTransactionController.paymentTransactionService.CreateNewPaymentTransaction(ctx, &paymentTransaction)
+	response, responseErr := paymentTransactionController.paymentTransactionService.RecordPaymentTransactionUser(ctx, &paymentTransaction)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
@@ -74,56 +81,56 @@ func (paymentTransactionController PaymentTransactionController) CreateNewPaymen
 
 }
 
-func (paymentTransactionController PaymentTransactionController) UpdatePaymentTransaction(ctx *gin.Context) {
+// func (paymentTransactionController PaymentTransactionController) UpdatePaymentTransaction(ctx *gin.Context) {
 
-	trpaID, err := strconv.Atoi(ctx.Param("id"))
+// 	trpaID, err := strconv.Atoi(ctx.Param("id"))
 
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+// 	if err != nil {
+// 		log.Println("Error while reading paramater id", err)
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 		return
+// 	}
 
-	body, err := io.ReadAll(ctx.Request.Body)
-	if err != nil {
-		log.Println("Error while reading update category request body", err)
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+// 	body, err := io.ReadAll(ctx.Request.Body)
+// 	if err != nil {
+// 		log.Println("Error while reading update category request body", err)
+// 		ctx.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
 
-	var paymentTransaction dbContext.CreatePaymentTransaction_paymentParams
-	err = json.Unmarshal(body, &paymentTransaction)
-	if err != nil {
-		log.Println("Error while unmarshaling update category request body", err)
-		ctx.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+// 	var paymentTransaction dbContext.CreatePaymentTransaction_paymentParams
+// 	err = json.Unmarshal(body, &paymentTransaction)
+// 	if err != nil {
+// 		log.Println("Error while unmarshaling update category request body", err)
+// 		ctx.AbortWithError(http.StatusInternalServerError, err)
+// 		return
+// 	}
 
-	response := paymentTransactionController.paymentTransactionService.UpdatePaymentTransaction(ctx, &paymentTransaction, int64(trpaID))
-	if response != nil {
-		ctx.AbortWithStatusJSON(response.Status, response)
-		return
-	}
+// 	response := paymentTransactionController.paymentTransactionService.UpdatePaymentTransaction(ctx, &paymentTransaction, int64(trpaID))
+// 	if response != nil {
+// 		ctx.AbortWithStatusJSON(response.Status, response)
+// 		return
+// 	}
 
-	ctx.JSON(http.StatusOK, response)
+// 	ctx.JSON(http.StatusOK, response)
 
-}
+// }
 
-func (paymentTransactionController PaymentTransactionController) DeletePaymentTransaction(ctx *gin.Context) {
+// func (paymentTransactionController PaymentTransactionController) DeletePaymentTransaction(ctx *gin.Context) {
 
-	trpaID, err := strconv.Atoi(ctx.Param("id"))
+// 	trpaID, err := strconv.Atoi(ctx.Param("id"))
 
-	if err != nil {
-		log.Println("Error while reading paramater id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+// 	if err != nil {
+// 		log.Println("Error while reading paramater id", err)
+// 		ctx.AbortWithError(http.StatusBadRequest, err)
+// 		return
+// 	}
 
-	responseErr := paymentTransactionController.paymentTransactionService.DeletePaymentTransaction(ctx, int64(trpaID))
-	if responseErr != nil {
-		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
-		return
-	}
+// 	responseErr := paymentTransactionController.paymentTransactionService.DeletePaymentTransaction(ctx, int64(trpaID))
+// 	if responseErr != nil {
+// 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+// 		return
+// 	}
 
-	ctx.Status(http.StatusNoContent)
-}
+// 	ctx.Status(http.StatusNoContent)
+// }

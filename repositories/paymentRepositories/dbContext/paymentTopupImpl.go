@@ -1,106 +1,81 @@
 package dbContext
 
-import (
-	"context"
-	"database/sql"
-	"errors"
-)
+import "context"
 
-type PaymentService struct {
-	db *sql.DB
-}
-
-type TopupDetail struct {
-	SourceName    string
-	SourceAccount string
-	SourceSaldo   float64
-	TargetName    string
-	TargetAccount string
-	TargetSaldo   float64
-}
-
-const listTopupDetail = `-- name: ListTopupDetail :many
-
-SELECT
-			b.bank_code,
-			b.bank_entity_id,
-			fs.usac_saldo,
-			f.fint_code,
-			f.fint_entity_id,
-			fs.usac_saldo
-		FROM
-			payment.users_account fs
-		JOIN
-			payment.bank b ON fs.usac_bank_entity_id = b.bank_entity_id
-		JOIN
-			payment.fintech f ON fs.usac_bank_entity_id = f.fint_entity_id
-
+const getBankAccount = `-- name: GetBankAccount :one
+SELECT 
+		b.bank_code,
+		ua.usac_account_number,
+		ua.usac_saldo,
+		ua.usac_user_entity_id
+FROM
+		payment.bank AS b
+JOIN
+		payment.users_account AS ua
+ON 
+		b.bank_entity_id = ua.usac_bank_entity_id
+WHERE
+		ua.usac_type = 'Bank' AND
+		b.bank_code = $1 AND
+		ua.usac_account_number = $2
+ORDER BY
+		b.bank_code,
+		ua.usac_account_number;
 `
 
-func (q *Queries) ListTopupDetail(ctx context.Context) ([]TopupDetail, error) {
-	rows, err := q.db.QueryContext(ctx, listTopupDetail)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []TopupDetail
-	for rows.Next() {
-		var i TopupDetail
-		if err := rows.Scan(
-			&i.SourceName,
-			&i.SourceAccount,
-			&i.SourceSaldo,
-			&i.TargetName,
-			&i.TargetAccount,
-			&i.TargetSaldo,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
+type BankAccount struct {
+	BankCode          string
+	BankAccountNumber string
+	BankSaldo         float64
+	UserEntityID      int32
 }
 
-func (ps *PaymentService) Topup(ctx context.Context, sourceBankEntityID int32, targetFintechEntityID int32, amount float64) error {
-	tx, err := ps.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
+func (q *Queries) GetBankAccount(ctx context.Context, bankCode string, usacAccountNumber string) (BankAccount, error) {
+	row := q.db.QueryRowContext(ctx, getBankAccount, bankCode, usacAccountNumber)
+	var i BankAccount
+	err := row.Scan(
+		&i.BankCode,
+		&i.BankAccountNumber,
+		&i.BankSaldo,
+		&i.UserEntityID,
+	)
+	return i, err
+}
 
-	// check source balance
-	var sourceBalance float64
-	err = tx.QueryRowContext(ctx, `SELECT usac_saldo FROM payment.users_account WHERE usac_bank_entity_id = ?`, sourceBankEntityID).Scan(&sourceBalance)
-	if err != nil {
-		return err
-	}
+const getFintechAccount = `-- name: GetFintechAccount :one
+SELECT 
+		f.fint_code,
+		ua.usac_account_number,
+		ua.usac_saldo,
+		ua.usac_user_entity_id
+FROM
+		payment.fintech f
+JOIN
+		payment.users_account ua ON f.fint_entity_id = ua.usac_bank_entity_id
+WHERE
+		ua.usac_type = 'Fintech' AND
+		f.fint_code = $1 AND
+		ua.usac_account_number = $2
+ORDER BY
+		f.fint_code,
+		ua.usac_account_number;
+`
 
-	if sourceBalance < amount {
-		return errors.New("insufficient funds")
-	}
+type FintechAccount struct {
+	FintCode          string
+	FintAccountNumber string
+	FintSaldo         float64
+	UserEntityID      int32
+}
 
-	// deduct amount from source account
-	_, err = tx.ExecContext(ctx, `UPDATE payment.users_account SET usac_saldo = usac_saldo - ? WHERE usac_bank_entity_id = ?`, amount, sourceBankEntityID)
-	if err != nil {
-		return err
-	}
-
-	// add amount to target account
-	_, err = tx.ExecContext(ctx, `UPDATE payment.users_account SET usac_saldo = usac_saldo + ? WHERE usac_bank_entity_id = ?`, amount, targetFintechEntityID)
-	if err != nil {
-		return err
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (q *Queries) GetFintechAccount(ctx context.Context, fintCode string, usacAccountNumber string) (FintechAccount, error) {
+	row := q.db.QueryRowContext(ctx, getFintechAccount, fintCode, usacAccountNumber)
+	var i FintechAccount
+	err := row.Scan(
+		&i.FintCode,
+		&i.FintAccountNumber,
+		&i.FintSaldo,
+		&i.UserEntityID,
+	)
+	return i, err
 }

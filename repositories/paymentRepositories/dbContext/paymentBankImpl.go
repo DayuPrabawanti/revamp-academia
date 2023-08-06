@@ -2,32 +2,39 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
-	"time"
 
 	"codeid.revampacademy/models"
 )
 
+type Bank struct {
+	BankEntityID int    `db:"bank_entity_id"`
+	BankCode     string `db:"bank_code"`
+}
+
 // 1a. fungsi utk ambil getlist
 const listPaymentBank = `-- name: ListPaymentBank :many
-SELECT bank_entity_id, bank_code, bank_name, bank_modified_date FROM payment.bank ORDER BY bank_name
+SELECT 
+	bank_entity_id, 
+	bank_code
+FROM 
+	payment.bank 
+ORDER BY 
+	bank_entity_id;
 `
 
-func (q *Queries) ListPaymentBank(ctx context.Context) ([]models.PaymentBank, error) {
+func (q *Queries) ListPaymentBank(ctx context.Context) ([]Bank, error) {
 	rows, err := q.db.QueryContext(ctx, listPaymentBank)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []models.PaymentBank
+	var items []Bank
 	for rows.Next() {
-		var i models.PaymentBank
+		var i Bank
 		if err := rows.Scan(
 			&i.BankEntityID,
 			&i.BankCode,
-			&i.BankName,
-			&i.BankModifiedDate,
 		); err != nil {
 			return nil, err
 		}
@@ -44,17 +51,21 @@ func (q *Queries) ListPaymentBank(ctx context.Context) ([]models.PaymentBank, er
 
 // 1a. fungsi utk ambil get payment bank
 const getPaymentBank = `-- name: GetPaymentBank :one
-SELECT bank_entity_id, bank_code, bank_name, bank_modified_date FROM payment.bank
-WHERE bank_code = $1`
+SELECT 
+	bank_entity_id, 
+	bank_code
+FROM 
+	payment.bank
+WHERE 
+	bank_code = $1;
+`
 
-func (q *Queries) GetPaymentBank(ctx context.Context, name string) (models.PaymentBank, error) {
+func (q *Queries) GetPaymentBank(ctx context.Context, name string) (Bank, error) {
 	row := q.db.QueryRowContext(ctx, getPaymentBank, name)
-	var i models.PaymentBank
+	var i Bank
 	err := row.Scan(
 		&i.BankEntityID,
 		&i.BankCode,
-		&i.BankName,
-		&i.BankModifiedDate,
 	)
 	return i, err
 }
@@ -63,35 +74,25 @@ func (q *Queries) GetPaymentBank(ctx context.Context, name string) (models.Payme
 const createPaymentBank = `-- name: CreatePaymentBank :one
 INSERT INTO
     payment.bank(
-        bank_entity_id,
-        bank_code,
-        bank_name,
-        bank_modified_date
+        bank_code
     )
-VALUES ($1, $2, $3, $4) RETURNING *
+VALUES ($1) RETURNING bank_entity_id, bank_code
 `
 
 type CreatePaymentBankParams struct {
-	BankEntityID     int32        `db:"bank_entity_id" json:"bankEntityId"`
-	BankCode         string       `db:"bank_code" json:"bankCode"`
-	BankName         string       `db:"bank_name" json:"bankName"`
-	BankModifiedDate sql.NullTime `db:"bank_modified_date" json:"bankModifiedDate"`
+	BankEntityID int32  `db:"bank_entity_id" json:"bankEntityId"`
+	BankCode     string `db:"bank_code" json:"bankCode"`
 }
 
-func (q *Queries) CreatePaymentBank(ctx context.Context, arg CreatePaymentBankParams) (*models.PaymentBank, *models.ResponseError) {
+func (q *Queries) CreatePaymentBank(ctx context.Context, arg CreatePaymentBankParams) (*Bank, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createPaymentBank,
-		arg.BankEntityID,
 		arg.BankCode,
-		arg.BankName,
-		arg.BankModifiedDate,
 	)
 
-	i := models.PaymentBank{}
+	i := Bank{}
 	err := row.Scan(
 		&i.BankEntityID,
 		&i.BankCode,
-		&i.BankName,
-		&i.BankModifiedDate,
 	)
 
 	if err != nil {
@@ -100,29 +101,31 @@ func (q *Queries) CreatePaymentBank(ctx context.Context, arg CreatePaymentBankPa
 			Status:  http.StatusInternalServerError,
 		}
 	}
-	return &models.PaymentBank{
-		BankEntityID:     i.BankEntityID,
-		BankCode:         i.BankCode,
-		BankName:         i.BankName,
-		BankModifiedDate: sql.NullTime{Time: time.Now(), Valid: true},
+	return &Bank{
+		BankEntityID: i.BankEntityID,
+		BankCode:     i.BankCode,
 	}, nil
 }
 
 const updatePaymentBank = `-- name: UpdatePaymentBank :exec
-UPDATE payment.bank
-  set bank_code = $2,
-  bank_name = $3
-WHERE bank_entity_id = $1
+UPDATE 
+	payment.bank
+SET
+	bank_code = $1
+WHERE 
+	bank_entity_id = $2
 `
 
-func (q *Queries) UpdatePaymentBank(ctx context.Context, arg CreatePaymentBankParams) error {
-	_, err := q.db.ExecContext(ctx, updatePaymentBank, arg.BankEntityID, arg.BankCode, arg.BankName)
+func (q *Queries) UpdatePaymentBank(ctx context.Context, arg CreatePaymentBankParams, bankEntityID int32) error {
+	_, err := q.db.ExecContext(ctx, updatePaymentBank, arg.BankCode, bankEntityID)
 	return err
 }
 
 const deletePaymentBank = `-- name: DeletePaymentBank :exec
-DELETE FROM payment.bank
-WHERE bank_entity_id = $1
+DELETE FROM 
+	payment.bank
+WHERE 
+	bank_entity_id = $1
 `
 
 func (q *Queries) DeletePaymentBank(ctx context.Context, bankEntityID int32) error {

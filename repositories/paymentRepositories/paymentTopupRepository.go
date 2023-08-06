@@ -6,12 +6,12 @@ import (
 
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
-	"github.com/gin-gonic/gin"
+	"golang.org/x/net/context"
 )
 
 type PaymentTopupRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
+	dbHandler *sql.DB
+	// transaction *sql.Tx
 }
 
 func NewPaymentTopupRepository(dbHandler *sql.DB) *PaymentTopupRepository {
@@ -20,24 +20,9 @@ func NewPaymentTopupRepository(dbHandler *sql.DB) *PaymentTopupRepository {
 	}
 }
 
-func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbContext.TopupDetail, *models.ResponseError) {
-
-	store := dbContext.New(ptr.dbHandler)
-	paymentTopups, err := store.ListTopupDetail(ctx)
-
-	listPaymentTopups := make([]*dbContext.TopupDetail, 0)
-
-	for _, v := range paymentTopups {
-		paymentTopup := &dbContext.TopupDetail{
-			SourceName:    v.SourceName,
-			SourceAccount: v.SourceAccount,
-			SourceSaldo:   v.SourceSaldo,
-			TargetName:    v.TargetName,
-			TargetAccount: v.TargetAccount,
-			TargetSaldo:   v.TargetSaldo,
-		}
-		listPaymentTopups = append(listPaymentTopups, paymentTopup)
-	}
+func (pttr *PaymentTopupRepository) GetAccountByBankCodeAndAccountNumber(ctx context.Context, bankCode string, usacAccountNumber string) (*dbContext.BankAccount, *models.ResponseError) {
+	store := dbContext.New(pttr.dbHandler)
+	bankAccount, err := store.GetBankAccount(ctx, bankCode, usacAccountNumber)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -45,6 +30,18 @@ func (ptr PaymentTopupRepository) GetListTopupDetail(ctx *gin.Context) ([]*dbCon
 			Status:  http.StatusInternalServerError,
 		}
 	}
+	return &bankAccount, nil
+}
 
-	return listPaymentTopups, nil
+func (pttr *PaymentTopupRepository) GetAccountByFintCodeAndAccountNumber(ctx context.Context, fintCode string, usacAccountNumber string) (*dbContext.FintechAccount, *models.ResponseError) {
+	store := dbContext.New(pttr.dbHandler)
+	fintAccount, err := store.GetFintechAccount(ctx, fintCode, usacAccountNumber)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &fintAccount, nil
 }

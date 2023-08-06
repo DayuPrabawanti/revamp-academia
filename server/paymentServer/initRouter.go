@@ -15,35 +15,39 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	paymentRoute.GET("/bank/search", controllerMgr.PaymentBankController.GetPaymentBankByName)
 	paymentRoute.POST("/bank/create", controllerMgr.PaymentBankController.CreateNewPaymentBank)
 
-	paymentRoute.PUT("/bank/update/:id", controllerMgr.PaymentBankController.UpdatePaymentBank)
+	paymentRoute.PUT("/bank/update/:bankEntityID", controllerMgr.PaymentBankController.UpdatePaymentBank)
 	paymentRoute.DELETE("/bank/delete/:id", controllerMgr.PaymentBankController.DeletePaymentBank)
 
 	// Router (API) end-point Mockup 2
 	paymentRoute.GET("/fintech", controllerMgr.PaymentFintechController.GetListPaymentFintech)
 	paymentRoute.GET("/fintech/search", controllerMgr.PaymentFintechController.GetPaymentFintechByName)
-	paymentRoute.POST("/fintech/payment/create", controllerMgr.PaymentFintechController.CreateNewPaymentFintech)
+	paymentRoute.POST("/fintech/create", controllerMgr.PaymentFintechController.CreateNewPaymentFintech)
 
-	paymentRoute.PUT("/fintech/payment/update/:id", controllerMgr.PaymentFintechController.UpdatePaymentFintechById)
-	paymentRoute.DELETE("/fintech/payment/delete/:id", controllerMgr.PaymentFintechController.DeletePaymentFintechById)
+	paymentRoute.PUT("/fintech/update/:fintEntityId", controllerMgr.PaymentFintechController.UpdatePaymentFintechById)
+	paymentRoute.DELETE("/fintech/delete/:id", controllerMgr.PaymentFintechController.DeletePaymentFintechById)
 
 	// Router (API) end-point Mockup 3
-	paymentRoute.GET("/accounts", controllerMgr.PaymentAccountController.GetListPaymentAccount)
-	paymentRoute.GET("/accounts/search", controllerMgr.PaymentAccountController.GetPaymentAccountByName)
-	paymentRoute.POST("/accounts/payment/create", controllerMgr.PaymentAccountController.CreateNewPaymentAccount)
+	paymentRoute.GET("/accounts", controllerMgr.PaymentAccountController.GetListPaymentUsers_accountByUserName)
+	paymentRoute.GET("/account/search", controllerMgr.PaymentAccountController.GetPaymentAccountByAccountNumber)
+	paymentRoute.POST("/account/create", controllerMgr.PaymentAccountController.CreateNewPaymentAccount)
 
-	paymentRoute.PUT("/accounts/payment/update/:id", controllerMgr.PaymentAccountController.UpdatePaymentAccountById)
-	paymentRoute.DELETE("/accounts/payment/delete/:id", controllerMgr.PaymentAccountController.DeletePaymentAccountById)
+	paymentRoute.PUT("/account/updatePlus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountPlus)
+	paymentRoute.PUT("/account/updateMinus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountMinus)
+	paymentRoute.DELETE("/account/deleteAccountNumber", controllerMgr.PaymentAccountController.DeletePaymentAccountByAccNum)
+	paymentRoute.POST("/account/debitSaldo", controllerMgr.PaymentAccountController.DebitSaldo)
 
 	// Router (API) end-point Mockup 4
-	paymentRoute.GET("/topup", controllerMgr.PaymentTopupController.GetListTopupDetail)
+	paymentRoute.GET("/topup-bank", controllerMgr.PaymentTopupController.GetAccountByBankCodeAndAccountNumber)
+	paymentRoute.GET("/topup-fintech", controllerMgr.PaymentTopupController.GetAccountByFintCodeAndAccountNumber)
+	paymentRoute.POST("/topup-transfer", controllerMgr.PaymentTopupController.TransferTopup)
 
 	// router (API) end-point Mockup 5
 	paymentRoute.GET("/transaction", controllerMgr.PaymentTransactionController.GetListPaymentTransaction)
 	paymentRoute.GET("/transaction/view", controllerMgr.PaymentTransactionController.GetPaymentTransactionById)
-	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.CreateNewPaymentTransaction)
+	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.RecordPaymentTransactionUser)
 
-	paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
-	paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
+	// paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
+	// paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
 
 	return router
 }
