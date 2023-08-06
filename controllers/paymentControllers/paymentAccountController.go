@@ -141,9 +141,9 @@ func (paymentAccountController PaymentAccountController) DeletePaymentAccountByA
 	ctx.Status(http.StatusNoContent)
 }
 
-func (controller *PaymentAccountController) DebitSaldo(ctx *gin.Context) {
+func (paymentAccountController *PaymentAccountController) DebitSaldo(ctx *gin.Context) {
 	usacAccountNumber := ctx.PostForm("usacAccountNumber")
-	amountStr := ctx.PostForm("amount")
+	amountStr := ctx.PostForm("amountStr")
 
 	amount, err := strconv.ParseFloat(amountStr, 64)
 	if err != nil {
@@ -151,7 +151,7 @@ func (controller *PaymentAccountController) DebitSaldo(ctx *gin.Context) {
 		return
 	}
 
-	transaction, responseErr := controller.paymentAccountService.DebitSaldo(ctx, usacAccountNumber, amount)
+	transaction, responseErr := paymentAccountController.paymentAccountService.DebitSaldo(ctx, usacAccountNumber, amount)
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return

@@ -16,7 +16,7 @@ type Bank struct {
 const listPaymentBank = `-- name: ListPaymentBank :many
 SELECT 
 	bank_entity_id, 
-	bank_code 
+	bank_code
 FROM 
 	payment.bank 
 ORDER BY 
@@ -53,10 +53,10 @@ func (q *Queries) ListPaymentBank(ctx context.Context) ([]Bank, error) {
 const getPaymentBank = `-- name: GetPaymentBank :one
 SELECT 
 	bank_entity_id, 
-	bank_code 
+	bank_code
 FROM 
-	payment.bank 
-WHERE
+	payment.bank
+WHERE 
 	bank_code = $1;
 `
 
@@ -76,10 +76,7 @@ INSERT INTO
     payment.bank(
         bank_code
     )
-VALUES ($1)
-RETURNING
-	bank_entity_id,
-	bank_code;
+VALUES ($1) RETURNING bank_entity_id, bank_code
 `
 
 type CreatePaymentBankParams struct {
@@ -114,8 +111,8 @@ const updatePaymentBank = `-- name: UpdatePaymentBank :exec
 UPDATE 
 	payment.bank
 SET
-    bank_code = $1
-WHERE
+	bank_code = $1
+WHERE 
 	bank_entity_id = $2
 `
 

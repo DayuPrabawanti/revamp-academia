@@ -54,24 +54,24 @@ func (PaymentTransactionController PaymentTransactionController) GetPaymentTrans
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (paymentTransactionController PaymentTransactionController) CreateNewPaymentTransaction(ctx *gin.Context) {
+func (paymentTransactionController PaymentTransactionController) RecordPaymentTransactionUser(ctx *gin.Context) {
 
 	body, err := io.ReadAll(ctx.Request.Body)
 	if err != nil {
-		log.Println("Error while reading create transaction request body", err)
+		log.Println("Error while reading create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	var paymentTransaction dbContext.CreateTransactionUser
+	var paymentTransaction dbContext.RecordTransactionUserParams
 	err = json.Unmarshal(body, &paymentTransaction)
 	if err != nil {
-		log.Println("Error while unmarshaling create transaction request body", err)
+		log.Println("Error while unmarshaling create category request body", err)
 		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	response, responseErr := paymentTransactionController.paymentTransactionService.CreateNewPaymentTransaction(ctx, &paymentTransaction)
+	response, responseErr := paymentTransactionController.paymentTransactionService.RecordPaymentTransactionUser(ctx, &paymentTransaction)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return

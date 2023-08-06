@@ -21,13 +21,13 @@ func NewPaymentTransactionRepository(dbHandler *sql.DB) *PaymentTransactionRepos
 	}
 }
 
-func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Context) ([]*dbContext.TransactionUser, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Context) ([]*dbContext.RecordTransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
 	paymentTransaction, err := store.ListPaymentTransaction_payment(ctx)
-	listPaymentTransactions := make([]*dbContext.TransactionUser, 0)
+	listPaymentTransactions := make([]*dbContext.RecordTransactionUser, 0)
 
 	for _, v := range paymentTransaction {
-		paymentTransaction := &dbContext.TransactionUser{
+		paymentTransaction := &dbContext.RecordTransactionUser{
 			TrpaCodeNumber:   v.TrpaCodeNumber,
 			TrpaModifiedDate: v.TrpaModifiedDate,
 			TrpaDebit:        v.TrpaDebit,
@@ -50,13 +50,13 @@ func (ptr PaymentTransactionRepository) GetListPaymentTransaction(ctx *gin.Conte
 	return listPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.TransactionUser, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Context, metadata *features.Metadata) ([]*dbContext.RecordTransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
 	paymentTransaction, err := store.GetPaymentTransaction_payment(ctx, metadata)
-	getPaymentTransactions := make([]*dbContext.TransactionUser, 0)
+	getPaymentTransactions := make([]*dbContext.RecordTransactionUser, 0)
 
 	for _, v := range paymentTransaction {
-		paymentTransaction := &dbContext.TransactionUser{
+		paymentTransaction := &dbContext.RecordTransactionUser{
 			TrpaCodeNumber:   v.TrpaCodeNumber,
 			TrpaModifiedDate: v.TrpaModifiedDate,
 			TrpaDebit:        v.TrpaDebit,
@@ -79,9 +79,9 @@ func (ptr PaymentTransactionRepository) GetPaymentTransactionById(ctx *gin.Conte
 	return getPaymentTransactions, nil
 }
 
-func (ptr PaymentTransactionRepository) CreatePaymentTransaction(ctx *gin.Context, createTransactionUser *dbContext.CreateTransactionUser) (*dbContext.TransactionUser, *models.ResponseError) {
+func (ptr PaymentTransactionRepository) RecordPaymentTransactionUser(ctx *gin.Context, params *dbContext.RecordTransactionUserParams) (*dbContext.RecordTransactionUser, *models.ResponseError) {
 	store := dbContext.New(ptr.dbHandler)
-	transactionUser, err := store.CreatePaymentTransaction_payment(ctx, *createTransactionUser)
+	transactionUser, err := store.RecordPaymentTransactionUser(ctx, *params)
 
 	if err != nil {
 		return nil, &models.ResponseError{

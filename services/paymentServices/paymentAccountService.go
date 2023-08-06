@@ -119,27 +119,7 @@ func (pas PaymentAccountService) DeletePaymentAccountByAccNum(ctx *gin.Context, 
 	return pas.repositoriesManager.PaymentAccountRepository.DeletePaymentAccountByAccNum(ctx, usacAccountNumber)
 }
 
-func (pas PaymentAccountService) RecordTransaction(ctx *gin.Context, params *dbContext.CreateTransactionUserParam) (*dbContext.TransactionUserDebit, *models.ResponseError) {
-	responseErr := validateRecordTransaction(params)
-	if responseErr != nil {
-		return nil, responseErr
-	}
-
-	return pas.repositoriesManager.PaymentAccountRepository.RecordPaymentTransaction(ctx, params)
-}
-
-func validateRecordTransaction(paymentTransactionParams *dbContext.CreateTransactionUserParam) *models.ResponseError {
-	if paymentTransactionParams.TrpaUserEntityID == 0 {
-		return &models.ResponseError{
-			Message: "Invalid TrpaCodeNumber",
-			Status:  http.StatusBadRequest,
-		}
-	}
-	return nil
-
-}
-
-func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber string, amount float64) (*dbContext.TransactionUserDebit, *models.ResponseError) {
+func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber string, amount float64) (*dbContext.RecordTransactionUser, *models.ResponseError) {
 
 	err := repositories.BeginTransaction(pas.repositoriesManager)
 	if err != nil {
@@ -149,40 +129,42 @@ func (pas PaymentAccountService) DebitSaldo(ctx *gin.Context, usacAccountNumber 
 		}
 	}
 
-	// Pertama, dapatkan informasi akun pengguna
+	// First, get user account information
 	userAccount, responseErr := pas.GetPaymentAccountByAccountNumber(ctx, usacAccountNumber)
-	if responseErr != nil {
-		repositories.RollbackTransaction(pas.repositoriesManager) // Gantikan dengan metode yang benar untuk rollback transaksi
-		return nil, responseErr
-	}
-
-	// Update akun pengguna dengan jumlah yang ingin ditambahkan ke saldo
-	updateParams := &dbContext.UpdatePaymentUsers_accountParams{
-		Amount: amount, // Jumlah yang ingin ditambahkan ke saldo
-	}
-	_, responseErr = pas.UpdatePaymentUsers_accountPlus(ctx, updateParams, usacAccountNumber)
 	if responseErr != nil {
 		repositories.RollbackTransaction(pas.repositoriesManager)
 		return nil, responseErr
 	}
 
-	// Buat catatan transaksi
-	transactionParams := &dbContext.CreateTransactionUserParam{
+	// Update user's account with the debit amount
+	updateParams := &dbContext.UpdatePaymentUsers_accountParams{
+		Amount: amount,
+	}
+	_, responseErr = pas.UpdatePaymentUsers_accountPlus(ctx, updateParams, usacAccountNumber)
+	if responseErr != nil {
+		repositories.RollbackTransaction(pas.repositoriesManager)
+		return nil, &models.ResponseError{
+			Message: "Failed to update account balance",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	// Create a transaction record
+	transactionUser := &dbContext.RecordTransactionUserParams{
 		TrpaDebit:        sql.NullFloat64{Float64: amount, Valid: true},
 		TrpaCredit:       sql.NullFloat64{},
 		TrpaType:         "SD",
 		TrpaNote:         "Isi SALDO",
 		TrpaFromID:       usacAccountNumber,
-		TrpaToID:         "",                       // Sesuaikan sesuai dengan logika Anda
-		TrpaUserEntityID: userAccount.UserEntityID, // Mengambil dari informasi akun pengguna
+		TrpaToID:         "",
+		TrpaUserEntityID: userAccount.UserEntityID,
 	}
-	transaction, responseErr := pas.RecordTransaction(ctx, transactionParams) // Pastikan memanggil metode yang benar
+	transaction, responseErr := pas.repositoriesManager.PaymentTransactionRepository.RecordPaymentTransactionUser(ctx, transactionUser)
 	if responseErr != nil {
 		repositories.RollbackTransaction(pas.repositoriesManager)
 		return nil, responseErr
 	}
-
-	repositories.CommitTransaction(pas.repositoriesManager) // Gantikan dengan metode yang benar untuk commit transaksi
+	repositories.CommitTransaction(pas.repositoriesManager)
 
 	return transaction, nil
 }

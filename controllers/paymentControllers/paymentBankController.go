@@ -79,7 +79,7 @@ func (paymentBankController PaymentBankController) UpdatePaymentBank(ctx *gin.Co
 	bankEntityID, err := strconv.Atoi(ctx.Param("bankEntityID"))
 
 	if err != nil {
-		log.Println("Error while reading paramater id", err)
+		log.Println("Error while reading paramater bankEntityID", err)
 		ctx.AbortWithError(http.StatusBadRequest, err)
 		return
 	}

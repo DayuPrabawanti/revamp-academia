@@ -1,17 +1,17 @@
 package repositories
 
 import (
-	"context"
 	"database/sql"
 	"net/http"
 
 	"codeid.revampacademy/models"
 	"codeid.revampacademy/repositories/paymentRepositories/dbContext"
+	"golang.org/x/net/context"
 )
 
 type PaymentTopupRepository struct {
-	dbHandler   *sql.DB
-	transaction *sql.Tx
+	dbHandler *sql.DB
+	// transaction *sql.Tx
 }
 
 func NewPaymentTopupRepository(dbHandler *sql.DB) *PaymentTopupRepository {
@@ -30,7 +30,6 @@ func (pttr *PaymentTopupRepository) GetAccountByBankCodeAndAccountNumber(ctx con
 			Status:  http.StatusInternalServerError,
 		}
 	}
-
 	return &bankAccount, nil
 }
 
@@ -44,6 +43,5 @@ func (pttr *PaymentTopupRepository) GetAccountByFintCodeAndAccountNumber(ctx con
 			Status:  http.StatusInternalServerError,
 		}
 	}
-
 	return &fintAccount, nil
 }

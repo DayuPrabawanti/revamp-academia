@@ -20,38 +20,38 @@ func NewPaymentBankService(repoMgr *repositories.RepositoriesManager) *PaymentBa
 }
 
 // 1a. ambil get list untuk payment bank
-func (pbs PaymentBankService) GetListPaymentBank(ctx *gin.Context) ([]*dbContext.Bank, *models.ResponseError) {
-	return pbs.repositoriesManager.PaymentBankRepository.GetListPaymentBank(ctx)
+func (pbr PaymentBankService) GetListPaymentBank(ctx *gin.Context) ([]*dbContext.Bank, *models.ResponseError) {
+	return pbr.repositoriesManager.PaymentBankRepository.GetListPaymentBank(ctx)
 }
 
 // 1a. ambil get by name untuk payment bank
-func (pbs PaymentBankService) GetPaymentBankByName(ctx *gin.Context, name string) (*dbContext.Bank, *models.ResponseError) {
-	return pbs.repositoriesManager.PaymentBankRepository.GetPaymentBankByName(ctx, name)
+func (pbr PaymentBankService) GetPaymentBankByName(ctx *gin.Context, name string) (*dbContext.Bank, *models.ResponseError) {
+	return pbr.repositoriesManager.PaymentBankRepository.GetPaymentBankByName(ctx, name)
 }
 
 // 1b. buat create paymentbank
-func (pbs PaymentBankService) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*dbContext.Bank, *models.ResponseError) {
+func (pbr PaymentBankService) CreateNewPaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams) (*dbContext.Bank, *models.ResponseError) {
 	responseErr := validatePaymentBank(paymentBankParams)
 	if responseErr != nil {
 		return nil, responseErr
 	}
 
-	return pbs.repositoriesManager.PaymentBankRepository.CreateNewPaymentBank(ctx, paymentBankParams)
+	return pbr.repositoriesManager.PaymentBankRepository.CreateNewPaymentBank(ctx, paymentBankParams)
 }
 
 // 1b. update payment data bank
-func (pbs PaymentBankService) UpdatePaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams, bankEntityID int64) *models.ResponseError {
+func (pbr PaymentBankService) UpdatePaymentBank(ctx *gin.Context, paymentBankParams *dbContext.CreatePaymentBankParams, bankEntityID int64) *models.ResponseError {
 	responseErr := validatePaymentBank(paymentBankParams)
 	if responseErr != nil {
 		return responseErr
 	}
-	return pbs.repositoriesManager.PaymentBankRepository.UpdatePaymentBank(ctx, paymentBankParams, bankEntityID)
+	return pbr.repositoriesManager.PaymentBankRepository.UpdatePaymentBank(ctx, paymentBankParams, bankEntityID)
 
 }
 
 // 1b. delet payment bank
-func (pbs PaymentBankService) DeletePaymentBank(ctx *gin.Context, id int64) *models.ResponseError {
-	return pbs.repositoriesManager.PaymentBankRepository.DeletePaymentBank(ctx, id)
+func (pbr PaymentBankService) DeletePaymentBank(ctx *gin.Context, id int64) *models.ResponseError {
+	return pbr.repositoriesManager.PaymentBankRepository.DeletePaymentBank(ctx, id)
 }
 
 func validatePaymentBank(paymentBankParams *dbContext.CreatePaymentBankParams) *models.ResponseError {
@@ -64,7 +64,7 @@ func validatePaymentBank(paymentBankParams *dbContext.CreatePaymentBankParams) *
 
 	if paymentBankParams.BankCode == "" {
 		return &models.ResponseError{
-			Message: "Invalid category name",
+			Message: "Invalid category code",
 			Status:  http.StatusBadRequest,
 		}
 	}

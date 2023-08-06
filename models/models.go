@@ -395,7 +395,7 @@ type MasterStatus struct {
 
 type MasterWorkingType struct {
 	WotyCode string         `db:"woty_code" json:"wotyCode"`
-	WotyName string `db:"woty_name" json:"wotyName"`
+	WotyName string`db:"woty_name" json:"wotyName"`
 }
 
 type PaymentBank struct {
@@ -421,8 +421,8 @@ type PaymentTransactionPayment struct {
 	TrpaType         string `db:"trpa_type" json:"trpaType"`
 	TrpaNote         string `db:"trpa_note" json:"trpaNote"`
 	TrpaModifiedDate time.Time   `db:"trpa_modified_date" json:"trpaModifiedDate"`
-	TrpaFromID     string         `db:"trpa_source_id" json:"trpaSourceId"`
-	TrpaToID     string         `db:"trpa_target_id" json:"trpaTargetId"`
+	TrpaSourceID     string         `db:"trpa_source_id" json:"trpaSourceId"`
+	TrpaTargetID     string         `db:"trpa_target_id" json:"trpaTargetId"`
 	TrpaUserEntityID int32  `db:"trpa_user_entity_id" json:"trpaUserEntityId"`
 }
 

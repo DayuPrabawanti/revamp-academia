@@ -34,17 +34,17 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	paymentRoute.PUT("/account/updatePlus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountPlus)
 	paymentRoute.PUT("/account/updateMinus", controllerMgr.PaymentAccountController.UpdatePaymentUsers_accountMinus)
 	paymentRoute.DELETE("/account/deleteAccountNumber", controllerMgr.PaymentAccountController.DeletePaymentAccountByAccNum)
-	// Transaction (Debit Saldo)
 	paymentRoute.POST("/account/debitSaldo", controllerMgr.PaymentAccountController.DebitSaldo)
 
 	// Router (API) end-point Mockup 4
 	paymentRoute.GET("/topup-bank", controllerMgr.PaymentTopupController.GetAccountByBankCodeAndAccountNumber)
 	paymentRoute.GET("/topup-fintech", controllerMgr.PaymentTopupController.GetAccountByFintCodeAndAccountNumber)
+	paymentRoute.POST("/topup-transfer", controllerMgr.PaymentTopupController.TransferTopup)
 
 	// router (API) end-point Mockup 5
 	paymentRoute.GET("/transaction", controllerMgr.PaymentTransactionController.GetListPaymentTransaction)
 	paymentRoute.GET("/transaction/view", controllerMgr.PaymentTransactionController.GetPaymentTransactionById)
-	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.CreateNewPaymentTransaction)
+	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.RecordPaymentTransactionUser)
 
 	// paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
 	// paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
