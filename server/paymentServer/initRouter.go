@@ -47,7 +47,7 @@ func InitRouter(controllerMgr *controllers.ControllersManager) *gin.Engine {
 	paymentRoute.POST("/transaction/create", controllerMgr.PaymentTransactionController.RecordPaymentTransactionUser)
 
 	// paymentRoute.PUT("/transaction/update/:id", controllerMgr.PaymentTransactionController.UpdatePaymentTransaction)
-	// paymentRoute.DELETE("/transaction/delete/:id", controllerMgr.PaymentTransactionController.DeletePaymentTransaction)
+	paymentRoute.DELETE("/transaction/delete", controllerMgr.PaymentTransactionController.DeletePaymentTransaction_paymentById)
 
 	return router
 }
