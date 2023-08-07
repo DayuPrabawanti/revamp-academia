@@ -118,20 +118,19 @@ const updatePayHistory = `-- name: UpdatePayHistory :exec
 UPDATE hr.employee_pay_history
   set ephi_rate_change_date = $2,
   ephi_rate_salary = $3,
-  ephi_pay_frequence = $4,
-  ephi_modified_date = $5
+  ephi_pay_frequence = $4
 WHERE ephi_entity_id = $1
 `
 
 type UpdatePayHistoryParams struct {
-	EphiEntityID     int32         `db:"ephi_entity_id" json:"ephiEntityId"`
-	EphiRateSalary   sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
-	EphiPayFrequence sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
-	EphiModifiedDate sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
+	EphiEntityID       int32         `db:"ephi_entity_id" json:"ephiEntityId"`
+	EphiRateChangeDate sql.NullTime  `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
+	EphiRateSalary     sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiPayFrequence   sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
 }
 
-func (q *Queries) UpdatePayHistory(ctx context.Context, arg CreatePayHistoryParams) error {
-	_, err := q.db.ExecContext(ctx, updatePayHistory, arg.EphiEntityID, arg.EphiRateChangeDate, arg.EphiRateSalary, arg.EphiPayFrequence, arg.EphiModifiedDate)
+func (q *Queries) UpdatePayHistory(ctx context.Context, arg UpdatePayHistoryParams) error {
+	_, err := q.db.ExecContext(ctx, updatePayHistory, arg.EphiEntityID, arg.EphiRateChangeDate, arg.EphiRateSalary, arg.EphiPayFrequence)
 	return err
 }
 

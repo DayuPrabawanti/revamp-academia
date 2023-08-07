@@ -29,3 +29,8 @@ func (cs *EmployeeMockupService) EmployeeMockup(ctx *gin.Context, userParam *dbC
 
 	return cs.employeeMockupRepository.CreateEmployeeMockup(ctx, userParam, empParam, salaryParam, assigmentParam)
 }
+
+func (cs *EmployeeMockupService) UpdateEmployeeMockup(ctx *gin.Context, userParam *dbContext.UpdateUsersParams, empParam *dbContext.UpdateEmployeeParams, salaryParam *dbContext.UpdatePayHistoryParams, assigmentParam *dbContext.UpdateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
+
+	return cs.employeeMockupRepository.UpdateEmployeeMockup(ctx, userParam, empParam, salaryParam, assigmentParam, id)
+}

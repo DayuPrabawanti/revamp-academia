@@ -36,8 +36,8 @@ func (dhs DepartmentHistoryService) CreateDepartmentHistory(ctx *gin.Context, de
 	return dhs.departmentHistoryRepository.CreateDepartmentHistory(ctx, departmentHistoryParams)
 }
 
-func (dhs DepartmentHistoryService) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.CreateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
-	responseErr := validateDepartmentHistory(departmentHistoryParams)
+func (dhs DepartmentHistoryService) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.UpdateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
+	responseErr := validateUpdateDepartmentHistory(departmentHistoryParams)
 	if responseErr != nil {
 		return responseErr
 	}
@@ -50,6 +50,25 @@ func (dhs DepartmentHistoryService) DeleteDepartmentHistory(ctx *gin.Context, id
 }
 
 func validateDepartmentHistory(departmentHistoryParams *dbContext.CreateEmployeeDepartmentHistoryParams) *models.ResponseError {
+	if departmentHistoryParams.EdhiID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid Edhi id",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if departmentHistoryParams.EdhiEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Edhi Entity Id Required",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	return nil
+
+}
+
+func validateUpdateDepartmentHistory(departmentHistoryParams *dbContext.UpdateEmployeeDepartmentHistoryParams) *models.ResponseError {
 	if departmentHistoryParams.EdhiID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid Edhi id",

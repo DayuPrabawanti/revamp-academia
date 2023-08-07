@@ -36,8 +36,8 @@ func (es EmployeeService) CreateEmployee(ctx *gin.Context, employeeParams *dbCon
 	return es.employeeRepository.CreateEmployee(ctx, employeeParams)
 }
 
-func (es EmployeeService) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.CreateEmployeeParams, id int64) *models.ResponseError {
-	responseErr := validateEmployee(employeeParams)
+func (es EmployeeService) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.UpdateEmployeeParams, id int64) *models.ResponseError {
+	responseErr := validateUpdateEmployee(employeeParams)
 	if responseErr != nil {
 		return responseErr
 	}
@@ -47,6 +47,25 @@ func (es EmployeeService) UpdateEmployee(ctx *gin.Context, employeeParams *dbCon
 
 func (es EmployeeService) DeleteEmployee(ctx *gin.Context, id int64) *models.ResponseError {
 	return es.employeeRepository.DeleteEmployee(ctx, id)
+}
+
+func validateUpdateEmployee(employeeParams *dbContext.UpdateEmployeeParams) *models.ResponseError {
+	if employeeParams.EmpEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid EmpEntityID",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	if employeeParams.EmpEmpNumber.Valid == false {
+		return &models.ResponseError{
+			Message: "Emp Number Required",
+			Status:  http.StatusBadRequest,
+		}
+	}
+
+	return nil
+
 }
 
 func validateEmployee(employeeParams *dbContext.CreateEmployeeParams) *models.ResponseError {
@@ -78,13 +97,24 @@ func (cs EmployeeService) CreateUser(ctx *gin.Context, userParams *dbContext.Cre
 	return cs.employeeRepository.CreateUser(ctx, userParams)
 }
 
-func (cs EmployeeService) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, id int64) *models.ResponseError {
-	responseErr := validateUser(userParams)
+func (cs EmployeeService) UpdateUser(ctx *gin.Context, userParams *dbContext.UpdateUsersParams, id int64) *models.ResponseError {
+	responseErr := validateUpdateUser(userParams)
 	if responseErr != nil {
 		return responseErr
 	}
 
 	return cs.employeeRepository.UpdateUser(ctx, userParams)
+}
+
+func validateUpdateUser(userParams *dbContext.UpdateUsersParams) *models.ResponseError {
+	if userParams.UserEntityID == 0 {
+		return &models.ResponseError{
+			Message: "Invalid User id",
+			Status:  http.StatusBadRequest,
+		}
+	}
+	return nil
+
 }
 
 func validateUser(userParams *dbContext.CreateUsersParams) *models.ResponseError {

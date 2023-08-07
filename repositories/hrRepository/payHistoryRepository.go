@@ -77,7 +77,7 @@ func (phr PayHistoryRepository) CreatePayHistory(ctx *gin.Context, payHistoryPar
 	return payHistory, nil
 }
 
-func (phr PayHistoryRepository) UpdatePayHistory(ctx *gin.Context, payHistoryParams *dbContext.CreatePayHistoryParams) *models.ResponseError {
+func (phr PayHistoryRepository) UpdatePayHistory(ctx *gin.Context, payHistoryParams *dbContext.UpdatePayHistoryParams) *models.ResponseError {
 
 	store := dbContext.New(phr.dbHandler)
 	err := store.UpdatePayHistory(ctx, *payHistoryParams)

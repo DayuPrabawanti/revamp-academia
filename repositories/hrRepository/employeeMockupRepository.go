@@ -91,6 +91,50 @@ func (cr EmployeeMockupRepository) CreateEmployeeMockup(ctx *gin.Context, userPa
 	return employeeMockup, nil
 }
 
+func (cr EmployeeMockupRepository) UpdateEmployeeMockup(ctx *gin.Context, usersParam *dbContext.UpdateUsersParams, empParam *dbContext.UpdateEmployeeParams, salaryParam *dbContext.UpdatePayHistoryParams, assigmentParam *dbContext.UpdateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
+
+	store := dbContext.New(cr.dbHandler)
+	err := store.UpdateUser(ctx, *usersParam)
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update user",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	store2 := dbContext.New(cr.dbHandler)
+	err2 := store2.UpdateEmployee(ctx, *empParam)
+	if err2 != nil {
+		return &models.ResponseError{
+			Message: "error when update employee",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	store3 := dbContext.New(cr.dbHandler)
+	err3 := store3.UpdatePayHistory(ctx, *salaryParam)
+	if err3 != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	store4 := dbContext.New(cr.dbHandler)
+	err4 := store4.UpdateEmployeeDepartmentHistory(ctx, *assigmentParam)
+	if err4 != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &models.ResponseError{
+		Message: "data has been update",
+		Status:  http.StatusOK,
+	}
+}
+
 func (tdmr EmployeeMockupRepository) SearchEmployee(ctx *gin.Context, userName string, status string) ([]models.EmployeeMockupList, *models.ResponseError) {
 	store := dbContext.New(tdmr.dbHandler)
 	employee, err := store.SearchEmployee(ctx, userName, status)

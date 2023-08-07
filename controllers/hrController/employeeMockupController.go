@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
 
 	"codeid.revampacademy/repositories/hrRepository/dbContext"
 	"codeid.revampacademy/services/hrService"
@@ -90,6 +91,65 @@ func (empMockupController EmployeeMockupController) CreateEmployeeMockup(ctx *gi
 	response, responseErr := empMockupController.employeeMockupService.EmployeeMockup(ctx, &user, &general, &salary, &assigment)
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}
+
+func (empMockupController EmployeeMockupController) UpdateEmployeeMockup(ctx *gin.Context) {
+
+	dept_id, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading update department request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var user dbContext.UpdateUsersParams
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		log.Println("Error while unmarshaling update user request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var employee dbContext.UpdateEmployeeParams
+	err = json.Unmarshal(body, &employee)
+	if err != nil {
+		log.Println("Error while unmarshaling update employee request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var salary dbContext.UpdatePayHistoryParams
+	err = json.Unmarshal(body, &salary)
+	if err != nil {
+		log.Println("Error while unmarshaling update salary request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var assigment dbContext.UpdateEmployeeDepartmentHistoryParams
+	err = json.Unmarshal(body, &assigment)
+	if err != nil {
+		log.Println("Error while unmarshaling update assigment request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response := empMockupController.employeeMockupService.UpdateEmployeeMockup(ctx, &user, &employee, &salary, &assigment, int64(dept_id))
+	if response != nil {
+		ctx.AbortWithStatusJSON(response.Status, response)
 		return
 	}
 

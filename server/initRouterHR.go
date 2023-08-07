@@ -86,6 +86,7 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		employeesRoute.GET("/employees", controllerMgr.EmployeeMockupController.ListEmployeeMockup)
 		employeesRoute.POST("/employees/create", controllerMgr.EmployeeMockupController.CreateEmployeeMockup)
 		employeesRoute.GET("/employees/search", controllerMgr.EmployeeMockupController.SearchEmployee)
+		employeesRoute.PUT("/employees/update/:id", controllerMgr.EmployeeMockupController.UpdateEmployeeMockup)
 
 	}
 

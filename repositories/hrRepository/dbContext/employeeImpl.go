@@ -188,10 +188,8 @@ UPDATE hr.employee
   emp_vacation_hours = $9,
   emp_sickleave_hours = $10,
   emp_current_flag = $11,
-  emp_modified_date = $12,
-  emp_type = $13,
-  emp_joro_id = $14,
-  emp_emp_entity_id = 15
+  emp_type = $12,
+  emp_joro_id = $13
 WHERE emp_entity_id = $1
 `
 
@@ -207,13 +205,11 @@ type UpdateEmployeeParams struct {
 	EmpVacationHours  sql.NullInt16  `db:"emp_vacation_hours" json:"empVacationHours"`
 	EmpSickleaveHours sql.NullInt16  `db:"emp_sickleave_hours" json:"empSickleaveHours"`
 	EmpCurrentFlag    sql.NullInt16  `db:"emp_current_flag" json:"empCurrentFlag"`
-	EmpModifiedDate   sql.NullTime   `db:"emp_modified_date" json:"empModifiedDate"`
 	EmpType           sql.NullString `db:"emp_type" json:"empType"`
 	EmpJoroID         sql.NullInt32  `db:"emp_joro_id" json:"empJoroId"`
-	EmpEmpEntityID    sql.NullInt32  `db:"emp_emp_entity_id" json:"empEmpEntityId"`
 }
 
-func (q *Queries) UpdateEmployee(ctx context.Context, arg CreateEmployeeParams) error {
+func (q *Queries) UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) error {
 	_, err := q.db.ExecContext(ctx, updateEmployee,
 		arg.EmpEntityID,
 		arg.EmpEmpNumber,
@@ -226,10 +222,8 @@ func (q *Queries) UpdateEmployee(ctx context.Context, arg CreateEmployeeParams) 
 		arg.EmpVacationHours,
 		arg.EmpSickleaveHours,
 		arg.EmpCurrentFlag,
-		arg.EmpModifiedDate,
 		arg.EmpType,
 		arg.EmpJoroID,
-		arg.EmpEmpEntityID,
 	)
 	return err
 }
@@ -333,9 +327,9 @@ UPDATE users.users
   user_birth_date=$6,
   user_email_promotion=$7,
   user_demographic=$8,
-  user_modified_date=$9,
-  user_photo=$10,
-  user_current_role=$11
+  user_modified_date=Now(),
+  user_photo=$9,
+  user_current_role=$10
 WHERE user_entity_id = $1
 `
 
@@ -348,12 +342,11 @@ type UpdateUsersParams struct {
 	UserBirthDate      sql.NullTime   `db:"user_birth_date" json:"userBirthDate"`
 	UserEmailPromotion sql.NullInt32  `db:"user_email_promotion" json:"userEmailPromotion"`
 	UserDemographic    sql.NullString `db:"user_demographic" json:"userDemographic"`
-	UserModifiedDate   sql.NullTime   `db:"user_modified_date" json:"userModifiedDate"`
 	UserPhoto          sql.NullString `db:"user_photo" json:"userPhoto"`
 	UserCurrentRole    sql.NullInt32  `db:"user_current_role" json:"userCurrentRole"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg CreateUsersParams) error {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUsersParams) error {
 	_, err := q.db.ExecContext(ctx, updateUsers,
 		arg.UserEntityID,
 		arg.UserName,
@@ -363,7 +356,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg CreateUsersParams) error {
 		arg.UserBirthDate,
 		arg.UserEmailPromotion,
 		arg.UserDemographic,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.UserPhoto,
 		arg.UserCurrentRole)
 	return err
