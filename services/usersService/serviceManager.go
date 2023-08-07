@@ -19,6 +19,14 @@ type ServiceManager struct {
 	UserLicenseService
 	UserSkillService
 	UserListProfileService
+	EditUsernameService
+	EditPasswordService
+	EditEmailService
+	EditPhoneService
+	AddAddressService
+	EditEducationService
+	EditExperienceService
+	EditSkillService
 }
 
 // constructor
@@ -37,5 +45,13 @@ func NewServiceManager(repoMgr *usersRepository.RepositoryManager) *ServiceManag
 		UserLicenseService:    *NewUserLicenseService(&repoMgr.UserLicenseRepository),
 		UserSkillService:      *NewUserSkillService(&repoMgr.UserSkillRepository),
 		UserListProfileService: *NewUserListProfileService(&repoMgr.UserListProfileRepository),
+		EditUsernameService:   *NewEditUsernameService(&repoMgr.EditUsernameRepository),
+		EditPasswordService: *NewEditUserPasswordService(&repoMgr.EditPasswordRepository),
+		EditEmailService: *NewEditUserEmailService(&repoMgr.EditEmailRepository),
+		EditPhoneService: *NewEditUserPhoneService(&repoMgr.EditPhoneRepository),
+		AddAddressService:     *NewAddAddressService(&repoMgr.EditAddressRepository),
+		EditEducationService: *NewEditUserEducationService(&repoMgr.EditEducationRepository),
+		EditExperienceService: *NewEditUserExperienceService(&repoMgr.EditExperienceRepository),
+		EditSkillService: *NewEditUserSkillService(&repoMgr.EditSkillRepository),
 	}
 }

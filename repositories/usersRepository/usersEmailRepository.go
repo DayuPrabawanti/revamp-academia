@@ -49,10 +49,19 @@ func (cr UserEmailRepository) GetListUsersEmail(ctx *gin.Context) ([]*models.Use
 }
 
 
-func (cr UserEmailRepository) GetEmail(ctx *gin.Context, id int32) (*models.UsersUsersEmail, *models.ResponseError) {
+func (cr UserEmailRepository) GetEmail(ctx *gin.Context, id int32) ([]*dbContext.Email, *models.ResponseError) {
 
 	store := dbContext.New(cr.dbHandler)
 	userEmail, err := store.GetEmail(ctx, int32(id))
+
+	listEmail := make([]*dbContext.Email, 0)
+
+	for _, v := range userEmail {
+		user := &dbContext.Email{
+			PmailAddress: v.PmailAddress,
+		}
+		listEmail = append(listEmail, user)
+	}
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -61,7 +70,7 @@ func (cr UserEmailRepository) GetEmail(ctx *gin.Context, id int32) (*models.User
 		}
 	}
 
-	return &userEmail, nil
+	return listEmail, nil
 }
 
 func (cr UserEmailRepository) CreateEmail(ctx *gin.Context, emailParams *dbContext.CreateEmailParams) (*models.UsersUsersEmail, *models.ResponseError) {

@@ -23,7 +23,7 @@ func (cs UserEmailService) GetListUsersEmail(ctx *gin.Context) ([]*models.UsersU
 	return cs.userEmailRepository.GetListUsersEmail(ctx)
 }
 
-func (cs UserEmailService) GetEmail(ctx *gin.Context, id int32) (*models.UsersUsersEmail, *models.ResponseError) {
+func (cs UserEmailService) GetEmail(ctx *gin.Context, id int32) ([]*dbContext.Email, *models.ResponseError) {
 	return cs.userEmailRepository.GetEmail(ctx, id)
 }
 

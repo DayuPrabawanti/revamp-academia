@@ -17,7 +17,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		userRoute.DELETE("/:id", controllerMgr.UserController.DeleteUser)
 	}
 
-	userEmailRoute := routers.Group("/usersemail")
+	userEmailRoute := routers.Group("/users/email")
 	{
 		// Router endpoint (url) http User Email
 		userEmailRoute.GET("/", controllerMgr.UserEmailController.GetListUsersEmail)
@@ -46,9 +46,25 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 
 	userProfile := routers.Group("/api/users/profile")
 	{
-		// Router endpoint (url) http User Sign Up
+		// Router endpoint (url) http User Show Profile
 		// userProfile.GET("/view/:id", controllerMgr.UserListProfileController.GetProfileUser)
 		userProfile.GET("/view/:id", controllerMgr.UserListProfileController.GetProfile)
+	}
+
+	editUser := routers.Group("/api/users/profile")
+	{
+		// Router endpoint (url) http User Edit Username
+		editUser.GET("/edit/:id", controllerMgr.EditUsernameController.GetUsername)
+		editUser.PUT("/edit/:id", controllerMgr.EditUsernameController.EditUsername)
+		editUser.GET("/password/:id", controllerMgr.EditUserPasswordController.GetPassword)
+		editUser.PUT("/password/:id", controllerMgr.EditUserPasswordController.UpdatePassword)
+		editUser.POST("/email/:id", controllerMgr.EditEmailController.AddEmail)
+		editUser.POST("/phone/:id", controllerMgr.EditPhoneController.AddPhone)
+		editUser.POST("/address/:id", controllerMgr.EditAddressController.AddAddress)
+		editUser.POST("/education/:id", controllerMgr.EditEducationController.AddEducation)
+		editUser.POST("/experience/:id", controllerMgr.EditExperienceController.AddExperience)
+		editUser.POST("/skill/:id", controllerMgr.EditSkillController.AddSkill)
+
 	}
 
 	userExperienceRoute := routers.Group("/usersexperience")
@@ -92,7 +108,7 @@ func InitRouter(routers *gin.Engine, controllerMgr *usersController.ControllerMa
 		// userAddressRoute.DELETE("/:id", controllerMgr.UserAddressController.DeleteExperience)
 	}
 
-	UserEducationRoute := routers.Group("/userseducation")
+	UserEducationRoute := routers.Group("/users/education")
 	{
 		// Router endpoint (url) http User Address
 		UserEducationRoute.GET("/", controllerMgr.UserEducationController.GetListUsersEducation)

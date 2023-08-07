@@ -49,7 +49,6 @@ func (userEmailController UserEmailController) GetEmail(ctx *gin.Context) {
 
 	response, responseErr := userEmailController.userEmailService.GetEmail(ctx, int32(emailId))
 	if responseErr != nil {
-
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}

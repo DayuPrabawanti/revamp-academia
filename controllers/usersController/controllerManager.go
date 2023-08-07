@@ -19,6 +19,14 @@ type ControllerManager struct {
 	UserLicenseController
 	UserSkillController
 	UserListProfileController
+	EditUsernameController
+	EditUserPasswordController
+	EditEmailController
+	EditPhoneController
+	EditAddressController
+	EditEducationController
+	EditExperienceController
+	EditSkillController
 }
 
 // constructor
@@ -37,5 +45,13 @@ func NewControllerManager(serviceMgr *usersService.ServiceManager) *ControllerMa
 		*NewUserLicenseController(&serviceMgr.UserLicenseService),
 		*NewUserSkillController(&serviceMgr.UserSkillService),
 		*NewUserListProfileController(&serviceMgr.UserListProfileService),
+		*NewEditUsernameController(&serviceMgr.EditUsernameService),
+		*NewEditUserPasswordController(&serviceMgr.EditPasswordService),
+		*NewEditEmailController(&serviceMgr.EditEmailService),
+		*NewEditPhoneController(&serviceMgr.EditPhoneService),
+		*NewEditAddressController(&serviceMgr.AddAddressService),
+		*NewEditEducationController(&serviceMgr.EditEducationService),
+		*NewEditExperienceController(&serviceMgr.EditExperienceService),
+		*NewEditSkillController(&serviceMgr.EditSkillService),
 	}
 }

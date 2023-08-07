@@ -16,6 +16,10 @@ type CreateEmailParams struct {
 	PmailModifiedDate sql.NullTime `db:"pmail_modified_date" json:"pmailModifiedDate"`
 }
 
+type Email struct {
+	PmailAddress      string       `db:"pmail_address" json:"pmailAddress"`
+}
+
 
 
 
@@ -64,15 +68,31 @@ WHERE pmail_entity_id = $1
 `
 
 // Users Email
-func (q *Queries) GetEmail(ctx context.Context, pmailID int32) (models.UsersUsersEmail, error) {
+func (q *Queries) GetEmail(ctx context.Context, pmailID int32) ([]Email, error) {
 	row, err := q.db.QueryContext(ctx, getEmail, pmailID)
-	var i models.UsersUsersEmail
-	err = row.Scan(
-		&i.PmailAddress,
-
-	)
-	return i, err
+	if err != nil {
+		return nil, err
+	}
+	defer row.Close()
+	var email []Email
+	for row.Next() {
+		var i Email
+		if err := row.Scan(
+			&i.PmailAddress,
+		); err != nil {
+			return nil, err
+		}
+		email = append(email, i)
+	}
+	if err := row.Close(); err != nil {
+		return nil, err
+	}
+	if err := row.Err(); err != nil {
+		return nil, err
+	}
+	return email, nil
 }
+
 
 const createEmail = `-- name: CreateEmail :one
 WITH inserted_entity AS (

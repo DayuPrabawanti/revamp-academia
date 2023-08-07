@@ -20,6 +20,14 @@ type RepositoryManager struct {
 	UserLicenseRepository
 	UserSkillRepository
 	UserListProfileRepository
+	EditUsernameRepository
+	EditPasswordRepository
+	EditEmailRepository
+	EditPhoneRepository
+	EditAddressRepository
+	EditEducationRepository
+	EditExperienceRepository
+	EditSkillRepository
 }
 
 // constructor
@@ -38,5 +46,13 @@ func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 		*NewUserLicenseRepository(dbHandler),
 		*NewUserSkillRepository(dbHandler),
 		*NewUserListProfileRepository(dbHandler),
+		*NewEditUsernameRepository(dbHandler),
+		*NewEditPasswordRepository(dbHandler),
+		*NewEditEmailRepository(dbHandler),
+		*NewEditPhoneRepository(dbHandler),
+		*NewEditAddressRepository(dbHandler),
+		*NewEditEducationRepository(dbHandler),
+		*NewEditExperienceRepository(dbHandler),
+		*NewEditSkillRepository(dbHandler),
 	}
 }
