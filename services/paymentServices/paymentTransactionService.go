@@ -59,9 +59,9 @@ func (pts PaymentTransactionService) RecordPaymentTransactionUser(ctx *gin.Conte
 
 // }
 
-// func (ptr PaymentTransactionService) DeletePaymentTransaction(ctx *gin.Context, id int64) *models.ResponseError {
-// 	return ptr.paymentTransactionRepository.DeletePaymentTransaction(ctx, id)
-// }
+func (ptr PaymentTransactionService) DeletePaymentTransaction(ctx *gin.Context, trpaCodeNumber string) *models.ResponseError {
+	return ptr.repositoriesManager.PaymentTransactionRepository.DeletePaymentTransaction(ctx, trpaCodeNumber)
+}
 
 func validatePaymentTransaction(params *dbContext.RecordTransactionUserParams) *models.ResponseError {
 	if params.TrpaUserEntityID == 0 {

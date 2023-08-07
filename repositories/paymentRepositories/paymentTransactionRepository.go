@@ -108,18 +108,18 @@ func (ptr PaymentTransactionRepository) RecordPaymentTransactionUser(ctx *gin.Co
 // 	}
 // }
 
-// func (ptr PaymentTransactionRepository) DeletePaymentTransaction(ctx *gin.Context, id int64) *models.ResponseError {
-// 	store := dbContext.New(ptr.dbHandler)
-// 	err := store.DeletePaymentTransaction_payment(ctx, int32(id))
+func (ptr PaymentTransactionRepository) DeletePaymentTransaction(ctx *gin.Context, trpaCodeNumber string) *models.ResponseError {
+	store := dbContext.New(ptr.dbHandler)
+	err := store.DeletePaymentTransaction_payment(ctx, trpaCodeNumber)
 
-// 	if err != nil {
-// 		return &models.ResponseError{
-// 			Message: "error when update",
-// 			Status:  http.StatusInternalServerError,
-// 		}
-// 	}
-// 	return &models.ResponseError{
-// 		Message: "data telah terhapus",
-// 		Status:  http.StatusOK,
-// 	}
-// }
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when update",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+	return &models.ResponseError{
+		Message: "data telah terhapus",
+		Status:  http.StatusOK,
+	}
+}

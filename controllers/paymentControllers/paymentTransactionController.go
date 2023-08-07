@@ -113,24 +113,17 @@ func (paymentTransactionController PaymentTransactionController) RecordPaymentTr
 // 	}
 
 // 	ctx.JSON(http.StatusOK, response)
-
 // }
 
-// func (paymentTransactionController PaymentTransactionController) DeletePaymentTransaction(ctx *gin.Context) {
+func (paymentTransactionController PaymentTransactionController) DeletePaymentTransaction(ctx *gin.Context) {
 
-// 	trpaID, err := strconv.Atoi(ctx.Param("id"))
+	trpaCodeNumber := ctx.Query("codeNumber")
 
-// 	if err != nil {
-// 		log.Println("Error while reading paramater id", err)
-// 		ctx.AbortWithError(http.StatusBadRequest, err)
-// 		return
-// 	}
+	responseErr := paymentTransactionController.paymentTransactionService.DeletePaymentTransaction(ctx, trpaCodeNumber)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
 
-// 	responseErr := paymentTransactionController.paymentTransactionService.DeletePaymentTransaction(ctx, int64(trpaID))
-// 	if responseErr != nil {
-// 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
-// 		return
-// 	}
-
-// 	ctx.Status(http.StatusNoContent)
-// }
+	ctx.Status(http.StatusNoContent)
+}
