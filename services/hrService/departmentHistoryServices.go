@@ -36,11 +36,7 @@ func (dhs DepartmentHistoryService) CreateDepartmentHistory(ctx *gin.Context, de
 	return dhs.departmentHistoryRepository.CreateDepartmentHistory(ctx, departmentHistoryParams)
 }
 
-func (dhs DepartmentHistoryService) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.CreateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
-	responseErr := validateDepartmentHistory(departmentHistoryParams)
-	if responseErr != nil {
-		return responseErr
-	}
+func (dhs DepartmentHistoryService) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.UpdateEmployeeDepartmentHistoryParams, id int64) *models.ResponseError {
 
 	return dhs.departmentHistoryRepository.UpdateDepartmentHistory(ctx, departmentHistoryParams)
 }

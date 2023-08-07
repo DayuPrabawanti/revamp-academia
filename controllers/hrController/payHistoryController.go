@@ -100,7 +100,7 @@ func (payHistoryController PayHistoryController) UpdatePayHistory(ctx *gin.Conte
 		return
 	}
 
-	var payHistory dbContext.CreatePayHistoryParams
+	var payHistory dbContext.UpdatePayHistoryParams
 	err = json.Unmarshal(body, &payHistory)
 	if err != nil {
 		log.Println("Error while unmarshaling update pay history request body", err)

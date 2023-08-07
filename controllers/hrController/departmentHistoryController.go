@@ -100,7 +100,7 @@ func (departmentHistoryController DepartmentHistoryController) UpdateDepartmentH
 		return
 	}
 
-	var departmentHistory dbContext.CreateEmployeeDepartmentHistoryParams
+	var departmentHistory dbContext.UpdateEmployeeDepartmentHistoryParams
 	err = json.Unmarshal(body, &departmentHistory)
 	if err != nil {
 		log.Println("Error while unmarshaling update department history request body", err)

@@ -2,7 +2,6 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"codeid.revampacademy/models"
@@ -164,17 +163,17 @@ const updateBatch = `-- name: UpdateBatch :exec
 UPDATE bootcamp.batch
 SET batch_start_date = $2,
 	batch_reason = $3,
-	batch_modified_date = $4,
-    batch_status = $5
+	batch_modified_date = Now(),
+    batch_status = $4
 WHERE batch_id = $1
 `
 
 type UpdateBatchParams struct {
-	BatchID           int32          `db:"batch_id" json:"batchId"`
-	BatchStartDate    sql.NullTime   `db:"batch_start_date" json:"batchStartDate"`
-	BatchReason       sql.NullString `db:"batch_reason" json:"batchReason"`
-	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
-	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
+	BatchID           int32     `db:"batch_id" json:"batchId"`
+	BatchStartDate    time.Time `db:"batch_start_date" json:"batchStartDate"`
+	BatchReason       string    `db:"batch_reason" json:"batchReason"`
+	BatchModifiedDate time.Time `db:"batch_modified_date" json:"batchModifiedDate"`
+	BatchStatus       string    `db:"batch_status" json:"batchStatus"`
 }
 
 func (q *Queries) UpdateBatch(ctx context.Context, arg UpdateBatchParams) error {
@@ -182,7 +181,6 @@ func (q *Queries) UpdateBatch(ctx context.Context, arg UpdateBatchParams) error 
 		arg.BatchID,
 		arg.BatchStartDate,
 		arg.BatchReason,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.BatchStatus,
 	)
 	return err

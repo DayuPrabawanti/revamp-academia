@@ -182,16 +182,16 @@ const updateSwitch = `-- name: UpdateSwitch :exec
 UPDATE bootcamp.batch
 SET batch_start_date = $2,
 	batch_reason = $3,
-	batch_modified_date = $4,
-    batch_status = $5
+	batch_modified_date = Now(),
+    batch_status = $4
 WHERE batch_id = $1
 `
 
 type UpdateSwitchParams struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
-	BatchStartDate    sql.NullTime   `db:"batch_start_date" json:"batchStartDate"`
-	BatchReason       sql.NullString `db:"batch_reason" json:"batchReason"`
-	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
+	BatchStartDate    time.Time      `db:"batch_start_date" json:"batchStartDate"`
+	BatchReason       string         `db:"batch_reason" json:"batchReason"`
+	BatchModifiedDate time.Time      `db:"batch_modified_date" json:"batchModifiedDate"`
 	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
 }
 
@@ -206,7 +206,6 @@ func (q *Queries) UpdateSwitch(ctx context.Context, arg UpdateSwitchParams) erro
 		arg.BatchID,
 		arg.BatchStartDate,
 		arg.BatchReason,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.BatchStatus,
 	)
 	return err

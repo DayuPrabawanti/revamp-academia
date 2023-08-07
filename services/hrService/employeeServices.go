@@ -36,11 +36,7 @@ func (es EmployeeService) CreateEmployee(ctx *gin.Context, employeeParams *dbCon
 	return es.employeeRepository.CreateEmployee(ctx, employeeParams)
 }
 
-func (es EmployeeService) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.CreateEmployeeParams, id int64) *models.ResponseError {
-	responseErr := validateEmployee(employeeParams)
-	if responseErr != nil {
-		return responseErr
-	}
+func (es EmployeeService) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.UpdateEmployeeParams, id int64) *models.ResponseError {
 
 	return es.employeeRepository.UpdateEmployee(ctx, employeeParams)
 }
@@ -53,13 +49,6 @@ func validateEmployee(employeeParams *dbContext.CreateEmployeeParams) *models.Re
 	if employeeParams.EmpEntityID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid EmpEntityID",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
-	if employeeParams.EmpEmpNumber.Valid == false {
-		return &models.ResponseError{
-			Message: "Emp Number Required",
 			Status:  http.StatusBadRequest,
 		}
 	}
@@ -78,11 +67,7 @@ func (cs EmployeeService) CreateUser(ctx *gin.Context, userParams *dbContext.Cre
 	return cs.employeeRepository.CreateUser(ctx, userParams)
 }
 
-func (cs EmployeeService) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams, id int64) *models.ResponseError {
-	responseErr := validateUser(userParams)
-	if responseErr != nil {
-		return responseErr
-	}
+func (cs EmployeeService) UpdateUser(ctx *gin.Context, userParams *dbContext.UpdateUsersParams, id int64) *models.ResponseError {
 
 	return cs.employeeRepository.UpdateUser(ctx, userParams)
 }

@@ -2,8 +2,8 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
+	"time"
 
 	"codeid.revampacademy/models"
 )
@@ -22,12 +22,12 @@ RETURNING edhi_id, edhi_entity_id, edhi_start_date, edhi_end_date, edhi_modified
 `
 
 type CreateEmployeeDepartmentHistoryParams struct {
-	EdhiID           int32         `db:"edhi_id" json:"edhiId"`
-	EdhiEntityID     int32         `db:"edhi_entity_id" json:"edhiEntityId"`
-	EdhiStartDate    sql.NullTime  `db:"edhi_start_date" json:"edhiStartDate"`
-	EdhiEndDate      sql.NullTime  `db:"edhi_end_date" json:"edhiEndDate"`
-	EdhiModifiedDate sql.NullTime  `db:"edhi_modified_date" json:"edhiModifiedDate"`
-	EdhiDeptID       sql.NullInt32 `db:"edhi_dept_id" json:"edhiDeptId"`
+	EdhiID           int32     `db:"edhi_id" json:"edhiId"`
+	EdhiEntityID     int32     `db:"edhi_entity_id" json:"edhiEntityId"`
+	EdhiStartDate    time.Time `db:"edhi_start_date" json:"edhiStartDate"`
+	EdhiEndDate      time.Time `db:"edhi_end_date" json:"edhiEndDate"`
+	EdhiModifiedDate time.Time `db:"edhi_modified_date" json:"edhiModifiedDate"`
+	EdhiDeptID       int32     `db:"edhi_dept_id" json:"edhiDeptId"`
 }
 
 func (q *Queries) CreateEmployeeDepartmentHistory(ctx context.Context, arg CreateEmployeeDepartmentHistoryParams) (*models.HrEmployeeDepartmentHistory, *models.ResponseError) {
@@ -124,20 +124,22 @@ UPDATE hr.employee_department_history
   set edhi_entity_id = $2,
   edhi_start_date = $3,
   edhi_end_date = $4,
-  edhi_modified_date = $5,
-  edhi_dept_id = $6
+  edhi_modified_date = Now(),
+  edhi_dept_id = $5
 WHERE edhi_id = $1
 `
 
 type UpdateEmployeeDepartmentHistoryParams struct {
-	EdhiID           int32        `db:"edhi_id" json:"edhiId"`
-	EdhiStartDate    sql.NullTime `db:"edhi_start_date" json:"edhiStartDate"`
-	EdhiEndDate      sql.NullTime `db:"edhi_end_date" json:"edhiEndDate"`
-	EdhiModifiedDate sql.NullTime `db:"edhi_modified_date" json:"edhiModifiedDate"`
+	EdhiID           int32     `db:"edhi_id" json:"edhiId"`
+	EdhiEntityID     int32     `db:"edhi_entity_id" json:"edhiEntityId"`
+	EdhiStartDate    time.Time `db:"edhi_start_date" json:"edhiStartDate"`
+	EdhiEndDate      time.Time `db:"edhi_end_date" json:"edhiEndDate"`
+	EdhiModifiedDate time.Time `db:"edhi_modified_date" json:"edhiModifiedDate"`
+	EdhiDeptID       int32     `db:"edhi_dept_id" json:"edhiDeptId"`
 }
 
-func (q *Queries) UpdateEmployeeDepartmentHistory(ctx context.Context, arg CreateEmployeeDepartmentHistoryParams) error {
-	_, err := q.db.ExecContext(ctx, updateEmployeeDepartmentHistory, arg.EdhiID, arg.EdhiEntityID, arg.EdhiStartDate, arg.EdhiEndDate, arg.EdhiModifiedDate, arg.EdhiDeptID)
+func (q *Queries) UpdateEmployeeDepartmentHistory(ctx context.Context, arg UpdateEmployeeDepartmentHistoryParams) error {
+	_, err := q.db.ExecContext(ctx, updateEmployeeDepartmentHistory, arg.EdhiID, arg.EdhiEntityID, arg.EdhiStartDate, arg.EdhiEndDate, arg.EdhiDeptID)
 	return err
 }
 

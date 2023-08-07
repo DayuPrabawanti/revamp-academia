@@ -100,7 +100,7 @@ func (employeeController EmployeeController) UpdateEmployee(ctx *gin.Context) {
 		return
 	}
 
-	var employee dbContext.CreateEmployeeParams
+	var employee dbContext.UpdateEmployeeParams
 	err = json.Unmarshal(body, &employee)
 	if err != nil {
 		log.Println("Error while unmarshaling update employee request body", err)
@@ -183,7 +183,7 @@ func (employeeController EmployeeController) UpdateUser(ctx *gin.Context) {
 		return
 	}
 
-	var user dbContext.CreateUsersParams
+	var user dbContext.UpdateUsersParams
 	err = json.Unmarshal(body, &user)
 	if err != nil {
 		log.Println("Error while unmarshaling update category request body", err)

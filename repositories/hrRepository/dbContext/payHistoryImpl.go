@@ -2,7 +2,6 @@ package dbContext
 
 import (
 	"context"
-	"database/sql"
 	"net/http"
 	"time"
 
@@ -17,22 +16,21 @@ WITH inserted_entity AS (
 	LIMIT 1
   )
   INSERT INTO hr.employee_pay_history (ephi_entity_id, ephi_rate_change_date, ephi_rate_salary, ephi_pay_frequence, ephi_modified_date) 
-  SELECT emp_entity_id, $1, $2, $3, Now()
+  SELECT emp_entity_id, Now(), $1, $2, Now()
   FROM inserted_entity
   RETURNING ephi_entity_id, ephi_rate_change_date, ephi_rate_salary, ephi_pay_frequence, ephi_modified_date
 `
 
 type CreatePayHistoryParams struct {
-	EphiEntityID       int32         `db:"ephi_entity_id" json:"ephiEntityId"`
-	EphiRateChangeDate time.Time     `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
-	EphiRateSalary     sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
-	EphiPayFrequence   sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
-	EphiModifiedDate   sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
+	EphiEntityID       int32     `db:"ephi_entity_id" json:"ephiEntityId"`
+	EphiRateChangeDate time.Time `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
+	EphiRateSalary     int32     `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiPayFrequence   int16     `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
+	EphiModifiedDate   time.Time `db:"ephi_modified_date" json:"ephiModifiedDate"`
 }
 
 func (q *Queries) CreatePayHistory(ctx context.Context, arg CreatePayHistoryParams) (*models.HrEmployeePayHistory, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createPayHistory,
-		arg.EphiRateChangeDate,
 		arg.EphiRateSalary,
 		arg.EphiPayFrequence,
 	)
@@ -119,19 +117,20 @@ UPDATE hr.employee_pay_history
   set ephi_rate_change_date = $2,
   ephi_rate_salary = $3,
   ephi_pay_frequence = $4,
-  ephi_modified_date = $5
+  ephi_modified_date = Now()
 WHERE ephi_entity_id = $1
 `
 
 type UpdatePayHistoryParams struct {
-	EphiEntityID     int32         `db:"ephi_entity_id" json:"ephiEntityId"`
-	EphiRateSalary   sql.NullInt32 `db:"ephi_rate_salary" json:"ephiRateSalary"`
-	EphiPayFrequence sql.NullInt16 `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
-	EphiModifiedDate sql.NullTime  `db:"ephi_modified_date" json:"ephiModifiedDate"`
+	EphiEntityID       int32     `db:"ephi_entity_id" json:"ephiEntityId"`
+	EphiRateChangeDate time.Time `db:"ephi_rate_change_date" json:"ephiRateChangeDate"`
+	EphiRateSalary     int32     `db:"ephi_rate_salary" json:"ephiRateSalary"`
+	EphiPayFrequence   int16     `db:"ephi_pay_frequence" json:"ephiPayFrequence"`
+	EphiModifiedDate   time.Time `db:"ephi_modified_date" json:"ephiModifiedDate"`
 }
 
-func (q *Queries) UpdatePayHistory(ctx context.Context, arg CreatePayHistoryParams) error {
-	_, err := q.db.ExecContext(ctx, updatePayHistory, arg.EphiEntityID, arg.EphiRateChangeDate, arg.EphiRateSalary, arg.EphiPayFrequence, arg.EphiModifiedDate)
+func (q *Queries) UpdatePayHistory(ctx context.Context, arg UpdatePayHistoryParams) error {
+	_, err := q.db.ExecContext(ctx, updatePayHistory, arg.EphiEntityID, arg.EphiRateChangeDate, arg.EphiRateSalary, arg.EphiPayFrequence)
 	return err
 }
 

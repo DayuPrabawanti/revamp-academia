@@ -57,7 +57,7 @@ func validateBatch(batchParams *dbContext.UpdateBatchParams) *models.ResponseErr
 		}
 	}
 
-	if batchParams.BatchStatus.Valid == false {
+	if batchParams.BatchStatus == "" {
 		return &models.ResponseError{
 			Message: "Invalid batch name",
 			Status:  http.StatusBadRequest,

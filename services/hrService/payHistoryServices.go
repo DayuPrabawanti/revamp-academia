@@ -36,11 +36,7 @@ func (phs PayHistoryService) CreatePayHistory(ctx *gin.Context, payHistoryParams
 	return phs.payHistoryRepository.CreatePayHistory(ctx, payHistoryParams)
 }
 
-func (phs PayHistoryService) UpdatePayHistory(ctx *gin.Context, payHistoryParams *dbContext.CreatePayHistoryParams, id int64) *models.ResponseError {
-	responseErr := validatePayHistory(payHistoryParams)
-	if responseErr != nil {
-		return responseErr
-	}
+func (phs PayHistoryService) UpdatePayHistory(ctx *gin.Context, payHistoryParams *dbContext.UpdatePayHistoryParams, id int64) *models.ResponseError {
 
 	return phs.payHistoryRepository.UpdatePayHistory(ctx, payHistoryParams)
 }
@@ -53,13 +49,6 @@ func validatePayHistory(payHistoryParams *dbContext.CreatePayHistoryParams) *mod
 	if payHistoryParams.EphiEntityID == 0 {
 		return &models.ResponseError{
 			Message: "Invalid Ephi Entity id",
-			Status:  http.StatusBadRequest,
-		}
-	}
-
-	if payHistoryParams.EphiRateSalary.Valid == false {
-		return &models.ResponseError{
-			Message: "Ephi Rate Salary Required",
 			Status:  http.StatusBadRequest,
 		}
 	}

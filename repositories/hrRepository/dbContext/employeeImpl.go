@@ -24,21 +24,21 @@ RETURNING emp_entity_id, emp_emp_number, emp_national_id, emp_birth_date, emp_ma
 `
 
 type CreateEmployeeParams struct {
-	EmpEntityID       int32          `db:"emp_entity_id" json:"empEntityId"`
-	EmpEmpNumber      sql.NullString `db:"emp_emp_number" json:"empEmpNumber"`
-	EmpNationalID     sql.NullString `db:"emp_national_id" json:"empNationalId"`
-	EmpBirthDate      sql.NullTime   `db:"emp_birth_date" json:"empBirthDate"`
-	EmpMaritalStatus  sql.NullString `db:"emp_marital_status" json:"empMaritalStatus"`
-	EmpGender         sql.NullString `db:"emp_gender" json:"empGender"`
-	EmpHireDate       sql.NullTime   `db:"emp_hire_date" json:"empHireDate"`
-	EmpSalariedFlag   sql.NullString `db:"emp_salaried_flag" json:"empSalariedFlag"`
-	EmpVacationHours  sql.NullInt16  `db:"emp_vacation_hours" json:"empVacationHours"`
-	EmpSickleaveHours sql.NullInt16  `db:"emp_sickleave_hours" json:"empSickleaveHours"`
-	EmpCurrentFlag    sql.NullInt16  `db:"emp_current_flag" json:"empCurrentFlag"`
-	EmpModifiedDate   sql.NullTime   `db:"emp_modified_date" json:"empModifiedDate"`
-	EmpType           sql.NullString `db:"emp_type" json:"empType"`
-	EmpJoroID         sql.NullInt32  `db:"emp_joro_id" json:"empJoroId"`
-	EmpEmpEntityID    sql.NullInt32  `db:"emp_emp_entity_id" json:"empEmpEntityId"`
+	EmpEntityID       int32     `db:"emp_entity_id" json:"empEntityId"`
+	EmpEmpNumber      string    `db:"emp_emp_number" json:"empEmpNumber"`
+	EmpNationalID     string    `db:"emp_national_id" json:"empNationalId"`
+	EmpBirthDate      time.Time `db:"emp_birth_date" json:"empBirthDate"`
+	EmpMaritalStatus  string    `db:"emp_marital_status" json:"empMaritalStatus"`
+	EmpGender         string    `db:"emp_gender" json:"empGender"`
+	EmpHireDate       time.Time `db:"emp_hire_date" json:"empHireDate"`
+	EmpSalariedFlag   string    `db:"emp_salaried_flag" json:"empSalariedFlag"`
+	EmpVacationHours  int16     `db:"emp_vacation_hours" json:"empVacationHours"`
+	EmpSickleaveHours int16     `db:"emp_sickleave_hours" json:"empSickleaveHours"`
+	EmpCurrentFlag    int16     `db:"emp_current_flag" json:"empCurrentFlag"`
+	EmpModifiedDate   time.Time `db:"emp_modified_date" json:"empModifiedDate"`
+	EmpType           string    `db:"emp_type" json:"empType"`
+	EmpJoroID         int32     `db:"emp_joro_id" json:"empJoroId"`
+	EmpEmpEntityID    int32     `db:"emp_emp_entity_id" json:"empEmpEntityId"`
 }
 
 func (q *Queries) CreateEmployee(ctx context.Context, arg CreateEmployeeParams) (*models.HrEmployee, *models.ResponseError) {
@@ -188,32 +188,30 @@ UPDATE hr.employee
   emp_vacation_hours = $9,
   emp_sickleave_hours = $10,
   emp_current_flag = $11,
-  emp_modified_date = $12,
-  emp_type = $13,
-  emp_joro_id = $14,
-  emp_emp_entity_id = 15
+  emp_modified_date = Now(),
+  emp_type = $12,
+  emp_joro_id = $13
 WHERE emp_entity_id = $1
 `
 
 type UpdateEmployeeParams struct {
-	EmpEntityID       int32          `db:"emp_entity_id" json:"empEntityId"`
-	EmpEmpNumber      sql.NullString `db:"emp_emp_number" json:"empEmpNumber"`
-	EmpNationalID     sql.NullString `db:"emp_national_id" json:"empNationalId"`
-	EmpBirthDate      sql.NullTime   `db:"emp_birth_date" json:"empBirthDate"`
-	EmpMaritalStatus  sql.NullString `db:"emp_marital_status" json:"empMaritalStatus"`
-	EmpGender         sql.NullString `db:"emp_gender" json:"empGender"`
-	EmpHireDate       sql.NullTime   `db:"emp_hire_date" json:"empHireDate"`
-	EmpSalariedFlag   sql.NullString `db:"emp_salaried_flag" json:"empSalariedFlag"`
-	EmpVacationHours  sql.NullInt16  `db:"emp_vacation_hours" json:"empVacationHours"`
-	EmpSickleaveHours sql.NullInt16  `db:"emp_sickleave_hours" json:"empSickleaveHours"`
-	EmpCurrentFlag    sql.NullInt16  `db:"emp_current_flag" json:"empCurrentFlag"`
-	EmpModifiedDate   sql.NullTime   `db:"emp_modified_date" json:"empModifiedDate"`
-	EmpType           sql.NullString `db:"emp_type" json:"empType"`
-	EmpJoroID         sql.NullInt32  `db:"emp_joro_id" json:"empJoroId"`
-	EmpEmpEntityID    sql.NullInt32  `db:"emp_emp_entity_id" json:"empEmpEntityId"`
+	EmpEntityID       int32     `db:"emp_entity_id" json:"empEntityId"`
+	EmpEmpNumber      string    `db:"emp_emp_number" json:"empEmpNumber"`
+	EmpNationalID     string    `db:"emp_national_id" json:"empNationalId"`
+	EmpBirthDate      time.Time `db:"emp_birth_date" json:"empBirthDate"`
+	EmpMaritalStatus  string    `db:"emp_marital_status" json:"empMaritalStatus"`
+	EmpGender         string    `db:"emp_gender" json:"empGender"`
+	EmpHireDate       time.Time `db:"emp_hire_date" json:"empHireDate"`
+	EmpSalariedFlag   string    `db:"emp_salaried_flag" json:"empSalariedFlag"`
+	EmpVacationHours  int16     `db:"emp_vacation_hours" json:"empVacationHours"`
+	EmpSickleaveHours int16     `db:"emp_sickleave_hours" json:"empSickleaveHours"`
+	EmpCurrentFlag    int16     `db:"emp_current_flag" json:"empCurrentFlag"`
+	EmpModifiedDate   time.Time `db:"emp_modified_date" json:"empModifiedDate"`
+	EmpType           string    `db:"emp_type" json:"empType"`
+	EmpJoroID         int32     `db:"emp_joro_id" json:"empJoroId"`
 }
 
-func (q *Queries) UpdateEmployee(ctx context.Context, arg CreateEmployeeParams) error {
+func (q *Queries) UpdateEmployee(ctx context.Context, arg UpdateEmployeeParams) error {
 	_, err := q.db.ExecContext(ctx, updateEmployee,
 		arg.EmpEntityID,
 		arg.EmpEmpNumber,
@@ -226,10 +224,8 @@ func (q *Queries) UpdateEmployee(ctx context.Context, arg CreateEmployeeParams) 
 		arg.EmpVacationHours,
 		arg.EmpSickleaveHours,
 		arg.EmpCurrentFlag,
-		arg.EmpModifiedDate,
 		arg.EmpType,
 		arg.EmpJoroID,
-		arg.EmpEmpEntityID,
 	)
 	return err
 }
@@ -245,17 +241,13 @@ func (q *Queries) DeleteEmployee(ctx context.Context, empEntityID int32) error {
 }
 
 type CreateUsersParams struct {
-	UserEntityID       int32          `db:"user_entity_id" json:"userEntityId"`
-	UserName           sql.NullString `db:"user_name" json:"userName"`
-	UserPassword       sql.NullString `db:"user_password" json:"userPassword"`
-	UserFirstName      sql.NullString `db:"user_first_name" json:"userFirstName"`
-	UserLastName       sql.NullString `db:"user_last_name" json:"userLastName"`
-	UserBirthDate      sql.NullTime   `db:"user_birth_date" json:"userBirthDate"`
-	UserEmailPromotion sql.NullInt32  `db:"user_email_promotion" json:"userEmailPromotion"`
-	UserDemographic    sql.NullString `db:"user_demographic" json:"userDemographic"`
-	UserModifiedDate   sql.NullTime   `db:"user_modified_date" json:"userModifiedDate"`
-	UserPhoto          sql.NullString `db:"user_photo" json:"userPhoto"`
-	UserCurrentRole    sql.NullInt32  `db:"user_current_role" json:"userCurrentRole"`
+	UserEntityID int32  `db:"user_entity_id" json:"userEntityId"`
+	UserName     string `db:"user_name" json:"userName"`
+
+	UserFirstName    string    `db:"user_first_name" json:"userFirstName"`
+	UserLastName     string    `db:"user_last_name" json:"userLastName"`
+	UserModifiedDate time.Time `db:"user_modified_date" json:"userModifiedDate"`
+	UserPhoto        string    `db:"user_photo" json:"userPhoto"`
 }
 
 const createUsers = `-- name: CreateUsers :one
@@ -267,10 +259,10 @@ WITH inserted_entity AS (
 	RETURNING entity_id
   )
   INSERT INTO users.users 
-  (user_entity_id, user_name, user_password, user_first_name, 
-  user_last_name, user_birth_date, user_email_promotion, user_demographic, 
-  user_modified_date, user_photo, user_current_role)
-  SELECT entity_id, $1, $2, $3, $4, $5, $6, $7, Now(), $8, $9 FROM inserted_entity
+  (user_entity_id, user_name, user_first_name, 
+  user_last_name, user_modified_date, user_photo)
+  SELECT entity_id, $1, $2, $3, Now(), $4
+  FROM inserted_entity
   RETURNING user_entity_id, user_name, user_password, user_first_name, 
   user_last_name, user_birth_date, user_email_promotion, user_demographic, 
   user_modified_date, user_photo, user_current_role
@@ -279,14 +271,9 @@ WITH inserted_entity AS (
 func (q *Queries) CreateUsers(ctx context.Context, arg CreateUsersParams) (*models.UsersUser, *models.ResponseError) {
 	row := q.db.QueryRowContext(ctx, createUsers,
 		arg.UserName,
-		arg.UserPassword,
 		arg.UserFirstName,
 		arg.UserLastName,
-		arg.UserBirthDate,
-		arg.UserEmailPromotion,
-		arg.UserDemographic,
 		arg.UserPhoto,
-		sql.NullInt64{Int64: 12, Valid: true},
 	)
 	i := models.UsersUser{}
 	err := row.Scan(
@@ -333,27 +320,27 @@ UPDATE users.users
   user_birth_date=$6,
   user_email_promotion=$7,
   user_demographic=$8,
-  user_modified_date=$9,
-  user_photo=$10,
-  user_current_role=$11
+  user_modified_date=Now(),
+  user_photo=$9,
+  user_current_role=$10
 WHERE user_entity_id = $1
 `
 
 type UpdateUsersParams struct {
 	UserEntityID       int32          `db:"user_entity_id" json:"userEntityId"`
-	UserName           sql.NullString `db:"user_name" json:"userName"`
-	UserPassword       sql.NullString `db:"user_password" json:"userPassword"`
-	UserFirstName      sql.NullString `db:"user_first_name" json:"userFirstName"`
-	UserLastName       sql.NullString `db:"user_last_name" json:"userLastName"`
-	UserBirthDate      sql.NullTime   `db:"user_birth_date" json:"userBirthDate"`
-	UserEmailPromotion sql.NullInt32  `db:"user_email_promotion" json:"userEmailPromotion"`
+	UserName           string         `db:"user_name" json:"userName"`
+	UserPassword       string         `db:"user_password" json:"userPassword"`
+	UserFirstName      string         `db:"user_first_name" json:"userFirstName"`
+	UserLastName       string         `db:"user_last_name" json:"userLastName"`
+	UserBirthDate      time.Time      `db:"user_birth_date" json:"userBirthDate"`
+	UserEmailPromotion int32          `db:"user_email_promotion" json:"userEmailPromotion"`
 	UserDemographic    sql.NullString `db:"user_demographic" json:"userDemographic"`
-	UserModifiedDate   sql.NullTime   `db:"user_modified_date" json:"userModifiedDate"`
-	UserPhoto          sql.NullString `db:"user_photo" json:"userPhoto"`
+	UserModifiedDate   time.Time      `db:"user_modified_date" json:"userModifiedDate"`
+	UserPhoto          string         `db:"user_photo" json:"userPhoto"`
 	UserCurrentRole    sql.NullInt32  `db:"user_current_role" json:"userCurrentRole"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg CreateUsersParams) error {
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUsersParams) error {
 	_, err := q.db.ExecContext(ctx, updateUsers,
 		arg.UserEntityID,
 		arg.UserName,
@@ -363,8 +350,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg CreateUsersParams) error {
 		arg.UserBirthDate,
 		arg.UserEmailPromotion,
 		arg.UserDemographic,
-		sql.NullTime{Time: time.Now(), Valid: true},
 		arg.UserPhoto,
-		arg.UserCurrentRole)
+		sql.NullInt64{Int64: 12, Valid: true})
 	return err
 }

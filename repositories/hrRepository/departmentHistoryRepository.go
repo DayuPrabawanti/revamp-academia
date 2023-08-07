@@ -78,7 +78,7 @@ func (dhr DepartmentHistoryRepository) CreateDepartmentHistory(ctx *gin.Context,
 	return departmentHistory, nil
 }
 
-func (dhr DepartmentHistoryRepository) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.CreateEmployeeDepartmentHistoryParams) *models.ResponseError {
+func (dhr DepartmentHistoryRepository) UpdateDepartmentHistory(ctx *gin.Context, departmentHistoryParams *dbContext.UpdateEmployeeDepartmentHistoryParams) *models.ResponseError {
 
 	store := dbContext.New(dhr.dbHandler)
 	err := store.UpdateEmployeeDepartmentHistory(ctx, *departmentHistoryParams)

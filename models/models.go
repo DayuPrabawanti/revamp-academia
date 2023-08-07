@@ -73,7 +73,15 @@ type TalentsMockup struct{
 type EmployeeMockupModel struct{
 	User 		UsersUser
 	General 	HrEmployee
-	Salary 	HrEmployeePayHistory
+	Salary 		HrEmployeePayHistory
+	Assigment 	HrEmployeeDepartmentHistory
+	Client 		HrEmployeeClientContract
+}
+
+type EmployeeMockupUpdateModel struct{
+	User 		UsersUser
+	General 	HrEmployee
+	Salary 		HrEmployeePayHistory
 	Assigment 	HrEmployeeDepartmentHistory
 }
 

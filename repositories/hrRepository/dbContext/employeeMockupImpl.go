@@ -11,6 +11,7 @@ type EmployeeMockupParams struct {
 	General   CreateEmployeeParams
 	Salary    CreatePayHistoryParams
 	Assigment CreateEmployeeDepartmentHistoryParams
+	Client    CreateClientContractParams
 }
 
 type EmployeeUpdateMockupParams struct {

@@ -43,7 +43,7 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 	{
 		// routers endpoint/url http category
 		payHistoryRoute.GET("", controllerMgr.PayHistoryController.GetListPayHistory)
-		payHistoryRoute.GET("/:id", controllerMgr.PayHistoryController.GetListPayHistory)
+		payHistoryRoute.GET("/:id", controllerMgr.PayHistoryController.GetPayHistory)
 		payHistoryRoute.POST("", controllerMgr.PayHistoryController.CreatePayHistory)
 		payHistoryRoute.PUT("/:id", controllerMgr.PayHistoryController.UpdatePayHistory)
 		payHistoryRoute.DELETE("/:id", controllerMgr.PayHistoryController.DeletePayHistory)
@@ -85,6 +85,7 @@ func InitRouterHR(routers *gin.Engine, controllerMgr *hrController.ControllerMan
 		// routers endpoint/url http category
 		employeesRoute.GET("/employees", controllerMgr.EmployeeMockupController.ListEmployeeMockup)
 		employeesRoute.POST("/employees/create", controllerMgr.EmployeeMockupController.CreateEmployeeMockup)
+		employeesRoute.PUT("/employees/update/:id", controllerMgr.EmployeeMockupController.UpdateEmployeeMockup)
 		employeesRoute.GET("/employees/search", controllerMgr.EmployeeMockupController.SearchEmployee)
 
 	}

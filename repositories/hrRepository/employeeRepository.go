@@ -87,7 +87,7 @@ func (er EmployeeRepository) CreateEmployee(ctx *gin.Context, employeeParams *db
 	return employee, nil
 }
 
-func (er EmployeeRepository) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.CreateEmployeeParams) *models.ResponseError {
+func (er EmployeeRepository) UpdateEmployee(ctx *gin.Context, employeeParams *dbContext.UpdateEmployeeParams) *models.ResponseError {
 
 	store := dbContext.New(er.dbHandler)
 	err := store.UpdateEmployee(ctx, *employeeParams)
@@ -135,7 +135,7 @@ func (cr EmployeeRepository) CreateUser(ctx *gin.Context, userParams *dbContext.
 	return user, nil
 }
 
-func (cr EmployeeRepository) UpdateUser(ctx *gin.Context, userParams *dbContext.CreateUsersParams) *models.ResponseError {
+func (cr EmployeeRepository) UpdateUser(ctx *gin.Context, userParams *dbContext.UpdateUsersParams) *models.ResponseError {
 
 	store := dbContext.New(cr.dbHandler)
 	err := store.UpdateUser(ctx, *userParams)
