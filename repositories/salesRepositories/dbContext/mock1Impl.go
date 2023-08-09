@@ -15,7 +15,7 @@ type CreateprogramEntityParams struct {
 
 const getProgramEntity = `-- name: getProgramEntity :one
 SELECT prog_title, prog_headline, prog_learning_type, prog_image, prog_price, prog_duration FROM curriculum.program_entity
-WHERE prog_learning_type = $1
+WHERE prog_title = $1
 `
 
 func (q *Queries) GetProgramEntity(ctx context.Context, nama string) (CreateprogramEntityParams, error) {

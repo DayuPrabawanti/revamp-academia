@@ -1,4 +1,4 @@
-package salesrepositories
+package salesRepositories
 
 import (
 	"database/sql"

@@ -1,4 +1,4 @@
-package salesrepositories
+package salesRepositories
 
 import (
 	"net/http"
