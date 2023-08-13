@@ -19,12 +19,7 @@ func main() {
 
 	log.Println("Inisializing database")
 	dbHandler := server.InitDatabase(config)
-	// log.Println(dbHandler)
 
-	// //test insert
-	// ctx := context.Background() //bikin goroutine
-
-	// queries := repositories.New(dbHandler)
 	log.Println("Inisializing HTTP Server")
 	httpServer := server.InitHttpServer(config, dbHandler)
 

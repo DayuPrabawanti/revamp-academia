@@ -80,6 +80,24 @@ type MergeJobAndMaster struct{
 	
 }
 
+type BootcampBatchMockup struct{
+	BatchID           int32          `db:"batch_id" json:"batchId"`
+	BatchName         string `db:"batch_name" json:"batchName"`
+	ProgTitle         string         `db:"prog_title" json:"technology"`
+	Members        []BatchMember `json:"members"`
+	BatchStartDate    time.Time   `db:"batch_start_date" json:"batchStartDate"`
+	BatchEndDate      time.Time   `db:"batch_end_date" json:"batchEndDate"`
+	UserName          string `db:"user_name" json:"trainer"`
+	BatchStatus       string `db:"batch_status" json:"batchStatus"`
+}
+
+type BatchMember struct {
+	UserPhoto string `json:"userPhoto"`
+}
+// type BatchMember struct {
+// 	UserPhoto string `db:"user_photo" json:"userPhoto"`
+// }
+
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
 	BatchEntityID     int32          `db:"batch_entity_id" json:"batchEntityId"`
@@ -89,7 +107,7 @@ type BootcampBatch struct {
 	BatchEndDate      sql.NullTime   `db:"batch_end_date" json:"batchEndDate"`
 	BatchReason       sql.NullString `db:"batch_reason" json:"batchReason"`
 	BatchType         sql.NullString `db:"batch_type" json:"batchType"`
-	BatchModifiedDate sql.NullTime   `db:"batch_modified_date" json:"batchModifiedDate"`
+	BatchModifiedDate time.Time   `db:"batch_modified_date" json:"batchModifiedDate"`
 	BatchStatus       sql.NullString `db:"batch_status" json:"batchStatus"`
 	BatchPicID        sql.NullInt32  `db:"batch_pic_id" json:"batchPicId"`
 }
@@ -103,8 +121,8 @@ type BootcampBatchTrainee struct {
 	BatrAccessGrant      sql.NullString `db:"batr_access_grant" json:"batrAccessGrant"`
 	BatrReview           sql.NullString `db:"batr_review" json:"batrReview"`
 	BatrTotalScore       sql.NullInt32  `db:"batr_total_score" json:"batrTotalScore"`
-	BatrModifiedDate     sql.NullTime   `db:"batr_modified_date" json:"batrModifiedDate"`
-	BatrTraineeEntityID  sql.NullInt32  `db:"batr_trainee_entity_id" json:"batrTraineeEntityId"`
+	BatrModifiedDate     time.Time   `db:"batr_modified_date" json:"batrModifiedDate"`
+	BatrTraineeEntityID  int32  `db:"batr_trainee_entity_id" json:"batrTraineeEntityId"`
 	BatrBatchID          int32          `db:"batr_batch_id" json:"batrBatchId"`
 }
 

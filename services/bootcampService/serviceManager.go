@@ -9,7 +9,6 @@ type ServiceManager struct {
 // constructor
 func NewServiceManager(repoMgr *bootcampRepository.RepositoryManager) *ServiceManager {
 	return &ServiceManager{
-		BatchService: *NewBatchService(&repoMgr.BatchRepository),
-		// ProductService: *NewProductService(&repoMgr.ProductRepository),
+		BatchService: *NewBatchService(repoMgr),
 	}
 }
