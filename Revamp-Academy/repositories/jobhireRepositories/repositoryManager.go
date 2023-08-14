@@ -3,15 +3,15 @@ package jobhireRepositories
 import "database/sql"
 
 type RepositoryManager struct {
-	CategoryRepo
+	// CategoryRepo
 	JobHirePostRepo
-	MasterRepo
+	// MasterRepo
 }
 
 func NewRepositoryManager(dbHandler *sql.DB) *RepositoryManager {
 	return &RepositoryManager{
-		*NewCategoryRepo(dbHandler),
+		// *NewCategoryRepo(dbHandler),
 		*NewJobPostRepo(dbHandler),
-		*NewMasterRepo(dbHandler),
+		// *NewMasterRepo(dbHandler),
 	}
 }

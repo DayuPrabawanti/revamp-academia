@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"codeid.revampacademy/models"
+	feature "codeid.revampacademy/models/features"
 )
 
 const listJobPostSearch = `-- name: ListJobPost :many
@@ -20,10 +21,12 @@ join master.job_role jr on jp.jopo_joro_id = jr.joro_id
 join master.working_type wt on jp.jopo_work_code = wt.woty_code 
 where ac.city_name=$1 AND jr.joro_name=$2 AND wt.woty_name = $3
 ORDER BY jp.jopo_title
+LIMIT $4 OFFSET $5;
 `
 
-func (q *Queries) ListJobPostSearch(ctx context.Context, cityName string, joroName string, wotyName string) ([]models.MergeJobSearch, error) {
-	rows, err := q.db.QueryContext(ctx, listJobPostSearch, cityName, joroName, wotyName)
+func (q *Queries) ListJobPostSearch(ctx context.Context, metadata *feature.Metadata) ([]models.MergeJobSearch, error) {
+	rows, err := q.db.QueryContext(ctx, listJobPostSearch, metadata.Location, metadata.JobRole, metadata.WorkType, metadata.PageNo, metadata.PageSize)
+
 	if err != nil {
 		return nil, err
 	}

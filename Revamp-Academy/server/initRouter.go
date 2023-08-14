@@ -14,7 +14,7 @@ func InitRouter(controllerManager *jobhireController.ControllerManager) *gin.Eng
 	{
 		//Mockup 1
 		jobRoute.GET("", controllerManager.GetJobPostMergeControl)
-		//list search
+		//Mockup 1 with search and pagination
 		jobRoute.GET("/search", controllerManager.GetJobPostSearch)
 
 		jobRoute.GET("/dumpJobs", controllerManager.GetJobPostControl)
@@ -23,10 +23,12 @@ func InitRouter(controllerManager *jobhireController.ControllerManager) *gin.Eng
 		jobRoute.GET("/view/:id", controllerManager.GetJobPostDetailControl)
 
 		//Mockup 3 -- Create
-		jobRoute.POST("/posting/create", controllerManager.CreateJobPostController)
+		jobRoute.POST("/posting/create", controllerManager.JobHireController.CreateJobPostController)
 
+		//Mockup 4 -- Create
+		jobRoute.PUT("/posting/update/:id", controllerManager.JobHireController.UpdateJobPostController)
 		//test
-		jobRoute.GET("/listJobCategory", controllerManager.GetListCategoryControl)
+		// jobRoute.GET("/listJobCategory", controllerManager.GetListCategoryControl)
 
 	}
 

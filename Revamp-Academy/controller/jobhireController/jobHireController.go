@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	// "codeid.revampacademy/service"
+	feature "codeid.revampacademy/models/features"
 	"codeid.revampacademy/service/jobhireService"
 	"github.com/gin-gonic/gin"
 )
@@ -21,7 +22,15 @@ func NewJobControll(jobService *jobhireService.JobService) *JobHireController {
 }
 
 func (jh JobHireController) GetJobPostControl(ctx *gin.Context) {
-	response, responseErr := jh.jobservice.GetListJobPost(ctx)
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "0"))
+
+	metadata := feature.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+	}
+
+	response, responseErr := jh.jobservice.GetListJobPost(ctx, &metadata)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
@@ -30,7 +39,14 @@ func (jh JobHireController) GetJobPostControl(ctx *gin.Context) {
 }
 
 func (jh JobHireController) GetJobPostMergeControl(ctx *gin.Context) {
-	response, responseErr := jh.jobservice.GetListJobMerge(ctx)
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "0"))
+
+	metadata := feature.Metadata{
+		PageNo:   pageNo,
+		PageSize: pageSize,
+	}
+	response, responseErr := jh.jobservice.GetListJobMerge(ctx, &metadata)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
@@ -56,11 +72,25 @@ func (jh JobHireController) GetJobPostDetailControl(ctx *gin.Context) {
 }
 
 func (jh JobHireController) GetJobPostSearch(ctx *gin.Context) {
-	cityName := ctx.Query("cityname")
-	joroName := ctx.Query("joroName")
-	wotyName := ctx.Query("wotyName")
+	// cityName := ctx.Query("cityname")
+	// joroName := ctx.Query("joroName")
+	// wotyName := ctx.Query("wotyName")
 
-	response, responseErr := jh.jobservice.GetListJobPostSearch(ctx, cityName, joroName, wotyName)
+	location := ctx.DefaultQuery("location", "")
+	jobRole := ctx.DefaultQuery("role", "")
+	workType := ctx.DefaultQuery("worktype", "")
+	pageNo, _ := strconv.Atoi(ctx.DefaultQuery("pageNo", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "0"))
+
+	metadata := feature.Metadata{
+		Location: location,
+		JobRole:  jobRole,
+		WorkType: workType,
+		PageNo:   pageNo,
+		PageSize: pageSize,
+	}
+
+	response, responseErr := jh.jobservice.GetListJobPostSearch(ctx, &metadata)
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return

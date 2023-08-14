@@ -4,15 +4,17 @@ import (
 	"context"
 
 	"codeid.revampacademy/models"
+	feature "codeid.revampacademy/models/features"
 )
 
 const getlistJobPost = `-- name: ListJobPost :many
 SELECT jopo_entity_id, jopo_number, jopo_title, jopo_start_date, jopo_end_date, jopo_min_salary, jopo_max_salary, jopo_min_experience, jopo_max_experience, jopo_primary_skill, jopo_secondary_skill, jopo_publish_date, jopo_modified_date, jopo_emp_entity_id, jopo_clit_id, jopo_joro_id, jopo_joty_id, jopo_joca_id, jopo_addr_id, jopo_work_code, jopo_edu_code, jopo_indu_code, jopo_status FROM jobHire.job_post
 ORDER BY jopo_title
+limit $1 offset $2
 `
 
-func (q *Queries) GetListJobPost(ctx context.Context) ([]models.JobhireJobPost, error) {
-	rows, err := q.db.QueryContext(ctx, listJobPost)
+func (q *Queries) GetListJobPost(ctx context.Context, metadata *feature.Metadata) ([]models.JobhireJobPost, error) {
+	rows, err := q.db.QueryContext(ctx, listJobPost, metadata.PageNo, metadata.PageSize)
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +71,11 @@ join master.city on master.address.addr_city_id = master.city.city_id
 join jobHire.client on jobHire.job_post.jopo_clit_id = jobHire.client.clit_id
 join jobHire.employee_range on jobHire.client.clit_emra_id = jobHire.employee_range.emra_id
 ORDER BY jopo_title
+limit $1 offset $2
 `
 
-func (q *Queries) ListJobPost(ctx context.Context) ([]models.MergeJobAndMaster, error) {
-	rows, err := q.db.QueryContext(ctx, listJobPost)
+func (q *Queries) ListJobPost(ctx context.Context, metadata *feature.Metadata) ([]models.MergeJobAndMaster, error) {
+	rows, err := q.db.QueryContext(ctx, listJobPost, metadata.PageNo, metadata.PageSize)
 	if err != nil {
 		return nil, err
 	}

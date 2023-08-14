@@ -12,11 +12,13 @@ import (
 type CategoryRepo struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewCategoryRepo(dbHandler *sql.DB) *CategoryRepo {
 	return &CategoryRepo{
 		dbHandler: dbHandler,
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 

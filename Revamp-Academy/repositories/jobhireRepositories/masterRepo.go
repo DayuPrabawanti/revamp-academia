@@ -12,11 +12,13 @@ import (
 type MasterRepo struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewMasterRepo(dbHandler *sql.DB) *MasterRepo {
 	return &MasterRepo{
 		dbHandler: dbHandler,
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 

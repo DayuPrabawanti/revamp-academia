@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"codeid.revampacademy/models"
+	feature "codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/jobhireRepositories/dbContext"
 	"github.com/gin-gonic/gin"
 )
@@ -12,11 +13,13 @@ import (
 type JobHirePostRepo struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewJobPostRepo(dbHandler *sql.DB) *JobHirePostRepo {
 	return &JobHirePostRepo{
 		dbHandler: dbHandler,
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 
@@ -33,9 +36,9 @@ func (jp JobHirePostRepo) GetJobRepoDetail(ctx *gin.Context, id int32) (*models.
 	return &jobDetail, nil
 }
 
-func (jp JobHirePostRepo) GetListJobPostSearch(ctx *gin.Context, cityName string, joroName string, wotyName string) ([]*models.MergeJobSearch, *models.ResponseError) {
+func (jp JobHirePostRepo) GetListJobPostSearch(ctx *gin.Context, metadata *feature.Metadata) ([]*models.MergeJobSearch, *models.ResponseError) {
 	market := dbContext.New(jp.dbHandler)
-	jobPost, err := market.ListJobPostSearch(ctx, cityName, joroName, wotyName)
+	jobPost, err := market.ListJobPostSearch(ctx, metadata)
 
 	listjobPost := make([]*models.MergeJobSearch, 0)
 
@@ -62,9 +65,9 @@ func (jp JobHirePostRepo) GetListJobPostSearch(ctx *gin.Context, cityName string
 	return listjobPost, nil
 }
 
-func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context) ([]*models.JobhireJobPost, *models.ResponseError) {
-	market := dbContext.New(jp.dbHandler)
-	jobPost, err := market.GetListJobPost(ctx)
+func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context, metadata *feature.Metadata) ([]*models.JobhireJobPost, *models.ResponseError) {
+	// market := dbContext.New(jp.dbHandler)
+	jobPost, err := jp.dbQueries.GetListJobPost(ctx, metadata)
 
 	listjobPost := make([]*models.JobhireJobPost, 0)
 
@@ -107,9 +110,9 @@ func (jp JobHirePostRepo) GetListJobPost(ctx *gin.Context) ([]*models.JobhireJob
 	return listjobPost, nil
 }
 
-func (jp JobHirePostRepo) GetListJobPostMerge(ctx *gin.Context) ([]*models.MergeJobAndMaster, *models.ResponseError) {
-	market := dbContext.New(jp.dbHandler)
-	jobPost, err := market.ListJobPost(ctx)
+func (jp JobHirePostRepo) GetListJobPostMerge(ctx *gin.Context, metadata *feature.Metadata) ([]*models.MergeJobAndMaster, *models.ResponseError) {
+	// market := dbContext.New(jp.dbHandler)
+	jobPost, err := jp.dbQueries.ListJobPost(ctx, metadata)
 
 	listjobPost := make([]*models.MergeJobAndMaster, 0)
 

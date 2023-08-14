@@ -10,8 +10,8 @@ type ControllerManager struct {
 
 func NewControllerManager(serviceManager *jobhireService.ServiceManager) *ControllerManager {
 	return &ControllerManager{
-		CategoryController: *NewCategoryController(&serviceManager.CategoryService),
-		JobHireController:  *NewJobControll(&serviceManager.JobService),
-		MasterController:   *NewMasterController(&serviceManager.MasterService),
+		// CategoryController: *NewCategoryController(&serviceManager.CategoryService),
+		JobHireController: *NewJobControll(&serviceManager.JobService),
+		// MasterController:   *NewMasterController(&serviceManager.MasterService),
 	}
 }
