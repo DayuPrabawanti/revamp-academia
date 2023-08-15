@@ -341,10 +341,10 @@ func (per ProgEntityRepository) GetGabung(ctx *gin.Context, id int64) (*[]mod.Ge
 	}
 
 	// Ambil data CurriculumSection
-	sections, err := per.GetSection(ctx, id)
-	if err != nil {
-		return nil, err
-	}
+	// sections, err := per.GetSection(ctx, id)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	// Ambil data CurriculumProgEntityDesc
 	progEntityDesc, err := per.GetProgEntityDesc(ctx, id)
@@ -366,8 +366,8 @@ func (per ProgEntityRepository) GetGabung(ctx *gin.Context, id int64) (*[]mod.Ge
 
 	// Buat objek GetGabung
 	getGabung := &mod.GetGabung{
-		CurriculumProgramEntity:            *progEntity,
-		CurriculumSectionGet:               *sections,
+		CurriculumProgramEntity: *progEntity,
+		// CurriculumSectionGet:               *sections,
 		CurriculumSectionDetail:            *secDetail,
 		CurriculumProgramEntityDescription: *progEntityDesc,
 		MasterCategory:                     *category,
@@ -429,7 +429,7 @@ func (per ProgEntityRepository) CreateCategory(ctx *gin.Context, categoryParams 
 	return category, nil
 }
 
-func (per ProgEntityRepository) CreateGabung(ctx *gin.Context, gabungParams *db.CreateGabung) (*mod.Gabung, *mod.ResponseError) {
+func (per ProgEntityRepository) CreateGabung(ctx *gin.Context, gabungParams *db.CreateGabungParams) (*mod.Gabung, *mod.ResponseError) {
 
 	progEntity, err := per.CreateProgEntity(ctx, &gabungParams.Createprogram_entityParams)
 	if err != nil {

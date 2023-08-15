@@ -28,7 +28,7 @@ type Gabung struct {
 type GetGabung struct {
 	CurriculumProgramEntity 			CurriculumProgramEntity
 	CurriculumProgramEntityDescription 	CurriculumProgramEntityDescription
-	CurriculumSectionGet    			[]CurriculumSectionGet
+	// CurriculumSectionGet    			[]CurriculumSectionGet
 	CurriculumSectionDetail				CurriculumSectionDetail
 	MasterCategory			 			[]MasterCategory
 }

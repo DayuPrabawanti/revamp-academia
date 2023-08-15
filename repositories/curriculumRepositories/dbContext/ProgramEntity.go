@@ -11,15 +11,6 @@ import (
 	"codeid.revampacademy/models/features"
 )
 
-type CreateGabung struct {
-	Createprogram_entityParams Createprogram_entityParams
-	CreatesectionsParams       CreatesectionsParams
-	CreateCategoryParams       CreateCategoryParams
-	CreateProgEntityDescParams CreateProgEntityDescParams
-	Createsection_detailParams Createsection_detailParams
-	// CreatesectionDetailMaterialParams CreatesectionDetailMaterialParams
-}
-
 const createprogram_entity = `-- name: Createprogram_entity :one
 
 INSERT INTO curriculum.program_entity (prog_entity_id, 
@@ -388,7 +379,7 @@ UPDATE curriculum.program_entity
   prog_cate_id=$17, 
   prog_created_by=$18, 
   prog_status=$19
-WHERE prog_entity_id= $1
+WHERE prog_entity_id= $1 
 `
 
 type Updateprogram_entityParams struct {

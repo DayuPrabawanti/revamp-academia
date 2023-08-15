@@ -68,7 +68,7 @@ func (cs ProgEntityService) CreateSections(ctx *gin.Context, sectionsParams *db.
 	return cs.repositoryManager.ProgEntityRepository.CreateSection(ctx, sectionsParams)
 }
 
-func (cs ProgEntityService) CreateGabung(ctx *gin.Context, gabungParams *db.CreateGabung) (*mod.Gabung, *mod.ResponseError) {
+func (cs ProgEntityService) CreateGabung(ctx *gin.Context, gabungParams *db.CreateGabungParams) (*mod.Gabung, *mod.ResponseError) {
 
 	return cs.repositoryManager.ProgEntityRepository.CreateGabung(ctx, gabungParams)
 }
@@ -137,7 +137,7 @@ func validateSection(sectionParams *db.CreatesectionsParams) *mod.ResponseError 
 
 }
 
-// func (Pe ProgEntityService) CreateGroupDto(ctx *gin.Context, progEntityWithSectionDto *mod.CreateGroupDto) (*models.CurriculumProgramEntity, *models.ResponseError) {
+// func (Pe ProgEntityService) CreateGroupDto(ctx *gin.Context, createProgEntityProgDescSectDto *mod.CreateGroup) (*models.CurriculumProgramEntity, *models.ResponseError) {
 
 // 	err := repo.BeginTransaction(&Pe.repositoryManager)
 // 	if err != nil {
@@ -147,7 +147,7 @@ func validateSection(sectionParams *db.CreatesectionsParams) *mod.ResponseError 
 // 		}
 // 	}
 // 	//first query statement
-// 	response, responseErr := Pe.CreateProgEntity(ctx, (*dbContext.Createprogram_entityParams)(&progEntityWithSectionDto.CreateProgEntityDto))
+// 	response, responseErr := Pe.CreateProgEntity(ctx, (*dbContext.Createprogram_entityParams)(&createProgEntityProgDescSectDto.CreateGroup))
 // 	if responseErr != nil {
 // 		repo.RollbackTransaction(&Pe.repositoryManager)
 // 		return nil, responseErr

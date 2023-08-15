@@ -231,7 +231,7 @@ func (progentityController ProgEntityController) CreateGabung(ctx *gin.Context) 
 		return
 	}
 
-	var gabung db.CreateGabung
+	var gabung db.CreateGabungParams
 	err = json.Unmarshal(body, &gabung)
 	if err != nil {
 		log.Println("Error while unmarshaling create Gabung request body", err)
@@ -239,7 +239,7 @@ func (progentityController ProgEntityController) CreateGabung(ctx *gin.Context) 
 		return
 	}
 
-	response, responseErr := progentityController.progentityService.CreateGabung(ctx, &gabung)
+	response, responseErr := progentityController.progentityService.CreateGabung(ctx, &db.CreateGabungParams{})
 	if responseErr != nil {
 		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
 		return
