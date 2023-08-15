@@ -118,10 +118,20 @@ func (q *Queries) GetBootcampBatchEvaluation(ctx context.Context, batchID int32)
 	return bootcampEvaluations, nil
 }
 
-const listProgramEntity = `-- name: ListProgramEntity :many
-SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_trainee, prog_image, prog_best_seller, prog_price, prog_language, prog_modified_date, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status 
-	FROM curriculum.program_entity
-	ORDER BY prog_title
+const getBatchTraineeReviews = ` -- name: GetBatchTraineeReview :many
+SELECT 
+	u.user_entity_id,
+	CONCAT(u.user_first_name, ' ', u.user_last_name) AS fullname,
+	bt.batr_id,
+	bt.batr_status, 
+	bt.batr_review
+FROM 
+	bootcamp.batch_trainee AS bt
+JOIN 
+	users.users AS u
+ON 
+	bt.batr_trainee_entity_id = u.user_entity_id
+WHERE bt.batr_trainee_entity_id = $1
 `
 
 func (q *Queries) GetBatchTraineeReview(ctx context.Context, userEntityID int32) ([]BootcampBatchTraineeReview, error) {
@@ -158,9 +168,16 @@ func (q *Queries) GetBatchTraineeReview(ctx context.Context, userEntityID int32)
 	return bootcampReviews, nil
 }
 
-const listUsers = `-- name: ListUsers :many
-SELECT user_entity_id, user_name, user_password, user_first_name, user_last_name, user_birth_date, user_email_promotion, user_demographic, user_modified_date, user_photo, user_current_role FROM users.users
-ORDER BY user_name
+const createBatchTraineeReview = ` -- name: CreateBatchTraineeReview :one
+INSERT INTO bootcamp.batch_trainee (
+    batr_batch_id,
+    batr_trainee_entity_id,
+    batr_status,
+    batr_review
+)
+VALUES ($1, $2, $3, $4)
+RETURNING batr_id,
+    (SELECT CONCAT(user_first_name, ' ', user_last_name) FROM users.users WHERE user_entity_id = $2) AS user_fullname
 `
 
 type CreateBatchTraineeReviewParams struct {
