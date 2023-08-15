@@ -157,7 +157,10 @@ type UpdateBatchParams struct {
 }
 
 func (q *Queries) UpdateBatch(ctx context.Context, arg CreateBatchParams) error {
-	_, err := q.db.ExecContext(ctx, updateBatch, arg.BatchID, arg.BatchName, arg.BatchDescription)
+	_, err := q.db.ExecContext(ctx, updateBatch,
+		arg.BatchID,
+		arg.BatchName,
+		arg.BatchDescription)
 	return err
 }
 

@@ -32,8 +32,8 @@ func getConfigFileName() string {
 	env := os.Getenv("ENV")
 
 	if env != "" {
-		return "revampacademia" + env
+		return "db_revamp" + env
 	}
 
-	return "revampacademia"
+	return "db_revamp"
 }

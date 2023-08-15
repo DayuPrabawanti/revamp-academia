@@ -12,97 +12,38 @@ import (
 type BootcampBatchEvaluationRepository struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewBootcampBatchEvaluationRepository(dbHandler *sql.DB) *BootcampBatchEvaluationRepository {
 	return &BootcampBatchEvaluationRepository{
 		dbHandler: dbHandler,
+		//add new fields
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 
-func (ber BootcampBatchEvaluationRepository) GetListBatch(ctx *gin.Context) ([]*models.BootcampBatch, *models.ResponseError) {
+func (ber BootcampBatchEvaluationRepository) GetBootcampBatchEvaluation(ctx *gin.Context, id int32) ([]*dbContext.BootcampBatchEvaluationMockup, *models.ResponseError) {
 
-	store := dbContext.New(ber.dbHandler)
-	batchs, err := store.ListBatchs(ctx)
+	// store := dbContext.New(cr.dbHandler)
+	bootcampEvaluations, err := ber.dbQueries.GetBootcampBatchEvaluation(ctx, int32(id))
 
-	listBatchs := make([]*models.BootcampBatch, 0)
+	bootcampBatch := make([]*dbContext.BootcampBatchEvaluationMockup, 0)
 
-	for _, v := range batchs {
-		batch := &models.BootcampBatch{
-			BatchID:           v.BatchID,
-			BatchEntityID:     v.BatchEntityID,
-			BatchName:         v.BatchName,
-			BatchDescription:  v.BatchDescription,
-			BatchStartDate:    v.BatchStartDate,
-			BatchEndDate:      v.BatchEndDate,
-			BatchReason:       v.BatchReason,
-			BatchType:         v.BatchType,
-			BatchModifiedDate: v.BatchModifiedDate,
-			BatchStatus:       v.BatchStatus,
-			BatchPicID:        v.BatchPicID,
-		}
-		listBatchs = append(listBatchs, batch)
-	}
-
-	if err != nil {
-		return nil, &models.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
-	}
-
-	return listBatchs, nil
-}
-
-func (ber BootcampBatchEvaluationRepository) GetListBootcampBatchEvaluation(ctx *gin.Context, batchId int32) ([]*models.BootcampBatchEvaluationMockup, *models.ResponseError) {
-
-	store := dbContext.New(ber.dbHandler)
-	bootcampBatchEvs, err := store.ListBootcampBatchEvaluation(ctx, batchId)
-
-	listBootcampBatchEvaluations := make([]*models.BootcampBatchEvaluationMockup, 0)
-
-	for _, v := range bootcampBatchEvs {
-		bootcampBatchEv := &models.BootcampBatchEvaluationMockup{
-			BootcampBatch:                  v.BootcampBatch,
-			BootcampBatchTraineeEvaluation: v.BootcampBatchTraineeEvaluation,
-			CurriculumProgramEntity:        v.CurriculumProgramEntity,
-			UsersUser:                      v.UsersUser,
-		}
-		listBootcampBatchEvaluations = append(listBootcampBatchEvaluations, bootcampBatchEv)
-	}
-
-	if err != nil {
-		return nil, &models.ResponseError{
-			Message: err.Error(),
-			Status:  http.StatusInternalServerError,
-		}
-	}
-
-	return listBootcampBatchEvaluations, nil
-}
-
-func (ber BootcampBatchEvaluationRepository) GetListBatchTraineeEvaluation(ctx *gin.Context) ([]*models.BootcampBatchTraineeEvaluation, *models.ResponseError) {
-
-	store := dbContext.New(ber.dbHandler)
-	batchTraineeEvs, err := store.ListBatchTraineeEvaluations(ctx)
-
-	listBatchTraineeEvaluations := make([]*models.BootcampBatchTraineeEvaluation, 0)
-
-	for _, v := range batchTraineeEvs {
-		batchTraineeEv := &models.BootcampBatchTraineeEvaluation{
-			BtevID:              v.BtevID,
-			BtevType:            v.BtevType,
-			BtevHeader:          v.BtevHeader,
-			BtevSection:         v.BtevSection,
-			BtevSkill:           v.BtevSkill,
-			BtevWeek:            v.BtevWeek,
+	for _, v := range bootcampEvaluations {
+		bootcamp := &dbContext.BootcampBatchEvaluationMockup{
+			UserEntityID:        v.UserEntityID,
+			BatchID:             v.BatchID,
+			BatchName:           v.BatchName,
+			ProgTitle:           v.ProgTitle,
+			UserPhoto:           v.UserPhoto,
+			UserFullname:        v.UserFullname,
+			BatrStatus:          v.BatrStatus,
 			BtevSkor:            v.BtevSkor,
-			BtevNote:            v.BtevNote,
-			BtevModifiedDate:    v.BtevModifiedDate,
-			BtevBatchID:         v.BtevBatchID,
+			BatchEntityID:       v.BatchEntityID,
 			BtevTraineeEntityID: v.BtevTraineeEntityID,
 		}
-		listBatchTraineeEvaluations = append(listBatchTraineeEvaluations, batchTraineeEv)
+		bootcampBatch = append(bootcampBatch, bootcamp)
 	}
 
 	if err != nil {
@@ -112,37 +53,25 @@ func (ber BootcampBatchEvaluationRepository) GetListBatchTraineeEvaluation(ctx *
 		}
 	}
 
-	return listBatchTraineeEvaluations, nil
+	return bootcampBatch, nil
 }
 
-func (ber BootcampBatchEvaluationRepository) GetListProgramEntity(ctx *gin.Context) ([]*models.CurriculumProgramEntity, *models.ResponseError) {
+func (ber BootcampBatchEvaluationRepository) GetBatchTraineeReview(ctx *gin.Context, id int32) ([]*dbContext.BootcampBatchTraineeReview, *models.ResponseError) {
 
-	store := dbContext.New(ber.dbHandler)
-	programEntity, err := store.ListProgramEntity(ctx)
+	// store := dbContext.New(cr.dbHandler)
+	bootcampReviews, err := ber.dbQueries.GetBatchTraineeReview(ctx, int32(id))
 
-	listProgramEntity := make([]*models.CurriculumProgramEntity, 0)
+	batchReview := make([]*dbContext.BootcampBatchTraineeReview, 0)
 
-	for _, v := range programEntity {
-		programEntity := &models.CurriculumProgramEntity{
-			ProgEntityID:     v.ProgEntityID,
-			ProgTitle:        v.ProgTitle,
-			ProgHeadline:     v.ProgHeadline,
-			ProgType:         v.ProgType,
-			ProgLearningType: v.ProgLearningType,
-			ProgRating:       v.ProgRating,
-			ProgBestSeller:   v.ProgBestSeller,
-			ProgPrice:        v.ProgPrice,
-			ProgLanguage:     v.ProgLanguage,
-			ProgModifiedDate: v.ProgModifiedDate,
-			ProgDuration:     v.ProgDuration,
-			ProgDurationType: v.ProgDurationType,
-			ProgTagSkill:     v.ProgTagSkill,
-			ProgCityID:       v.ProgCityID,
-			ProgCateID:       v.ProgCateID,
-			ProgCreatedBy:    v.ProgCreatedBy,
-			ProgStatus:       v.ProgStatus,
+	for _, v := range bootcampReviews {
+		bootcamp := &dbContext.BootcampBatchTraineeReview{
+			UserEntityID: v.UserEntityID,
+			UserFullname: v.UserFullname,
+			BatrID:       v.BatrID,
+			BatrStatus:   v.BatrStatus,
+			BatrReview:   v.BatrReview,
 		}
-		listProgramEntity = append(listProgramEntity, programEntity)
+		batchReview = append(batchReview, bootcamp)
 	}
 
 	if err != nil {
@@ -152,32 +81,28 @@ func (ber BootcampBatchEvaluationRepository) GetListProgramEntity(ctx *gin.Conte
 		}
 	}
 
-	return listProgramEntity, nil
+	return batchReview, nil
 }
 
-func (ber BootcampBatchEvaluationRepository) GetListUsers(ctx *gin.Context) ([]*models.UsersUser, *models.ResponseError) {
+// CreateBatchTrainee creates a new batch trainee in the database.
+func (ber BootcampBatchEvaluationRepository) CreateBatchTraineeReview(ctx *gin.Context, batchTraineeReviewParams *dbContext.CreateBatchTraineeReviewParams) (*dbContext.BootcampBatchTraineeReview, *models.ResponseError) {
 
-	store := dbContext.New(ber.dbHandler)
-	users, err := store.ListUsers(ctx)
+	// store := dbContext.New(btr.dbHandler)
+	bootcampReview, err := ber.dbQueries.CreateBatchTraineeReview(ctx, *batchTraineeReviewParams)
 
-	listUsers := make([]*models.UsersUser, 0)
-
-	for _, v := range users {
-		user := &models.UsersUser{
-			UserEntityID:       v.UserEntityID,
-			UserName:           v.UserName,
-			UserPassword:       v.UserPassword,
-			UserFirstName:      v.UserFirstName,
-			UserLastName:       v.UserLastName,
-			UserBirthDate:      v.UserBirthDate,
-			UserEmailPromotion: v.UserEmailPromotion,
-			UserDemographic:    v.UserDemographic,
-			UserModifiedDate:   v.UserModifiedDate,
-			UserPhoto:          v.UserPhoto,
-			UserCurrentRole:    v.UserCurrentRole,
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Message,
+			Status:  http.StatusInternalServerError,
 		}
-		listUsers = append(listUsers, user)
 	}
+	return bootcampReview, nil
+}
+
+// UpdateBatchTrainee updates an existing batch trainee in the database.
+func (ber BootcampBatchEvaluationRepository) UpdateBatchTraineeReview(ctx *gin.Context, batchTraineeReviewParams *dbContext.UpdateBatchTraineeReviewParams) (*dbContext.BootcampBatchTraineeReview, *models.ResponseError) {
+	// store := dbContext.New(btr.dbHandler)
+	bootcampReview, err := ber.dbQueries.UpdateBatchTraineeReview(ctx, *batchTraineeReviewParams)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -186,5 +111,23 @@ func (ber BootcampBatchEvaluationRepository) GetListUsers(ctx *gin.Context) ([]*
 		}
 	}
 
-	return listUsers, nil
+	return bootcampReview, nil
+}
+
+// DeleteBatchTrainee deletes a batch trainee from the database.
+func (ber BootcampBatchEvaluationRepository) DeleteBatchTraineeReview(ctx *gin.Context, id int64) *models.ResponseError {
+	// store := dbContext.New(btr.dbHandler)
+	err := ber.dbQueries.DeleteBatchTraineeReview(ctx, int32(id))
+
+	if err != nil {
+		return &models.ResponseError{
+			Message: "error when deleting",
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &models.ResponseError{
+		Message: "data has been deleted",
+		Status:  http.StatusOK,
+	}
 }

@@ -2,141 +2,112 @@ package dbContext
 
 import (
 	"context"
+	"net/http"
 
 	"codeid.revampacademy/models"
 )
 
-const listBootcampBatchEvaluations = `-- name: Group :many
-SELECT 
-    b.batch_id,  
-    b.batch_name,  
-    pe.prog_title,
-    us.user_photo,
-    us.user_name,
-    b.batch_status,
-    bte.btev_skor
+type BootcampBatchEvaluationMockup struct {
+	UserEntityID        int32  `db:"user_entity_id" json:"userEntityId"`
+	UserFullname        string `json:"fullname"`
+	UserPhoto           string `db:"user_photo" json:"userPhoto"`
+	ProgTitle           string `db:"prog_title" json:"progTitle"`
+	BatchID             int32  `db:"batch_id" json:"batchId"`
+	BatchEntityID       int32  `db:"batch_entity_id" json:"batchEntityId"`
+	BatchName           string `db:"batch_name" json:"batchName"`
+	BatrStatus          string `db:"batr_status" json:"batrStatus"`
+	BtevSkor            int32  `db:"btev_skor" json:"btevSkor"`
+	BtevTraineeEntityID int32  `db:"btev_trainee_entity_id" json:"btevTraineeEntityId"`
+}
+
+type BootcampBatchTraineeReview struct {
+	UserEntityID int32  `db:"user_entity_id" json:"userEntityId"`
+	UserFullname string `json:"fullname"`
+	BatrID       int32  `db:"batr_id" json:"batrId"`
+	BatrStatus   string `db:"batr_status" json:"batrStatus"`
+	BatrReview   string `db:"batr_review" json:"batrReview"`
+}
+
+const getBootcampBatchEvaluations = `-- name: GetBootcampBatchEvaluations :many
+SELECT
+	user_entity_id,
+	btev_batch_id,
+
+    batch_name,
+	prog_title, 
+    
+    user_photo, 
+    CONCAT (user_first_name, user_last_name) AS fullname, 
+    batr_status, 
+    SUM(btev_skor) AS total_skor,
+
+	batch_entity_id,
+	btev_trainee_entity_id
 FROM 
-    bootcamp.batch b
+    bootcamp.batch_trainee_evaluation
 JOIN 
-    curriculum.program_entity pe ON b.batch_entity_id = pe.prog_entity_id
+    bootcamp.batch_trainee 
+ON 
+    btev_trainee_entity_id = batr_trainee_entity_id
 JOIN 
-    users.users us ON us.user_entity_id = b.batch_entity_id
+    users.users 
+ON 
+    batr_trainee_entity_id = user_entity_id
 JOIN 
-    bootcamp.batch_trainee_evaluation bte ON b.batch_id = bte.btev_batch_id
+    bootcamp.batch
+ON 
+    batch_entity_id = user_entity_id
+JOIN 
+    curriculum.program_entity
+ON 
+    batch_entity_id = prog_entity_id
+WHERE 
+    batch_id = $1
+GROUP BY 
+	user_entity_id,
+	btev_batch_id, 
+
+    batch_name,
+    prog_title, 
+
+    user_photo,
+    batr_status,
+	
+	batch_entity_id,
+	btev_trainee_entity_id
 ORDER BY
-	b.batch_id;
+    btev_batch_id;
 `
 
-func (q *Queries) ListBootcampBatchEvaluation(ctx context.Context, batchId int32) ([]models.BootcampBatchEvaluationMockup, error) {
-	rows, err := q.db.QueryContext(ctx, listBootcampBatchEvaluations, batchId)
-
+func (q *Queries) GetBootcampBatchEvaluation(ctx context.Context, batchID int32) ([]BootcampBatchEvaluationMockup, error) {
+	rows, err := q.db.QueryContext(ctx, getBootcampBatchEvaluations, batchID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []models.BootcampBatchEvaluationMockup
+
+	var bootcampEvaluations []BootcampBatchEvaluationMockup
+
 	for rows.Next() {
-		var i models.BootcampBatchEvaluationMockup
-		if err := rows.Scan(
-			&i.BootcampBatch.BatchName,
-			&i.CurriculumProgramEntity.ProgTitle,
-			&i.UsersUser.UserPhoto,
-			&i.UsersUser.UserName,
-			&i.BootcampBatch.BatchStatus,
-			&i.BootcampBatchTraineeEvaluation.BtevSkor,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
+		var i BootcampBatchEvaluationMockup
 
-const listProgramEntity = `-- name: ListProgramEntity :many
-SELECT prog_entity_id, prog_title, prog_headline, prog_type, prog_learning_type, prog_rating, prog_total_trainee, prog_image, prog_best_seller, prog_price, prog_language, prog_modified_date, prog_duration, prog_duration_type, prog_tag_skill, prog_city_id, prog_cate_id, prog_created_by, prog_status 
-	FROM curriculum.program_entity
-	ORDER BY prog_title
-`
-
-func (q *Queries) ListProgramEntity(ctx context.Context) ([]models.CurriculumProgramEntity, error) {
-	rows, err := q.db.QueryContext(ctx, listProgramEntity)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []models.CurriculumProgramEntity
-	for rows.Next() {
-		var i models.CurriculumProgramEntity
-		if err := rows.Scan(
-			&i.ProgEntityID,
-			&i.ProgTitle,
-			&i.ProgHeadline,
-			&i.ProgType,
-			&i.ProgLearningType,
-			&i.ProgRating,
-			&i.ProgTotalTrainee,
-			&i.ProgImage,
-			&i.ProgBestSeller,
-			&i.ProgPrice,
-			&i.ProgLanguage,
-			&i.ProgModifiedDate,
-			&i.ProgDuration,
-			&i.ProgDurationType,
-			&i.ProgTagSkill,
-			&i.ProgCityID,
-			&i.ProgCateID,
-			&i.ProgCreatedBy,
-			&i.ProgStatus,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const listUsers = `-- name: ListUsers :many
-SELECT user_entity_id, user_name, user_password, user_first_name, user_last_name, user_birth_date, user_email_promotion, user_demographic, user_modified_date, user_photo, user_current_role FROM users.users
-ORDER BY user_name
-`
-
-func (q *Queries) ListUsers(ctx context.Context) ([]models.UsersUser, error) {
-	rows, err := q.db.QueryContext(ctx, listUsers)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []models.UsersUser
-	for rows.Next() {
-		var i models.UsersUser
-		if err := rows.Scan(
+		err := rows.Scan(
 			&i.UserEntityID,
-			&i.UserName,
-			&i.UserPassword,
-			&i.UserFirstName,
-			&i.UserLastName,
-			&i.UserBirthDate,
-			&i.UserEmailPromotion,
-			&i.UserDemographic,
-			&i.UserModifiedDate,
+			&i.BatchID,
+			&i.BatchName,
+			&i.ProgTitle,
 			&i.UserPhoto,
-			&i.UserCurrentRole,
-		); err != nil {
+			&i.UserFullname,
+			&i.BatrStatus,
+			&i.BtevSkor,
+			&i.BatchEntityID,
+			&i.BtevTraineeEntityID,
+		)
+
+		if err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		bootcampEvaluations = append(bootcampEvaluations, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -144,253 +115,152 @@ func (q *Queries) ListUsers(ctx context.Context) ([]models.UsersUser, error) {
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return items, nil
+	return bootcampEvaluations, nil
 }
 
-// import (
-// 	"context"
+const getBatchTraineeReviews = ` -- name: GetBatchTraineeReview :many
+SELECT 
+	u.user_entity_id,
+	CONCAT(u.user_first_name, ' ', u.user_last_name) AS fullname,
+	bt.batr_id,
+	bt.batr_status, 
+	bt.batr_review
+FROM 
+	bootcamp.batch_trainee AS bt
+JOIN 
+	users.users AS u
+ON 
+	bt.batr_trainee_entity_id = u.user_entity_id
+WHERE bt.batr_trainee_entity_id = $1
+`
 
-// 	"codeid.revampacademy/models"
-// )
+func (q *Queries) GetBatchTraineeReview(ctx context.Context, userEntityID int32) ([]BootcampBatchTraineeReview, error) {
 
-// const listGroupsQuery = `-- name: ListGroups :many
-// SELECT
-//   b.batch_id,
-//   b.batch_entity_id,
-//   b.batch_name,
-//   b.batch_description,
-//   b.batch_start_date,
-//   b.batch_end_date,
-//   b.batch_reason,
-//   b.batch_type,
-//   b.batch_modified_date,
-//   b.batch_status,
-//   b.batch_pic_id,
-//   btev.btev_id,
-//   btev.btev_type,
-//   btev.btev_header,
-//   btev.btev_section,
-//   btev.btev_skill,
-//   btev.btev_week,
-//   btev.btev_skor,
-//   btev.btev_note,
-//   cpe.prog_entity_id,
-//   cpe.prog_title,
-//   cpe.prog_headline,
-//   cpe.prog_type,
-//   cpe.prog_learning_type,
-//   cpe.prog_rating,
-//   cpe.prog_total_trainee,
-//   cpe.prog_modified_date,
-//   cpe.prog_image,
-//   cpe.prog_best_seller,
-//   cpe.prog_price,
-//   cpe.prog_language,
-//   cpe.prog_duration,
-//   cpe.prog_duration_type,
-//   cpe.prog_tag_skill,
-//   uu.user_entity_id,
-//   uu.user_name,
-//   uu.user_password,
-//   uu.user_first_name,
-//   uu.user_last_name,
-//   uu.user_birth_date,
-//   uu.user_email_promotion,
-//   uu.user_demographic,
-//   uu.user_modified_date,
-//   uu.user_photo,
-//   uu.user_current_role
-// FROM
-//   bootcamp.batch b
-//   LEFT JOIN bootcamp.bootcamp_batch_trainee_evaluation btev ON b.batch_id = btev.btev_batch_id
-//   LEFT JOIN bootcamp.curriculum_program_entity cpe ON b.batch_id = cpe.prog_entity_id
-//   LEFT JOIN bootcamp.users_user uu ON b.batch_id = uu.user_entity_id
-// ORDER BY
-//   b.batch_id
-// `
+	rows, err := q.db.QueryContext(ctx, getBatchTraineeReviews, userEntityID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-// func (r *Queries) ListGroups(ctx context.Context) ([]*models.Group, error) {
-// 	rows, err := r.db.QueryContext(ctx, listGroupsQuery)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	defer rows.Close()
+	var bootcampReviews []BootcampBatchTraineeReview
 
-// 	var groups []*models.Group
+	for rows.Next() {
+		var i BootcampBatchTraineeReview
 
-// 	for rows.Next() {
-// 		var group models.Group
-// 		// Scan the result into the group struct
-// 		err := rows.Scan(
-// 			&group.BootcampBatch.BatchID,
-// 			&group.BootcampBatch.BatchEntityID,
-// 			&group.BootcampBatch.BatchName,
-// 			&group.BootcampBatch.BatchDescription,
-// 			&group.BootcampBatch.BatchStartDate,
-// 			&group.BootcampBatch.BatchEndDate,
-// 			&group.BootcampBatch.BatchReason,
-// 			&group.BootcampBatch.BatchType,
-// 			&group.BootcampBatch.BatchModifiedDate,
-// 			&group.BootcampBatch.BatchStatus,
-// 			&group.BootcampBatch.BatchPicID,
-// 			&group.BootcampBatchTraineeEvaluation.BtevID,
-// 			&group.BootcampBatchTraineeEvaluation.BtevType,
-// 			&group.BootcampBatchTraineeEvaluation.BtevHeader,
-// 			&group.BootcampBatchTraineeEvaluation.BtevSection,
-// 			&group.BootcampBatchTraineeEvaluation.BtevSkill,
-// 			&group.BootcampBatchTraineeEvaluation.BtevWeek,
-// 			&group.BootcampBatchTraineeEvaluation.BtevSkor,
-// 			&group.BootcampBatchTraineeEvaluation.BtevNote,
-// 			&group.CurriculumProgramEntity.ProgEntityID,
-// 			&group.CurriculumProgramEntity.ProgTitle,
-// 			&group.CurriculumProgramEntity.ProgHeadline,
-// 			&group.CurriculumProgramEntity.ProgType,
-// 			&group.CurriculumProgramEntity.ProgLearningType,
-// 			&group.CurriculumProgramEntity.ProgRating,
-// 			&group.CurriculumProgramEntity.ProgTotalTrainee,
-// 			&group.CurriculumProgramEntity.ProgModifiedDate,
-// 			&group.CurriculumProgramEntity.ProgImage,
-// 			&group.CurriculumProgramEntity.ProgBestSeller,
-// 			&group.CurriculumProgramEntity.ProgPrice,
-// 			&group.CurriculumProgramEntity.ProgLanguage,
-// 			&group.CurriculumProgramEntity.ProgDuration,
-// 			&group.CurriculumProgramEntity.ProgDurationType,
-// 			&group.CurriculumProgramEntity.ProgTagSkill,
-// 			&group.UsersUser.UserEntityID,
-// 			&group.UsersUser.UserName,
-// 			&group.UsersUser.UserPassword,
-// 			&group.UsersUser.UserFirstName,
-// 			&group.UsersUser.UserLastName,
-// 			&group.UsersUser.UserBirthDate,
-// 			&group.UsersUser.UserEmailPromotion,
-// 			&group.UsersUser.UserDemographic,
-// 			&group.UsersUser.UserModifiedDate,
-// 			&group.UsersUser.UserPhoto,
-// 			&group.UsersUser.UserCurrentRole,
-// 		)
-// 		if err != nil {
-// 			return nil, err
-// 		}
+		err := rows.Scan(
+			&i.UserEntityID,
+			&i.UserFullname,
+			&i.BatrID,
+			&i.BatrStatus,
+			&i.BatrReview,
+		)
 
-// 		groups = append(groups, &group)
-// 	}
+		if err != nil {
+			return nil, err
+		}
+		bootcampReviews = append(bootcampReviews, i)
+	}
 
-// 	if err := rows.Err(); err != nil {
-// 		return nil, err
-// 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
-// 	return groups, nil
-// }
+	return bootcampReviews, nil
+}
 
-// const getGroupByIDQuery = `-- name: GetGroupByID :one
-// SELECT
-//   b.batch_id,
-//   b.batch_entity_id,
-//   b.batch_name,
-//   b.batch_description,
-//   b.batch_start_date,
-//   b.batch_end_date,
-//   b.batch_reason,
-//   b.batch_type,
-//   b.batch_modified_date,
-//   b.batch_status,
-//   b.batch_pic_id,
-//   btev.btev_id,
-//   btev.btev_type,
-//   btev.btev_header,
-//   btev.btev_section,
-//   btev.btev_skill,
-//   btev.btev_week,
-//   btev.btev_skor,
-//   btev.btev_note,
-//   cpe.prog_entity_id,
-//   cpe.prog_title,
-//   cpe.prog_headline,
-//   cpe.prog_type,
-//   cpe.prog_learning_type,
-//   cpe.prog_rating,
-//   cpe.prog_total_trainee,
-//   cpe.prog_modified_date,
-//   cpe.prog_image,
-//   cpe.prog_best_seller,
-//   cpe.prog_price,
-//   cpe.prog_language,
-//   cpe.prog_duration,
-//   cpe.prog_duration_type,
-//   cpe.prog_tag_skill,
-//   uu.user_entity_id,
-//   uu.user_name,
-//   uu.user_password,
-//   uu.user_first_name,
-//   uu.user_last_name,
-//   uu.user_birth_date,
-//   uu.user_email_promotion,
-//   uu.user_demographic,
-//   uu.user_modified_date,
-//   uu.user_photo,
-//   uu.user_current_role
-// FROM
-//   bootcamp.batch b
-//   LEFT JOIN bootcamp.bootcamp_batch_trainee_evaluation btev ON b.batch_id = btev.btev_batch_id
-//   LEFT JOIN bootcamp.curriculum_program_entity cpe ON b.batch_id = cpe.prog_entity_id
-//   LEFT JOIN bootcamp.users_user uu ON b.batch_id = uu.user_entity_id
-// WHERE
-//   b.batch_id = $1
-// `
+const createBatchTraineeReview = ` -- name: CreateBatchTraineeReview :one
+INSERT INTO bootcamp.batch_trainee (
+    batr_batch_id,
+    batr_trainee_entity_id,
+    batr_status,
+    batr_review
+)
+VALUES ($1, $2, $3, $4)
+RETURNING batr_id,
+    (SELECT CONCAT(user_first_name, ' ', user_last_name) FROM users.users WHERE user_entity_id = $2) AS user_fullname
+`
 
-// func (r *Queries) GetGroupByID(ctx context.Context, batchID int32) (*models.Group, error) {
-// 	row := r.db.QueryRowContext(ctx, getGroupByIDQuery, batchID)
-// 	var group models.Group
-// 	err := row.Scan(
-// 		&group.BootcampBatch.BatchID,
-// 		&group.BootcampBatch.BatchEntityID,
-// 		&group.BootcampBatch.BatchName,
-// 		&group.BootcampBatch.BatchDescription,
-// 		&group.BootcampBatch.BatchStartDate,
-// 		&group.BootcampBatch.BatchEndDate,
-// 		&group.BootcampBatch.BatchReason,
-// 		&group.BootcampBatch.BatchType,
-// 		&group.BootcampBatch.BatchModifiedDate,
-// 		&group.BootcampBatch.BatchStatus,
-// 		&group.BootcampBatch.BatchPicID,
-// 		&group.BootcampBatchTraineeEvaluation.BtevID,
-// 		&group.BootcampBatchTraineeEvaluation.BtevType,
-// 		&group.BootcampBatchTraineeEvaluation.BtevHeader,
-// 		&group.BootcampBatchTraineeEvaluation.BtevSection,
-// 		&group.BootcampBatchTraineeEvaluation.BtevSkill,
-// 		&group.BootcampBatchTraineeEvaluation.BtevWeek,
-// 		&group.BootcampBatchTraineeEvaluation.BtevSkor,
-// 		&group.BootcampBatchTraineeEvaluation.BtevNote,
-// 		&group.CurriculumProgramEntity.ProgEntityID,
-// 		&group.CurriculumProgramEntity.ProgTitle,
-// 		&group.CurriculumProgramEntity.ProgHeadline,
-// 		&group.CurriculumProgramEntity.ProgType,
-// 		&group.CurriculumProgramEntity.ProgLearningType,
-// 		&group.CurriculumProgramEntity.ProgRating,
-// 		&group.CurriculumProgramEntity.ProgTotalTrainee,
-// 		&group.CurriculumProgramEntity.ProgModifiedDate,
-// 		&group.CurriculumProgramEntity.ProgImage,
-// 		&group.CurriculumProgramEntity.ProgBestSeller,
-// 		&group.CurriculumProgramEntity.ProgPrice,
-// 		&group.CurriculumProgramEntity.ProgLanguage,
-// 		&group.CurriculumProgramEntity.ProgDuration,
-// 		&group.CurriculumProgramEntity.ProgDurationType,
-// 		&group.CurriculumProgramEntity.ProgTagSkill,
-// 		&group.UsersUser.UserEntityID,
-// 		&group.UsersUser.UserName,
-// 		&group.UsersUser.UserPassword,
-// 		&group.UsersUser.UserFirstName,
-// 		&group.UsersUser.UserLastName,
-// 		&group.UsersUser.UserBirthDate,
-// 		&group.UsersUser.UserEmailPromotion,
-// 		&group.UsersUser.UserDemographic,
-// 		&group.UsersUser.UserModifiedDate,
-// 		&group.UsersUser.UserPhoto,
-// 		&group.UsersUser.UserCurrentRole,
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
+type CreateBatchTraineeReviewParams struct {
+	BatrID              int32  `db:"batr_id" json:"batrId"`
+	BatrBatchID         int32  `json:"batrBatchID"`
+	BatrTraineeEntityID int32  `json:"batrTraineeEntityId"`
+	BatrStatus          string `json:"batrStatus"`
+	BatrReview          string `json:"batrReview"`
+}
 
-// 	return &group, nil
-// }
+func (q *Queries) CreateBatchTraineeReview(ctx context.Context, arg CreateBatchTraineeReviewParams) (*BootcampBatchTraineeReview, *models.ResponseError) {
+	row := q.db.QueryRowContext(ctx, createBatchTraineeReview,
+		arg.BatrBatchID,
+		arg.BatrTraineeEntityID,
+		arg.BatrStatus,
+		arg.BatrReview,
+	)
+
+	i := BootcampBatchTraineeReview{}
+	err := row.Scan(
+		&i.BatrID,
+		&i.UserFullname,
+	)
+
+	if err != nil {
+		return nil, &models.ResponseError{
+			Message: err.Error(),
+			Status:  http.StatusInternalServerError,
+		}
+	}
+
+	return &BootcampBatchTraineeReview{
+		UserFullname: i.UserFullname,
+		BatrID:       i.BatrID,
+	}, nil
+}
+
+const updateBatchTraineeReview = `-- name: UpdateBatchTraineeReview :exec
+UPDATE 
+	bootcamp.batch_trainee AS bt
+SET
+	batr_status = $1, 
+	batr_review = $2
+FROM 
+	users.users AS u
+WHERE 
+	bt.batr_trainee_entity_id = $3 
+AND 
+	u.user_entity_id = bt.batr_trainee_entity_id
+RETURNING 
+	bt.batr_id,
+	CONCAT(u.user_first_name, ' ', u.user_last_name) AS user_fullname
+`
+
+type UpdateBatchTraineeReviewParams struct {
+	BatrStatus string `json:"batrStatus"`
+	BatrReview string `json:"batrReview"`
+	BatrID     int32  `json:"batrID"`
+}
+
+func (q *Queries) UpdateBatchTraineeReview(ctx context.Context, arg UpdateBatchTraineeReviewParams) (*BootcampBatchTraineeReview, error) {
+	row := q.db.QueryRowContext(ctx, updateBatchTraineeReview,
+		arg.BatrStatus,
+		arg.BatrReview,
+		arg.BatrID)
+
+	var i BootcampBatchTraineeReview
+	err := row.Scan(
+		&i.UserEntityID,
+		&i.UserFullname,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &i, nil
+}
+
+const deleteBatchTraineeReview = `-- name: DeleteBatchTraineeReview :exec
+DELETE FROM bootcamp.batch_trainee
+WHERE batr_id = $1
+`
+
+func (q *Queries) DeleteBatchTraineeReview(ctx context.Context, batrID int32) error {
+	_, err := q.db.ExecContext(ctx, deleteBatchTraineeReview, batrID)
+	return err
+}

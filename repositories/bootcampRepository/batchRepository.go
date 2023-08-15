@@ -12,18 +12,21 @@ import (
 type BatchRepository struct {
 	dbHandler   *sql.DB
 	transaction *sql.Tx
+	dbQueries   dbContext.Queries
 }
 
 func NewBatchRepository(dbHandler *sql.DB) *BatchRepository {
 	return &BatchRepository{
 		dbHandler: dbHandler,
+		//add new fields
+		dbQueries: *dbContext.New(dbHandler),
 	}
 }
 
 func (br BatchRepository) GetListBatch(ctx *gin.Context) ([]*models.BootcampBatch, *models.ResponseError) {
 
-	store := dbContext.New(br.dbHandler)
-	batchs, err := store.ListBatchs(ctx)
+	// store := dbContext.New(br.dbHandler)
+	batchs, err := br.dbQueries.ListBatchs(ctx)
 
 	listBatchs := make([]*models.BootcampBatch, 0)
 
@@ -56,8 +59,8 @@ func (br BatchRepository) GetListBatch(ctx *gin.Context) ([]*models.BootcampBatc
 
 func (br BatchRepository) GetBatch(ctx *gin.Context, id int64) (*models.BootcampBatch, *models.ResponseError) {
 
-	store := dbContext.New(br.dbHandler)
-	batch, err := store.GetBatch(ctx, int32(id))
+	// store := dbContext.New(br.dbHandler)
+	batch, err := br.dbQueries.GetBatch(ctx, int32(id))
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -71,8 +74,8 @@ func (br BatchRepository) GetBatch(ctx *gin.Context, id int64) (*models.Bootcamp
 
 func (br BatchRepository) CreateBatch(ctx *gin.Context, batchParams *dbContext.CreateBatchParams) (*models.BootcampBatch, *models.ResponseError) {
 
-	store := dbContext.New(br.dbHandler)
-	batch, err := store.CreateBatch(ctx, *batchParams)
+	// store := dbContext.New(br.dbHandler)
+	batch, err := br.dbQueries.CreateBatch(ctx, *batchParams)
 
 	if err != nil {
 		return nil, &models.ResponseError{
@@ -85,12 +88,12 @@ func (br BatchRepository) CreateBatch(ctx *gin.Context, batchParams *dbContext.C
 
 func (br BatchRepository) UpdateBatch(ctx *gin.Context, batchParams *dbContext.CreateBatchParams) *models.ResponseError {
 
-	store := dbContext.New(br.dbHandler)
-	err := store.UpdateBatch(ctx, *batchParams)
+	// store := dbContext.New(br.dbHandler)
+	err := br.dbQueries.UpdateBatch(ctx, *batchParams)
 
 	if err != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when updating",
 			Status:  http.StatusInternalServerError,
 		}
 	}
@@ -102,12 +105,12 @@ func (br BatchRepository) UpdateBatch(ctx *gin.Context, batchParams *dbContext.C
 
 func (br BatchRepository) DeleteBatch(ctx *gin.Context, id int64) *models.ResponseError {
 
-	store := dbContext.New(br.dbHandler)
-	err := store.DeleteBatch(ctx, int32(id))
+	// store := dbContext.New(br.dbHandler)
+	err := br.dbQueries.DeleteBatch(ctx, int32(id))
 
 	if err != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when deleting",
 			Status:  http.StatusInternalServerError,
 		}
 	}
@@ -121,8 +124,8 @@ func (br BatchRepository) SearchBatch(ctx *gin.Context, batchName, status string
 	// Perform validation, if needed, for batchName and status
 	// If validation fails, return appropriate response error
 
-	store := dbContext.New(br.dbHandler)
-	batches, err := store.SearchBatch(ctx, batchName, status)
+	// store := dbContext.New(br.dbHandler)
+	batches, err := br.dbQueries.SearchBatch(ctx, batchName, status)
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: "Failed to search batches",
@@ -135,8 +138,8 @@ func (br BatchRepository) SearchBatch(ctx *gin.Context, batchName, status string
 
 func (br BatchRepository) PagingBatch(ctx *gin.Context, offset, pageSize int) ([]models.BootcampBatch, *models.ResponseError) {
 
-	store := dbContext.New(br.dbHandler)
-	batches, err := store.PagingBatch(ctx, pageSize, offset)
+	// store := dbContext.New(br.dbHandler)
+	batches, err := br.dbQueries.PagingBatch(ctx, pageSize, offset)
 	if err != nil {
 		return nil, &models.ResponseError{
 			Message: "Failed to fetch batches",
