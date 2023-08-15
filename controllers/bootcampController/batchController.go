@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"codeid.revampacademy/models"
+	"codeid.revampacademy/models/features"
 	"codeid.revampacademy/repositories/bootcampRepository/dbContext"
 	"codeid.revampacademy/services/bootcampService"
 	"github.com/gin-gonic/gin"
@@ -25,7 +27,20 @@ func NewBatchController(batchService *bootcampService.BatchService) *BatchContro
 
 // create method
 func (batchController BatchController) GetListBatch(ctx *gin.Context) {
-	response, responseErr := batchController.batchService.GetListBatch(ctx)
+	//add metadata to hold data from query parameter, use defaultquery
+	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "0"))
+	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("pageSize", "3"))
+	batch := ctx.DefaultQuery("batch", "")
+	status := ctx.DefaultQuery("status", "")
+
+	metadata := features.Metadata{
+		Page:     page,
+		PageSize: pageSize,
+		Batch:    batch,
+		Status:   status,
+	}
+
+	response, responseErr := batchController.batchService.GetListBatch(ctx, &metadata)
 
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
@@ -34,23 +49,26 @@ func (batchController BatchController) GetListBatch(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, response)
 }
 
-func (batchController BatchController) GetBatch(ctx *gin.Context) {
-	id := ctx.Query("batchid") // Mengambil nilai query parameter id dari URL
+func (batchController *BatchController) GetBatch(ctx *gin.Context) {
+	id := ctx.Query("batchid")
 
-	batchId, err := strconv.Atoi(id)
+	batchID, err := strconv.Atoi(id)
 	if err != nil {
-		log.Println("Error while parsing id", err)
-		ctx.AbortWithError(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid batch id",
+		})
 		return
 	}
 
-	response, responseErr := batchController.batchService.GetBatch(ctx, int64(batchId))
+	batch, responseErr := batchController.batchService.GetBatchWithMembers(ctx, int64(batchID))
 	if responseErr != nil {
-		ctx.JSON(responseErr.Status, responseErr)
+		ctx.JSON(responseErr.Status, gin.H{
+			"message": responseErr.Message,
+		})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, response)
+	ctx.JSON(http.StatusOK, batch)
 }
 
 func (batchController BatchController) CreateBatch(ctx *gin.Context) {
@@ -80,11 +98,64 @@ func (batchController BatchController) CreateBatch(ctx *gin.Context) {
 
 }
 
+func (batchController BatchController) CreateInstructorPrograms(ctx *gin.Context) {
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var batch dbContext.CreateInstructorProgramsParams
+	err = json.Unmarshal(body, &batch)
+	if err != nil {
+		log.Println("Error while unmarshaling create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := batchController.batchService.CreateInstructorPrograms(ctx, &batch)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}
+
+func (batchController BatchController) CreateBatchTrainee(ctx *gin.Context) {
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var batch dbContext.CreateBatchTraineeParams
+	err = json.Unmarshal(body, &batch)
+	if err != nil {
+		log.Println("Error while unmarshaling create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response, responseErr := batchController.batchService.CreateBatchTrainee(ctx, &batch)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}
+
 func (batchController BatchController) UpdateBatch(ctx *gin.Context) {
 	id := ctx.Query("id") // Mengambil nilai query parameter id dari URL
 
 	batchId, err := strconv.Atoi(id)
-	// batchId, err := strconv.Atoi(ctx.Param("id"))
 
 	if err != nil {
 		log.Println("Error while reading paramater id", err)
@@ -107,7 +178,43 @@ func (batchController BatchController) UpdateBatch(ctx *gin.Context) {
 		return
 	}
 
-	response := batchController.batchService.UpdateBatch(ctx, &batch, int64(batchId))
+	response := batchController.batchService.UpdateBatch(ctx, &batch, int32(batchId))
+	if response != nil {
+		ctx.AbortWithStatusJSON(response.Status, response)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, response)
+
+}
+
+func (batchController BatchController) UpdateInstructorPrograms(ctx *gin.Context) {
+	id := ctx.Query("id") // Mengambil nilai query parameter id dari URL
+
+	batchId, err := strconv.Atoi(id)
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading update instructor programs request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var instructorPrograms dbContext.CreateInstructorProgramsParams
+	err = json.Unmarshal(body, &instructorPrograms)
+	if err != nil {
+		log.Println("Error while unmarshaling update instructor programs request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	response := batchController.batchService.UpdateInstructorPrograms(ctx, &instructorPrograms, int32(batchId))
 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return
@@ -136,6 +243,72 @@ func (batchController BatchController) DeleteBatch(ctx *gin.Context) {
 	ctx.Status(http.StatusNoContent)
 }
 
+func (batchController BatchController) DeleteInstructorPrograms(ctx *gin.Context) {
+
+	batchId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	responseErr := batchController.batchService.DeleteInstructorPrograms(ctx, int64(batchId))
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
+
+func (batchController BatchController) DeleteBatchTrainee(ctx *gin.Context) {
+
+	batchId, err := strconv.Atoi(ctx.Param("id"))
+
+	if err != nil {
+		log.Println("Error while reading paramater id", err)
+		ctx.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	responseErr := batchController.batchService.DeleteBatchTrainee(ctx, int64(batchId))
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.Status(http.StatusNoContent)
+}
+
+func (batchController BatchController) DeleteBatchTrainee2(ctx *gin.Context) {
+	batrTraineeEntityID, err := strconv.Atoi(ctx.Query("id"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid trainee entity ID",
+		})
+		return
+	}
+
+	batrBatchID, err := strconv.Atoi(ctx.Query("batch"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid batch ID",
+		})
+		return
+	}
+
+	responseErr := batchController.batchService.DeleteBatchTrainee2(ctx, int64(batrTraineeEntityID), int64(batrBatchID))
+	if responseErr != nil {
+		ctx.JSON(responseErr.Status, responseErr)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Batch trainee data has been deleted",
+	})
+}
+
 func (batchController BatchController) SearchBatch(ctx *gin.Context) {
 	batchName := ctx.DefaultQuery("batch", "")
 	status := ctx.DefaultQuery("status", "")
@@ -149,26 +322,50 @@ func (batchController BatchController) SearchBatch(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, batches)
 }
 
-func (batchController BatchController) PagingBatch(ctx *gin.Context) {
-	page, err := strconv.Atoi(ctx.DefaultQuery("page", "1"))
-	if err != nil || page <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
+func (batchController BatchController) CreateBatchInstructorTrainee(ctx *gin.Context) {
+
+	body, err := io.ReadAll(ctx.Request.Body)
+	if err != nil {
+		log.Println("Error while reading create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	pageSize, err := strconv.Atoi(ctx.DefaultQuery("pageSize", "10"))
-	if err != nil || pageSize <= 0 {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page size"})
+	var batch models.CreateBatchInstructorTraineeDto
+	err = json.Unmarshal(body, &batch)
+	if err != nil {
+		log.Println("Error while unmarshaling create batch request body", err)
+		ctx.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 
-	offset := (page - 1) * pageSize
+	response, responseErr := batchController.batchService.CreateBatchInstructorTraineeDto(ctx, &batch)
+	if responseErr != nil {
+		ctx.AbortWithStatusJSON(responseErr.Status, responseErr)
+		return
+	}
 
-	batches, responseErr := batchController.batchService.PagingBatch(ctx, offset, pageSize)
+	ctx.JSON(http.StatusOK, response)
+
+}
+
+func (batchController BatchController) DeleteBatchTransaction(ctx *gin.Context) {
+	batchIdStr := ctx.Query("batchid")
+	batchId, err := strconv.Atoi(batchIdStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Invalid batchID",
+		})
+		return
+	}
+
+	responseErr := batchController.batchService.DeleteBatchTransaction(ctx, int64(batchId))
 	if responseErr != nil {
 		ctx.JSON(responseErr.Status, responseErr)
 		return
 	}
 
-	ctx.JSON(http.StatusOK, batches)
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Batch data, instructor programs and batch trainee have been deleted",
+	})
 }

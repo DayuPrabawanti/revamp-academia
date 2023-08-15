@@ -1,15 +1,20 @@
 package bootcampService
 
-import "codeid.revampacademy/repositories/bootcampRepository"
+import (
+	"codeid.revampacademy/repositories/bootcampRepository"
+)
 
 type ServiceManager struct {
 	BatchService
+	BootcampBatchEvaluationService
+	EvaluationCandidateService
 }
 
 // constructor
 func NewServiceManager(repoMgr *bootcampRepository.RepositoryManager) *ServiceManager {
 	return &ServiceManager{
-		BatchService: *NewBatchService(&repoMgr.BatchRepository),
-		// ProductService: *NewProductService(&repoMgr.ProductRepository),
+		BatchService:                   *NewBatchService(repoMgr),
+		BootcampBatchEvaluationService: *NewBootcampBatchEvaluationService(repoMgr),
+		EvaluationCandidateService:     *NewEvaluationCandidateService(repoMgr),
 	}
 }

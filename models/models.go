@@ -80,6 +80,36 @@ type MergeJobAndMaster struct{
 	
 }
 
+type BootcampBatchMockup struct{
+	BatchID           int32          `db:"batch_id" json:"batchId"`
+	BatchName         string `db:"batch_name" json:"batchName"`
+	ProgTitle         string         `db:"prog_title" json:"technology"`
+	Members        []BatchMember `json:"members"`
+	BatchStartDate    time.Time   `db:"batch_start_date" json:"batchStartDate"`
+	BatchEndDate      time.Time   `db:"batch_end_date" json:"batchEndDate"`
+	UserName          string `db:"user_name" json:"trainer"`
+	BatchStatus       string `db:"batch_status" json:"batchStatus"`
+}
+
+type BatchMember struct {
+	UserPhoto string `json:"userPhoto"`
+}
+
+type BootcampBatchEvaluationMockup struct {
+	BootcampBatch                  BootcampBatch
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	CurriculumProgramEntity        CurriculumProgramEntity
+	UsersUser                      UsersUser
+}
+
+type EvaluationCandidateMockup struct {
+	BootcampBatch                  BootcampBatch
+	BootcampBatchTraineeEvaluation BootcampBatchTraineeEvaluation
+	CurriculumProgramEntity        CurriculumProgramEntity
+	UsersUser                      UsersUser
+	UsersUsersEducation            UsersUsersEducation
+}
+
 type BootcampBatch struct {
 	BatchID           int32          `db:"batch_id" json:"batchId"`
 	BatchEntityID     int32          `db:"batch_entity_id" json:"batchEntityId"`
