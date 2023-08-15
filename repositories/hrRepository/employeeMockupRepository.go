@@ -140,7 +140,7 @@ func (cr EmployeeMockupRepository) UpdateEmployeeMockup(ctx *gin.Context, usersP
 	err3 := store3.UpdatePayHistory(ctx, *salaryParam)
 	if err3 != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when update pay history",
 			Status:  http.StatusInternalServerError,
 		}
 	}
@@ -149,7 +149,7 @@ func (cr EmployeeMockupRepository) UpdateEmployeeMockup(ctx *gin.Context, usersP
 	err4 := store4.UpdateEmployeeDepartmentHistory(ctx, *assigmentParam)
 	if err4 != nil {
 		return &models.ResponseError{
-			Message: "error when update",
+			Message: "error when update update department history",
 			Status:  http.StatusInternalServerError,
 		}
 	}
