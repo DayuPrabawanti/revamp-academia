@@ -24,20 +24,21 @@ func InitRouter(controllerManager *jobhireController.ControllerManager) *gin.Eng
 
 		//Mockup 3 -- Create
 		jobRoute.POST("/posting/create", controllerManager.JobHireController.CreateJobPostController)
+		jobRoute.POST("/posting/create/tx", controllerManager.JobHireController.CreateJobPostWithDescription)
 
 		//Mockup 4 -- Create
-		jobRoute.PUT("/posting/update/:id", controllerManager.JobHireController.UpdateJobPostController)
+		jobRoute.PUT("/posting/update/batchid", controllerManager.JobHireController.UpdateJobPostController)
 		//test
 		// jobRoute.GET("/listJobCategory", controllerManager.GetListCategoryControl)
 
 	}
 
-	masterRoute := router.Group("/masterdata")
-	{
-		masterRoute.GET("/listaddress", controllerManager.GetListAddressControl)
-		masterRoute.GET("/listcity", controllerManager.GetListCityControl)
-		masterRoute.POST("/addAddress", controllerManager.CreateAddress)
-	}
+	// masterRoute := router.Group("/masterdata")
+	// {
+	// 	masterRoute.GET("/listaddress", controllerManager.GetListAddressControl)
+	// 	masterRoute.GET("/listcity", controllerManager.GetListCityControl)
+	// 	masterRoute.POST("/addAddress", controllerManager.CreateAddress)
+	// }
 
 	return router
 }

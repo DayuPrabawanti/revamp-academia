@@ -12,9 +12,9 @@ import (
 )
 
 func (jc JobHireController) UpdateJobPostController(ctx *gin.Context) {
-	// id := ctx.Query("id")
+	id := ctx.Query("id")
 
-	jobPostId, err := strconv.Atoi(ctx.Param("id"))
+	jobPostId, err := strconv.Atoi(id)
 	if err != nil {
 		log.Println("Error while reading parameter id", err)
 		ctx.AbortWithError(http.StatusBadRequest, err)
@@ -37,7 +37,7 @@ func (jc JobHireController) UpdateJobPostController(ctx *gin.Context) {
 		return
 	}
 
-	response := jc.jobservice.UpdateJobPost(ctx, &jobpost, int64(jobPostId))
+	response := jc.jobservice.UpdateJobPost(ctx, &jobpost, int32(jobPostId))
 	if response != nil {
 		ctx.AbortWithStatusJSON(response.Status, response)
 		return

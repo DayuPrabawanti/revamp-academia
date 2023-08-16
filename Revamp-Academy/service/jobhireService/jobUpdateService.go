@@ -8,14 +8,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (jp JobService) UpdateJobPost(ctx *gin.Context, jobPostParams *dbContext.UpdateJobPostParams, id int64) *models.ResponseError {
+func (jp JobService) UpdateJobPost(ctx *gin.Context, jobPostParams *dbContext.UpdateJobPostParams, id int32) *models.ResponseError {
 
 	responseErr := ValidateParamsJobForUpdate(jobPostParams)
 
 	if responseErr != nil {
 		return responseErr
 	}
-	return jp.repositoryMgr.UpdateJobPosting(ctx, jobPostParams)
+	return jp.repositoryMgr.JobHirePostRepo.UpdateJobPosting(ctx, jobPostParams)
 }
 
 func ValidateParamsJobForUpdate(jobParams *dbContext.UpdateJobPostParams) *models.ResponseError {
