@@ -17,6 +17,8 @@ func InitRouter(controllerManager *jobhireController.ControllerManager) *gin.Eng
 		//Mockup 1 with search and pagination
 		jobRoute.GET("/search", controllerManager.GetJobPostSearch)
 
+		// Add jobpost by using method get for update by id - last
+
 		jobRoute.GET("/dumpJobs", controllerManager.GetJobPostControl)
 
 		//Mockup 2
